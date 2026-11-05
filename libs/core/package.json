@@ -1,0 +1,32 @@
+{
+  "name": "@devantage/docscanify",
+  "version": "1.0.0",
+  "description": "Detect, crop and correct the perspective of documents in images on Node.js and browsers, with no install scripts and no system dependencies",
+  "contributors": [
+    "Guilherme Nogueira <guilherme.nogueira@devantage.com.br>"
+  ],
+  "homepage": "https://github.com/devantage/docscanify",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/devantage/docscanify.git",
+    "directory": "libs/core"
+  },
+  "keywords": [
+    "document-scanner",
+    "scanner",
+    "perspective-correction",
+    "edge-detection",
+    "opencv",
+    "jscanify"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "browser": {
+    "@napi-rs/canvas": false,
+    "@techstark/opencv-js": false
+  }
+}

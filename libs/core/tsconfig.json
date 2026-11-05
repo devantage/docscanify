@@ -1,12 +1,11 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "strict": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2019",
     "lib": ["es2019", "es2020", "es2022.error", "dom"],
-    "types": ["node", "jest"],
+    "importHelpers": false,
     "removeComments": true,
     "useUnknownInCatchVariables": false,
     "forceConsistentCasingInFileNames": true,
@@ -16,12 +15,17 @@
     "strictNullChecks": true,
     "preserveConstEnums": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true,
     "declaration": true,
-    "sourceMap": true,
-    "skipLibCheck": true,
-    "strictPropertyInitialization": false
+    "sourceMap": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

@@ -23,6 +23,6 @@ jobs:
 
       - run: npm install
 
-      - run: npm run build
+      - run: npm run build core
 
-      - run: npm publish --access public
+      - run: npm publish dist/libs/core --access public
