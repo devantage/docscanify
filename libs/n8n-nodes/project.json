@@ -1,0 +1,44 @@
+{
+  "name": "n8n-nodes",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/n8n-nodes/src",
+  "projectType": "library",
+  "tags": ["scope:lib"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/n8n-nodes",
+        "main": "libs/n8n-nodes/src/index.ts",
+        "tsConfig": "libs/n8n-nodes/tsconfig.lib.json",
+        "assets": [
+          "libs/n8n-nodes/*.md",
+          {
+            "input": "libs/n8n-nodes/icons",
+            "glob": "*.svg",
+            "output": "icons"
+          }
+        ]
+      }
+    },
+    "lint": {
+      "cache": false,
+      "options": {
+        "args": ["--fix"]
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "continuous": true,
+      "options": {
+        "command": "mkdir -p tmp/n8n/node-path/@devantage && ln -sfn ../../../../dist/libs/core tmp/n8n/node-path/@devantage/docscanify && NODE_PATH=\"$PWD/tmp/n8n/node-path\" N8N_CUSTOM_EXTENSIONS=\"$PWD/dist/libs/n8n-nodes\" N8N_USER_FOLDER=\"$PWD/tmp/n8n\" npx n8n@1.123.36 start",
+        "env": {
+          "N8N_LOG_LEVEL": "debug",
+          "N8N_SECURE_COOKIE": "false"
+        }
+      }
+    }
+  }
+}

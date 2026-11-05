@@ -25,4 +25,8 @@ jobs:
 
       - run: npm run build core
 
+      - run: npm run build n8n-nodes
+
       - run: npm publish dist/libs/core --access public
+
+      - run: npm publish dist/libs/n8n-nodes --access public
