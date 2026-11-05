@@ -2,6 +2,7 @@
 /dist
 /tmp
 out-tsc
+*.tsbuildinfo
 
 # dependencies
 /node_modules
@@ -46,3 +47,6 @@ vitest.config.*.timestamp*
 
 # Packages
 *.tgz
+
+# Copied from node_modules on install (apps/web/scripts/copy-opencv.mjs)
+/apps/web/public/opencv.js

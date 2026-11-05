@@ -1,0 +1,496 @@
+/* Scrolls horizontally and stays centered when it fits */
+.doc-carousel {
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.doc-carousel ol {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  margin: 0 auto;
+  list-style: none;
+}
+
+.doc-item {
+  flex: none;
+}
+
+.doc-tile {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.doc-tile-body {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  transition:
+    border-color 150ms var(--ease),
+    box-shadow 150ms var(--ease);
+}
+
+button.doc-tile-body {
+  cursor: pointer;
+}
+
+.doc-tile-body img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 150ms var(--ease);
+}
+
+/* The preview shows the whole page: a rotated document must not be cut off */
+.doc-tile-body img.is-preview {
+  object-fit: contain;
+  background: var(--canvas);
+}
+
+.doc-tile.is-active .doc-tile-body {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-ring);
+}
+
+.doc-tile.is-pending img {
+  opacity: 0.5;
+}
+
+.doc-tile-n,
+.doc-tile-alert {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.doc-tile-n {
+  background: rgba(16, 24, 40, 0.75);
+}
+
+.doc-tile.is-active .doc-tile-n {
+  background: var(--brand);
+}
+
+.doc-tile-alert {
+  background: var(--danger);
+  box-shadow: 0 0 0 2px #fff;
+  font-weight: 700;
+}
+
+.doc-tile-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2.5px solid #f1d5dc;
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 3px #fff;
+  animation: spin 800ms linear infinite;
+}
+
+.doc-tile-remove {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.95);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: var(--shadow-md);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background-color 150ms var(--ease),
+    color 150ms var(--ease);
+}
+
+.doc-tile-remove svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+}
+
+.doc-tile-remove:active {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+@media (hover: hover) {
+  .doc-tile-remove:hover {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+
+  button.doc-tile-body:hover {
+    border-color: var(--muted);
+  }
+
+  .doc-tile.is-active button.doc-tile-body:hover {
+    border-color: var(--brand);
+  }
+}
+
+/* Add card, always last: take photos, choose, or drop images */
+.add-tile {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  width: 100%;
+  height: 100%;
+  background: #e4e7ec;
+  border: 2px dashed #b9c0cb;
+  text-align: center;
+  transition:
+    background-color 150ms var(--ease),
+    border-color 150ms var(--ease);
+}
+
+.add-tile.is-over {
+  background: var(--brand-soft);
+  border-color: var(--brand);
+}
+
+.add-tile-head {
+  display: grid;
+  justify-items: center;
+}
+
+.add-tile-icon {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--brand);
+}
+
+.add-tile-icon svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+}
+
+.add-tile-title {
+  font-weight: 650;
+  color: var(--text);
+}
+
+.add-tile-actions {
+  display: grid;
+  width: 100%;
+}
+
+.add-tile-hint {
+  margin: 0;
+  font-size: 0.6875rem;
+  line-height: 1.35;
+  color: var(--muted);
+  text-wrap: balance;
+}
+
+/* Large: carousel of the Upload step */
+.doc-carousel.is-large {
+  flex: 1;
+  display: grid;
+  align-items: center;
+  min-height: 0;
+  scroll-snap-type: x proximity;
+}
+
+.is-large ol {
+  gap: 1rem;
+  height: 100%;
+  padding: 0.5rem 1rem;
+}
+
+.is-large .doc-item {
+  width: 12rem;
+  height: 16rem;
+  max-height: 100%;
+  scroll-snap-align: center;
+}
+
+.is-large .doc-tile-body {
+  border-radius: 14px;
+  box-shadow: var(--shadow-md);
+}
+
+.is-large .doc-tile-n {
+  left: 0.6rem;
+  bottom: 0.6rem;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 8px;
+  font-size: var(--fs-small);
+}
+
+.is-large .doc-tile-alert {
+  top: 0.6rem;
+  left: 0.6rem;
+  width: 22px;
+  height: 22px;
+}
+
+.is-large .doc-tile-remove {
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 36px;
+  height: 36px;
+}
+
+.is-large .doc-tile-remove svg {
+  width: 18px;
+  height: 18px;
+}
+
+.is-large .add-tile {
+  gap: 0.6rem;
+  padding: 1rem 0.85rem;
+  border-radius: var(--radius-card);
+}
+
+.is-large .add-tile-head {
+  gap: 0.5rem;
+}
+
+.is-large .add-tile-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.is-large .add-tile-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.is-large .add-tile-title {
+  margin-bottom: 0.25rem;
+}
+
+.is-large .add-tile-actions {
+  gap: 0.5rem;
+}
+
+.is-large .add-tile-actions .btn {
+  width: 100%;
+  padding-inline: 0.5rem;
+}
+
+/* Compact: bar under the preview in the Crop, Enhance, and Export steps */
+.doc-carousel.is-compact {
+  flex: none;
+  width: 100%;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+}
+
+.is-compact ol {
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+.is-compact .doc-item {
+  width: 56px;
+  height: 72px;
+}
+
+.is-compact .doc-tile-body {
+  border: 1.5px solid var(--line-strong);
+  border-radius: 8px;
+}
+
+.is-compact .doc-tile-n {
+  left: 4px;
+  bottom: 4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 0.6875rem;
+}
+
+.is-compact .doc-tile-alert {
+  top: 4px;
+  left: 4px;
+  width: 18px;
+  height: 18px;
+  font-size: 0.75rem;
+}
+
+/* On the edge of the item, so it does not cover the thumbnail */
+.is-compact .doc-tile-remove {
+  top: -7px;
+  right: -7px;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+}
+
+/* Touch area larger than the visible button */
+.is-compact .doc-tile-remove::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+}
+
+.is-compact .doc-tile-remove svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* More specific than the thumbnail size, including on phones */
+.is-compact .doc-item.doc-item-add {
+  width: auto;
+}
+
+.is-compact .add-tile {
+  gap: 0.3rem;
+  padding: 0.35rem 0.5rem;
+  border-width: 1.5px;
+  border-radius: 8px;
+}
+
+.is-compact .add-tile-head {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.is-compact .add-tile-icon svg {
+  width: 13px;
+  height: 13px;
+}
+
+.is-compact .add-tile-title {
+  font-size: 0.6875rem;
+}
+
+.is-compact .add-tile-actions {
+  grid-template-columns: repeat(2, 38px);
+  gap: 0.3rem;
+}
+
+.is-compact .add-tile-actions .btn {
+  min-height: 32px;
+  padding: 0;
+}
+
+/* Icon only: the button name lives in aria-label and the tooltip */
+.is-compact .add-tile-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.is-compact .add-tile-hint {
+  display: none;
+}
+
+/* ---------- Reordering (useSortable) ---------- */
+
+/* Sortable items: holding does not select text or open the system image menu */
+[data-sortable] {
+  position: relative;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+[data-sortable] img {
+  -webkit-user-drag: none;
+}
+
+@media (hover: hover) {
+  [data-sortable] {
+    cursor: grab;
+  }
+}
+
+/* The other items make room with an animation; the dragged one follows the pointer with no delay */
+.is-sorting [data-sortable]:not(.is-dragging) {
+  transition: transform 180ms var(--ease);
+}
+
+.is-sorting,
+.is-sorting [data-sortable] {
+  cursor: grabbing;
+}
+
+[data-sortable].is-dragging {
+  z-index: 3;
+}
+
+/* Scroll snapping would fight the automatic scrolling at the edges */
+.is-sorting {
+  scroll-snap-type: none;
+}
+
+[data-sortable].is-dragging > * {
+  transform: scale(1.06);
+  box-shadow: 0 14px 28px -8px rgba(16, 24, 40, 0.35);
+  transition:
+    transform 150ms var(--ease),
+    box-shadow 150ms var(--ease);
+}
+
+/* ---------- Phone ---------- */
+
+@media (max-width: 760px) {
+  .is-compact ol {
+    gap: 0.6rem;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .is-compact .doc-item {
+    width: 44px;
+    height: 56px;
+  }
+
+  /* No room for the title: only the two buttons */
+  .is-compact .add-tile-head {
+    display: none;
+  }
+
+  .is-compact .add-tile-actions {
+    grid-template-rows: 40px;
+    grid-template-columns: repeat(2, 40px);
+  }
+
+  .is-large .add-tile {
+    padding: 0.75rem 0.6rem;
+  }
+
+  .is-large ol {
+    gap: 0.75rem;
+    padding-inline: 0.25rem;
+  }
+
+  .is-large .doc-item {
+    width: 9rem;
+    height: 12rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doc-tile-spinner {
+    animation-duration: 3s;
+  }
+}

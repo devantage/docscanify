@@ -1,0 +1,18 @@
+# Used by BuildKit for apps/web/Dockerfile only. The build context is the root of the monorepo,
+# so the paths are relative to it
+
+# Installed and built inside the image
+node_modules
+dist
+apps/web/public/opencv.js
+
+# Not needed to build
+.git
+.github
+.husky
+.nx
+.vscode
+coverage
+tmp
+**/*.tsbuildinfo
+**/.DS_Store
