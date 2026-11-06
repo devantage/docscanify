@@ -17,7 +17,7 @@ npm install            # installs every dependency, at the root
 npm run build:all      # builds every project into dist/
 npm run test:all       # tests every project
 npm run lint:all       # lints every project, fixing what it can
-npm run format         # formats the workspace with Prettier
+npm run format:all     # formats every project with Prettier
 ```
 
 To run a target in a single project, pass the project: `npm run build core`, `npm run test core`, `npm run lint core`, or `npx nx <target> <project>` for any other target. To run only what a change affects, use `npx nx affected -t test`, and to see how the projects depend on each other, use `npx nx graph`.
