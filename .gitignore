@@ -1,7 +1,10 @@
 # Compiled output
 /dist
+/tmp
+out-tsc
+*.tgz
 
-# Dependencies
+# dependencies
 /node_modules
 
 # IDEs and editors
@@ -12,19 +15,32 @@
 *.launch
 .settings/
 *.sublime-workspace
+
+# IDE - VSCode
 /.vscode/*
 !/.vscode/settings.json
 !/.vscode/tasks.json
 !/.vscode/launch.json
 !/.vscode/extensions.json
 
-# Tests
+# misc
+/.sass-cache
+/connect.lock
 /coverage
+/libpeerconnection.log
+npm-*.log
+yarn-*.log
+testem.log
+/typings
 
-# OS Files
+# System Files
 .DS_Store
 Thumbs.db
 
+# NX Data
+/.nx/cache
+/.nx/workspace-data
 
-# Packages
-*.tgz
+# Vite Files
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
