@@ -12,7 +12,7 @@ export type Locale = 'pt-BR' | 'en' | 'es';
  * Language used when none of the browser languages is supported. Change it here to configure
  * the app; `TranslateProvider` also accepts a `defaultLocale` prop.
  */
-export const DEFAULT_LOCALE: Locale = 'pt-BR';
+export const DEFAULT_LOCALE: Locale = 'en';
 
 /** Messages of every supported language. Typed as `Messages`, so a missing key fails to compile. */
 export const MESSAGES: Record<Locale, Messages> = {
