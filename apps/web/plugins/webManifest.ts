@@ -2,7 +2,16 @@ import fs from 'node:fs';
 import type { ServerResponse } from 'node:http';
 import path from 'node:path';
 
-import type { Connect, Plugin, ResolvedConfig, ViteDevServer } from 'vite';
+import type {
+  Connect,
+  HtmlTagDescriptor,
+  IndexHtmlTransformResult,
+  Plugin,
+  ResolvedConfig,
+  ViteDevServer,
+} from 'vite';
+
+import { DEFAULT_LOCALE } from '../src/i18n/config';
 
 /** An icon of the manifest. */
 interface ManifestIcon {
@@ -34,7 +43,7 @@ interface LocaleManifest extends SharedManifest {
   description: string;
 }
 
-/** The part of a language's messages the manifest reads. */
+/** The part of a language's messages the plugin reads. */
 interface ManifestMessages {
   app: { description: string };
 }
@@ -90,6 +99,13 @@ const SHARED: SharedManifest = {
 /** File name of a language's manifest; `TranslateProvider` links the one of the current language. */
 const fileName = (locale: string): string => `manifest.${locale}.webmanifest`;
 
+/** Reads the messages of a language, from its file in `LOCALES_DIR`. */
+function readMessages(root: string, locale: string): ManifestMessages {
+  return JSON.parse(
+    fs.readFileSync(path.resolve(root, LOCALES_DIR, `${locale}.json`), 'utf8'),
+  ) as ManifestMessages;
+}
+
 /** The manifest of each language, by file name, with the description from its messages. */
 function buildManifests(root: string): Map<string, string> {
   const dir: string = path.resolve(root, LOCALES_DIR);
@@ -98,9 +114,7 @@ function buildManifests(root: string): Map<string, string> {
     .readdirSync(dir)
     .filter((f: string) => f.endsWith('.json'))) {
     const locale: string = path.basename(file, '.json');
-    const messages: ManifestMessages = JSON.parse(
-      fs.readFileSync(path.join(dir, file), 'utf8'),
-    ) as ManifestMessages;
+    const messages: ManifestMessages = readMessages(root, locale);
     const manifest: LocaleManifest = {
       lang: locale,
       dir: 'ltr',
@@ -116,14 +130,42 @@ function buildManifests(root: string): Map<string, string> {
  * Web app manifests, one per language (`manifest.<locale>.webmanifest`), so the installed app
  * shows its description in the user's language. The dev server builds them on each request, so
  * edits to the messages show up right away; the build writes them next to `index.html`.
+ *
+ * It also gives `index.html` the language, the description and the manifest of `DEFAULT_LOCALE`,
+ * which is what crawlers, link previews and the first paint see. Once the app starts,
+ * `TranslateProvider` switches the three to the user's language.
  */
 export function webManifest(): Plugin {
   let root: string = '';
+  let base: string = '/';
 
   return {
     name: 'web-manifest',
     configResolved(config: ResolvedConfig): void {
       root = config.root;
+      base = config.base;
+    },
+    transformIndexHtml(html: string): IndexHtmlTransformResult {
+      const { app }: ManifestMessages = readMessages(root, DEFAULT_LOCALE);
+      const tags: HtmlTagDescriptor[] = [
+        {
+          tag: 'meta',
+          attrs: { name: 'description', content: app.description },
+          injectTo: 'head',
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'manifest',
+            href: `${base}${fileName(DEFAULT_LOCALE)}`,
+          },
+          injectTo: 'head',
+        },
+      ];
+      return {
+        html: html.replace(/<html\b/, `<html lang="${DEFAULT_LOCALE}"`),
+        tags,
+      };
     },
     configureServer(server: ViteDevServer): void {
       server.middlewares.use(

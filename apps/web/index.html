@@ -1,5 +1,7 @@
 <!doctype html>
-<html lang="en">
+<!-- plugins/webManifest.ts adds the language, the description and the manifest of DEFAULT_LOCALE;
+     TranslateProvider switches them to the user's language -->
+<html>
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -7,14 +9,8 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <meta name="theme-color" content="#ffffff" />
-    <meta
-      name="description"
-      content="Scan documents in the browser: take photos or upload images, crop, adjust, and export to PDF, PNG, or JPG."
-    />
     <meta name="apple-mobile-web-app-title" content="DocScanify" />
     <title>DocScanify</title>
-    <!-- English, like <html lang>: TranslateProvider switches both to the user's language -->
-    <link rel="manifest" href="%BASE_URL%manifest.en.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%icon.svg" />
     <link rel="apple-touch-icon" href="%BASE_URL%icons/apple-touch-icon.png" />
   </head>
