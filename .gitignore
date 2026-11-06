@@ -2,6 +2,7 @@
 /dist
 /tmp
 out-tsc
+*.tgz
 
 # dependencies
 /node_modules
@@ -36,13 +37,10 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# NX Data
 /.nx/cache
 /.nx/workspace-data
 
-.env
-
+# Vite Files
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
-
-# Packages
-*.tgz

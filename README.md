@@ -18,7 +18,7 @@ npm install            # installs every dependency, at the root
 npm run build:all      # builds every project into dist/
 npm run test:all       # tests every project
 npm run lint:all       # lints every project, fixing what it can
-npm run format         # formats the workspace with Prettier
+npm run format:all     # formats every project with Prettier
 ```
 
 To run n8n locally with the node loaded, use `npx nx serve n8n-nodes` (http://localhost:5678).
