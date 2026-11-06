@@ -1,4 +1,4 @@
-name: Build Web image and publish to registry
+name: Build Web App image and publish to registry
 
 on:
   push:

@@ -50,5 +50,9 @@
       "inputs": ["production", "^production"]
     }
   },
-  "analytics": true
+  "analytics": true,
+  "useDaemonProcess": false,
+  "tui": {
+    "enabled": false
+  }
 }

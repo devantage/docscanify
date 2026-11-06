@@ -1,6 +1,23 @@
 {
   "name": "@devantage/docscanify/web",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module"
+  "version": "1.0.0",
+  "description": "Detect, crop and correct the perspective of documents in images directly from your browser",
+  "contributors": [
+    "Guilherme Nogueira <guilherme.nogueira@devantage.com.br>"
+  ],
+  "homepage": "https://github.com/devantage/docscanify",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/devantage/docscanify.git",
+    "directory": "apps/web"
+  },
+  "keywords": [
+    "document-scanner",
+    "scanner",
+    "perspective-correction",
+    "edge-detection",
+    "opencv",
+    "jscanify"
+  ],
+  "license": "MIT"
 }

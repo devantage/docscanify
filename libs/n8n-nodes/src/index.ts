@@ -1,2 +1,2 @@
-export * from './nodes/Scanify.node';
+export * from './nodes/DocScanify.node';
 export * from './resources/document/shared';

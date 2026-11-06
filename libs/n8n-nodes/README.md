@@ -1,6 +1,6 @@
 ![Logo](https://s3.devantage.com.br/devantage-public/logo-100x100.png)
 
-# n8n-nodes-scanify
+# n8n-nodes-docscanify
 
 This is an n8n community node that works like a "CamScanner": it takes a photo of a document, detects its edges, corrects the perspective and returns a PDF or an image.
 
@@ -16,7 +16,7 @@ The scanning is done by [DocScanify](https://www.npmjs.com/package/@devantage/do
 
 ## Installation
 
-Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation. The published package's name is: `@devantage/n8n-nodes-scanify`
+Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation. The published package's name is: `@devantage/n8n-nodes-docscanify`
 
 The package has no install scripts, so it works with the n8n community nodes installer. Its native module, [@napi-rs/canvas](https://github.com/Brooooooklyn/canvas), ships prebuilt binaries for Linux (including Alpine), macOS and Windows.
 
@@ -26,7 +26,7 @@ These are the currently available resources and it's respective operations.
 
 ### Document
 
-- Scan Image
+- Scan Document
 
 | Parameter               | Default | Description                                                                         |
 | ----------------------- | ------- | ----------------------------------------------------------------------------------- |
@@ -52,7 +52,7 @@ The output JSON gets `scan.detected`, `scan.corners` (in original image pixels, 
 
 The current version is compatible with n8n installations above v1.0.0.
 
-Version 2 keeps the node, its parameters and its output from version 1, and adds the Reduce Noise, Sharpen and Rotation options. The scanning moved to DocScanify, so it detects the document the same way and reads more image formats.
+This package replaces `@devantage/n8n-nodes-scanify`. It keeps the parameters and the output of its node, and adds the Reduce Noise, Sharpen and Rotation options. n8n identifies community nodes by their package, so workflows that use the old package need its node replaced with this one.
 
 ## Usage
 

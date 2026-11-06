@@ -1,8 +1,3 @@
-# Image of the web app. Built from the root of the monorepo, which the build needs (the library
-# source, the Nx workspace and the lockfile):
-#
-#   docker build . -f apps/web/Dockerfile -t docscanify-web
-
 # Extends from Node.js 24, the version used by the CI
 FROM node:24-slim AS build
 
@@ -43,9 +38,6 @@ RUN addgroup --gid 1001 -S nginx_group && adduser --uid 1001 -S nginx_user -G ng
 
 # Setting the ownership of what nginx writes to
 RUN chown -R nginx_user:nginx_group /usr/share/nginx /var/cache/nginx /run
-
-# Removing the user directive, which only makes sense when nginx starts as root
-RUN sed -i '/^user /d' /etc/nginx/nginx.conf
 
 # Setting container user
 USER nginx_user

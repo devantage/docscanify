@@ -2,6 +2,7 @@
 /dist
 /tmp
 out-tsc
+*.tgz
 *.tsbuildinfo
 
 # dependencies
@@ -37,16 +38,16 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# NX Data
 /.nx/cache
 /.nx/workspace-data
 
-.env
-
+# Vite Files
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
 
 # Packages
 *.tgz
 
-# Copied from node_modules on install (apps/web/scripts/copy-opencv.mjs)
+# OpenCV copy
 /apps/web/public/opencv.js

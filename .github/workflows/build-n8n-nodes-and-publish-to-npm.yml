@@ -1,9 +1,9 @@
-name: Build and publish to NPM
+name: Build n8n nodes and publish to NPM
 
 on:
   push:
     tags:
-      - v*.*.*
+      - n8n-nodes-v*.*.*
 
 jobs:
   build-and-publish:
@@ -23,10 +23,6 @@ jobs:
 
       - run: npm install
 
-      - run: npm run build core
-
       - run: npm run build n8n-nodes
-
-      - run: npm publish dist/libs/core --access public
 
       - run: npm publish dist/libs/n8n-nodes --access public

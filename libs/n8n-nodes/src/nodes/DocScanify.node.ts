@@ -2,11 +2,11 @@ import { ResourceNode } from '@devantage/n8n-custom-nodes-framework';
 
 import { resourceRegistry } from '../resources';
 
-export class Scanify extends ResourceNode {
+export class DocScanify extends ResourceNode {
   public constructor() {
     super(resourceRegistry, {
-      displayName: 'Scanify',
-      name: 'scanify',
+      displayName: 'DocScanify',
+      name: 'docScanify',
       icon: 'file:../../icons/icon.svg',
       version: 1,
       description:
