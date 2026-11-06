@@ -1,0 +1,53 @@
+/*
+  Design tokens
+  - Light and neutral: the document is the hero; the interface stays in the background.
+  - Canvas: very light gray, where the document rests. Pure white for panels and the top bar.
+  - Burgundy (the logo color): the only action color. Primary button, current step, crop
+    corners, focus.
+  - The camera is the exception: it stays dark, like any camera app.
+*/
+:root {
+  --canvas: #eef0f3;
+  --surface: #ffffff;
+  --surface-sunken: #f2f4f7;
+  --line: #e4e7ec;
+  --line-strong: #d0d5dd;
+  --text: #101828;
+  --text-2: #475467;
+  --muted: #667085;
+
+  --brand: #840623;
+  --brand-hover: #6c051d;
+  --brand-press: #57041a;
+  --brand-soft: #fbeef1;
+  --brand-ring: rgba(132, 6, 35, 0.2);
+  --on-brand: #ffffff;
+
+  --danger: #b42318;
+  --danger-soft: #fef3f2;
+  --ok: #067647;
+  --ok-soft: #ecfdf3;
+  --warning: #b54708;
+  --warning-soft: #fffaeb;
+
+  --camera: #0c0d10;
+
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-md:
+    0 6px 16px -4px rgba(16, 24, 40, 0.1), 0 2px 4px -2px rgba(16, 24, 40, 0.05);
+  --shadow-doc:
+    0 16px 40px -12px rgba(16, 24, 40, 0.22), 0 2px 6px rgba(16, 24, 40, 0.06);
+
+  --font: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --fs-small: 0.8125rem;
+  --fs-body: 0.9375rem;
+  --fs-title: 1.125rem;
+  --fs-display: 1.625rem;
+
+  --radius-control: 10px;
+  --radius-card: 20px;
+  --panel-w: 352px;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  color-scheme: light;
+}

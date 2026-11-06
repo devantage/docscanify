@@ -1,0 +1,149 @@
+{
+  "app": {
+    "steps": "Steps",
+    "language": "Language",
+    "description": "Scan documents, take photos or upload images, crop, adjust, and export to PDF, PNG, or JPG. Everything is processed on your device.",
+    "step": {
+      "upload": "Upload",
+      "crop": "Crop",
+      "enhance": "Adjust",
+      "export": "Export"
+    }
+  },
+  "common": {
+    "continue": "Continue",
+    "back": "Back",
+    "takePhoto": "Take photo",
+    "uploadImages": "Upload images",
+    "dropHint": "or drag the images here",
+    "closeNotice": "Close message",
+    "notifications": "Notifications"
+  },
+  "files": {
+    "document": "document",
+    "documents": "documents"
+  },
+  "upload": {
+    "emptyTitle": "Take photos or upload images of your documents",
+    "emptyText": "Upload one or more images of the documents you want to scan.",
+    "privacy": "Images are processed on your device and are never sent to a server.",
+    "filledTitle": {
+      "one": "You uploaded {count} image",
+      "other": "You uploaded {count} images"
+    },
+    "filledText": "You can add, remove, or drag to reorder in the list below."
+  },
+  "carousel": {
+    "label": "Documents",
+    "add": "Add",
+    "upload": "Upload",
+    "document": "Document {number}",
+    "documentNeedsCrop": "Document {number}, needs a crop fix",
+    "tileHint": "Tap to open, drag to change the order",
+    "remove": "Remove document {number}",
+    "removeShort": "Remove"
+  },
+  "import": {
+    "opening": "Uploading the image…",
+    "openingOf": "Uploading image {current} of {total}…",
+    "detecting": "Finding the document in the image…",
+    "detectingOf": "Finding the document in image {current} of {total}…",
+    "noneOpened": {
+      "one": "This file could not be opened. Upload a JPG, PNG, or WebP image.",
+      "other": "None of the {count} files could be opened. Upload JPG, PNG, or WebP images."
+    },
+    "someFailed": {
+      "one": "{count} file could not be opened.",
+      "other": "{count} files could not be opened."
+    }
+  },
+  "camera": {
+    "frame": "Frame the document",
+    "photos": {
+      "one": "{count} photo",
+      "other": "{count} photos"
+    },
+    "next": "{photos} · take the next one or finish",
+    "shutter": "Take photo",
+    "done": "Done",
+    "doneWith": "Done with {photos}",
+    "error": {
+      "unsupported": "The camera is not available. Use \"Upload images\" instead",
+      "denied": "Camera access was denied. Allow it in your browser settings and try again.",
+      "notFound": "No camera found on this device.",
+      "unknown": "The camera could not be opened."
+    }
+  },
+  "crop": {
+    "title": "Crop",
+    "stage": "Crop",
+    "instructions": "Move the corners to frame the part of the image you want to scan",
+    "crossed": "The corners are crossed. Drag them to form a quadrilateral.",
+    "detectorError": "The edge detector could not be loaded",
+    "invalid": {
+      "one": "{count} document needs a crop fix. It is marked with ! in the list.",
+      "other": "{count} documents need a crop fix. They are marked with ! in the list."
+    },
+    "autoDetect": "Detect automatically"
+  },
+  "result": {
+    "stage": "Document preview",
+    "preview": "Preview of document {number}, cropped",
+    "applying": "Applying…",
+    "position": "Document {current} of {total} · {detail}",
+    "failed": "These options could not be applied on this device."
+  },
+  "enhance": {
+    "title": "Adjust",
+    "color": "Color",
+    "filter": {
+      "none": "Color",
+      "grayscale": "Grayscale",
+      "bw": "Black and white"
+    },
+    "rotate": "Rotate",
+    "left": "Left",
+    "right": "Right",
+    "sharpness": "Sharpness",
+    "sharpen": {
+      "off": "None",
+      "soft": "Soft",
+      "strong": "Strong"
+    },
+    "denoise": "Reduce noise",
+    "applyAll": "Apply to all documents",
+    "applied": {
+      "one": "The adjustments were applied to {count} document.",
+      "other": "The adjustments were applied to all {count} documents."
+    },
+    "applyAllHint": "Keeps the other adjustments and only changes the rotation in this document."
+  },
+  "export": {
+    "title": "Export",
+    "format": "Format",
+    "file": "File",
+    "fileOne": "One PDF with everything",
+    "fileMany": "One PDF per document",
+    "page": "PDF page",
+    "pageFormat": {
+      "a4": "A4",
+      "letter": "Letter",
+      "image": "Document size"
+    },
+    "margin": "Margin (mm)",
+    "pdfZipHint": "The PDFs are downloaded together, in a ZIP file.",
+    "imageZipHint": "Each document becomes a file, all in a ZIP.",
+    "imageHint": "PNG keeps every detail. JPG makes a smaller file, with some loss.",
+    "generating": "Creating file…",
+    "generatingOf": "Creating {current} of {total}…",
+    "action": "Export",
+    "saved": "File downloaded: {file}",
+    "saveFailed": "The file could not be created.",
+    "restart": "New scan"
+  },
+  "update": {
+    "available": "A new version is available.",
+    "availableWithDocuments": "A new version is available. Updating now discards the open documents.",
+    "action": "Update"
+  }
+}

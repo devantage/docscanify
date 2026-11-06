@@ -1,0 +1,6 @@
+/* Takes the place of the export button while the file is made: same height, so nothing jumps */
+.export-progress {
+  display: grid;
+  align-items: center;
+  min-height: 44px;
+}

@@ -3,6 +3,7 @@
 /tmp
 out-tsc
 *.tgz
+*.tsbuildinfo
 
 # dependencies
 /node_modules
@@ -44,3 +45,9 @@ Thumbs.db
 # Vite Files
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
+
+# Packages
+*.tgz
+
+# OpenCV copy
+/apps/web/public/opencv.js

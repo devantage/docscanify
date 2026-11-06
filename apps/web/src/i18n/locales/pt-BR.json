@@ -1,0 +1,149 @@
+{
+  "app": {
+    "steps": "Etapas",
+    "language": "Idioma",
+    "description": "Escaneie documentos, fotografe ou envie imagens, recorte, ajuste e exporte em PDF, PNG ou JPG. Tudo é processado no seu dispositivo.",
+    "step": {
+      "upload": "Enviar",
+      "crop": "Recortar",
+      "enhance": "Ajustar",
+      "export": "Exportar"
+    }
+  },
+  "common": {
+    "continue": "Continuar",
+    "back": "Voltar",
+    "takePhoto": "Fotografar",
+    "uploadImages": "Enviar imagens",
+    "dropHint": "ou arraste as imagens para cá",
+    "closeNotice": "Fechar aviso",
+    "notifications": "Avisos"
+  },
+  "files": {
+    "document": "documento",
+    "documents": "documentos"
+  },
+  "upload": {
+    "emptyTitle": "Fotografe ou envie imagens dos documentos",
+    "emptyText": "Envie uma ou várias imagens dos documentos que deseja escanear.",
+    "privacy": "As imagens são processadas no seu dispositivo e não são enviadas a nenhum servidor.",
+    "filledTitle": {
+      "one": "Você enviou {count} imagem",
+      "other": "Você enviou {count} imagens"
+    },
+    "filledText": "Você pode adicionar, remover ou arrastar para reordenar na lista abaixo."
+  },
+  "carousel": {
+    "label": "Documentos",
+    "add": "Adicionar",
+    "upload": "Enviar",
+    "document": "Documento {number}",
+    "documentNeedsCrop": "Documento {number}, precisa de ajuste no recorte",
+    "tileHint": "Toque para abrir, arraste para mudar a ordem",
+    "remove": "Remover documento {number}",
+    "removeShort": "Remover"
+  },
+  "import": {
+    "opening": "Enviando a imagem…",
+    "openingOf": "Enviando a imagem {current} de {total}…",
+    "detecting": "Detectando o documento na imagem…",
+    "detectingOf": "Detectando o documento na imagem {current} de {total}…",
+    "noneOpened": {
+      "one": "Não foi possível abrir este arquivo. Envie uma imagem JPG, PNG ou WebP.",
+      "other": "Nenhum dos {count} arquivos pôde ser aberto. Envie imagens JPG, PNG ou WebP."
+    },
+    "someFailed": {
+      "one": "{count} arquivo não pôde ser aberto.",
+      "other": "{count} arquivos não puderam ser abertos."
+    }
+  },
+  "camera": {
+    "frame": "Enquadre o documento",
+    "photos": {
+      "one": "{count} foto",
+      "other": "{count} fotos"
+    },
+    "next": "{photos} · tire a próxima ou conclua",
+    "shutter": "Tirar foto",
+    "done": "Concluir",
+    "doneWith": "Concluir com {photos}",
+    "error": {
+      "unsupported": "Não foi possível acessar a câmera. Utilize a opção \"Enviar imagens\"",
+      "denied": "O acesso à câmera foi negado. Libere a permissão nas configurações do navegador e tente de novo.",
+      "notFound": "Nenhuma câmera encontrada neste dispositivo.",
+      "unknown": "Não foi possível abrir a câmera."
+    }
+  },
+  "crop": {
+    "title": "Recortar",
+    "stage": "Recorte",
+    "instructions": "Mova os cantos para enquadrar a área da imagem que deseja escanear",
+    "crossed": "Os cantos estão cruzados. Arraste-os para formar um quadrilátero.",
+    "detectorError": "Não foi possível carregar o detector de bordas",
+    "invalid": {
+      "one": "{count} documento precisa de ajuste no recorte. Ele está marcado com ! na lista.",
+      "other": "{count} documentos precisam de ajuste no recorte. Eles estão marcados com ! na lista."
+    },
+    "autoDetect": "Detectar automaticamente"
+  },
+  "result": {
+    "stage": "Prévia do documento",
+    "preview": "Prévia do documento {number}, recortado",
+    "applying": "Aplicando…",
+    "position": "Documento {current} de {total} · {detail}",
+    "failed": "Não foi possível aplicar estas opções neste aparelho."
+  },
+  "enhance": {
+    "title": "Ajustar",
+    "color": "Cor",
+    "filter": {
+      "none": "Colorido",
+      "grayscale": "Cinza",
+      "bw": "Preto e branco"
+    },
+    "rotate": "Girar",
+    "left": "Esquerda",
+    "right": "Direita",
+    "sharpness": "Nitidez",
+    "sharpen": {
+      "off": "Sem ajuste",
+      "soft": "Suave",
+      "strong": "Forte"
+    },
+    "denoise": "Reduzir ruído",
+    "applyAll": "Aplicar a todos os documentos",
+    "applied": {
+      "one": "Os ajustes foram aplicados a {count} documento.",
+      "other": "Os ajustes foram aplicados aos {count} documentos."
+    },
+    "applyAllHint": "Mantém os demais ajustes e altera apenas a rotação neste documento."
+  },
+  "export": {
+    "title": "Exportar",
+    "format": "Formato",
+    "file": "Arquivo",
+    "fileOne": "Um PDF com tudo",
+    "fileMany": "Um PDF por documento",
+    "page": "Página do PDF",
+    "pageFormat": {
+      "a4": "A4",
+      "letter": "Carta",
+      "image": "Tamanho do documento"
+    },
+    "margin": "Margem (mm)",
+    "pdfZipHint": "Os PDFs são baixados juntos, num arquivo ZIP.",
+    "imageZipHint": "Cada documento vira um arquivo, todos num ZIP.",
+    "imageHint": "PNG preserva todos os detalhes. JPG gera um arquivo menor, com alguma perda.",
+    "generating": "Gerando arquivo…",
+    "generatingOf": "Gerando {current} de {total}…",
+    "action": "Exportar",
+    "saved": "Arquivo baixado: {file}",
+    "saveFailed": "Não foi possível gerar o arquivo.",
+    "restart": "Nova digitalização"
+  },
+  "update": {
+    "available": "Nova versão disponível.",
+    "availableWithDocuments": "Nova versão disponível. Atualizar agora descarta os documentos abertos.",
+    "action": "Atualizar"
+  }
+}

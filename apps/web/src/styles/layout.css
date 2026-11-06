@@ -1,0 +1,174 @@
+/* App shell: top bar, then the workspace with a stage (preview) and, in some steps, a panel */
+
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100dvh;
+}
+
+/* Positioned: the loading overlay and toasts cover the whole workspace */
+.workspace {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr var(--panel-w);
+  grid-template-rows: minmax(0, 1fr);
+  min-height: 0;
+}
+
+/* ---------- Stage ---------- */
+
+.stage {
+  position: relative;
+  grid-column: 1 / -1;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 2rem;
+  background: var(--canvas);
+  overflow: hidden;
+}
+
+.stage:has(+ .panel) {
+  grid-column: 1;
+}
+
+.stage-status {
+  color: var(--text-2);
+}
+
+/* Stage with the document carousel below it */
+.stage-split {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.stage-main {
+  position: relative;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 0;
+  padding: 2rem;
+  overflow: hidden;
+}
+
+/* ---------- Panel ---------- */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.75rem 1.5rem 0;
+  background: var(--surface);
+  border-left: 1px solid var(--line);
+  overflow-y: auto;
+  scroll-padding-bottom: 9rem;
+}
+
+.panel-body {
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+}
+
+.panel-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+.panel-text {
+  margin: -0.85rem 0 0;
+  color: var(--text-2);
+}
+
+.panel-hint {
+  margin: 0;
+  font-size: var(--fs-small);
+  color: var(--muted);
+}
+
+/* Pinned to the bottom: the primary button stays visible while the panel scrolls */
+.panel-actions {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  gap: 0.5rem;
+  padding-block: 0.75rem 1.5rem;
+  background: var(--surface);
+  box-shadow: 0 -14px 14px -10px var(--surface);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.row > .btn {
+  flex: 1 1 auto;
+  white-space: nowrap;
+}
+
+/* ---------- Phone ---------- */
+
+@media (max-width: 760px) {
+  .workspace {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .stage,
+  .stage:has(+ .panel) {
+    grid-column: 1;
+    padding: 1rem;
+  }
+
+  .stage-split,
+  .stage-split:has(+ .panel) {
+    padding: 0;
+  }
+
+  .stage-main {
+    padding: 1rem;
+  }
+
+  /* The panel becomes a sheet attached to the bottom */
+  .panel {
+    gap: 0.75rem;
+    max-height: 62dvh;
+    padding: 1.25rem 1rem 0;
+    border-left: 0;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    box-shadow: 0 -8px 24px -6px rgba(16, 24, 40, 0.12);
+  }
+
+  .panel-body {
+    gap: 1rem;
+  }
+
+  .panel-title {
+    font-size: var(--fs-title);
+  }
+
+  .panel-actions {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  /* Back and Continue on a single row: leaves more height for the panel options */
+  .panel-nav {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  }
+
+  .panel-nav .btn-ghost {
+    order: -1;
+  }
+
+  .panel-hint {
+    display: none;
+  }
+}

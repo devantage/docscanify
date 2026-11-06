@@ -1,2 +1,2 @@
 npm run lint:affected
-npm run test:affected --passWithNoTests
+npm run test:affected
