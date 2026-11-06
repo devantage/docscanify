@@ -6,10 +6,10 @@ Detect, crop and correct the perspective of documents in images on Node.js and b
 
 # Packages
 
-| Path                             | Package                                                                                      | Description                                                                                          |
-| -------------------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| [libs/core](libs/core)           | [`@devantage/docscanify`](https://www.npmjs.com/package/@devantage/docscanify)               | The library published to npm; see its [README](libs/core/README.md)                                  |
-| [libs/n8n-nodes](libs/n8n-nodes) | [`@devantage/n8n-nodes-scanify`](https://www.npmjs.com/package/@devantage/n8n-nodes-scanify) | n8n community node that scans documents with the library; see its [README](libs/n8n-nodes/README.md) |
+| Path                             | Package                                                                                            | Description                                                                                          |
+| -------------------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| [libs/core](libs/core)           | [`@devantage/docscanify`](https://www.npmjs.com/package/@devantage/docscanify)                     | The library published to npm; see its [README](libs/core/README.md)                                  |
+| [libs/n8n-nodes](libs/n8n-nodes) | [`@devantage/n8n-nodes-docscanify`](https://www.npmjs.com/package/@devantage/n8n-nodes-docscanify) | n8n community node that scans documents with the library; see its [README](libs/n8n-nodes/README.md) |
 
 ## Development
 
@@ -27,7 +27,7 @@ To run a target in a single project, pass the project: `npm run build core`, `np
 
 ## Releases
 
-Pushing a tag `v1.2.3` builds both libraries and publishes them to npm: `@devantage/docscanify` (libs/core) and `@devantage/n8n-nodes-scanify` (libs/n8n-nodes), each with the `version` of its own `package.json`. Bump both first, because npm rejects a version that was already published.
+Pushing a tag `v1.2.3` builds both libraries and publishes them to npm: `@devantage/docscanify` (libs/core) and `@devantage/n8n-nodes-docscanify` (libs/n8n-nodes), each with the `version` of its own `package.json`. Bump both first, because npm rejects a version that was already published.
 
 ## License
 

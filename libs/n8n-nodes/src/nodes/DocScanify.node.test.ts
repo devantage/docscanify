@@ -6,7 +6,7 @@ import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
 import { resourceRegistry } from '../resources';
-import { Scanify } from './Scanify.node';
+import { DocScanify } from './DocScanify.node';
 
 function mockOperation(execute: jest.Mock<Promise<unknown>, [number]>): void {
   jest.spyOn(resourceRegistry, 'getResource').mockReturnValue({
@@ -14,15 +14,15 @@ function mockOperation(execute: jest.Mock<Promise<unknown>, [number]>): void {
   } as never);
 }
 
-describe('Scanify node', (): void => {
+describe('DocScanify node', (): void => {
   afterEach((): void => {
     jest.restoreAllMocks();
   });
 
   it('describes the node with the registry properties and no credentials', (): void => {
-    const node: Scanify = new Scanify();
+    const node: DocScanify = new DocScanify();
 
-    expect(node.description.name).toBe('scanify');
+    expect(node.description.name).toBe('docScanify');
     expect(node.description.icon).toBe('file:../../icons/icon.svg');
     expect(node.description.credentials).toEqual([]);
     expect(node.description.properties[0].name).toBe('resource');
@@ -42,7 +42,7 @@ describe('Scanify node', (): void => {
 
     mockOperation(executeMock);
 
-    const node: Scanify = new Scanify();
+    const node: DocScanify = new DocScanify();
     const result: INodeExecutionData[][] = await TestUtil.executeNode(
       node,
       context as unknown as IExecuteFunctions,
@@ -57,7 +57,7 @@ describe('Scanify node', (): void => {
       operation: 'scan',
     });
 
-    const node: Scanify = new Scanify();
+    const node: DocScanify = new DocScanify();
 
     await expect(
       TestUtil.executeNode(node, context as unknown as IExecuteFunctions),
@@ -78,7 +78,7 @@ describe('Scanify node', (): void => {
         .mockRejectedValue(new Error('No document detected in the image')),
     );
 
-    const node: Scanify = new Scanify();
+    const node: DocScanify = new DocScanify();
     const result: INodeExecutionData[][] = await TestUtil.executeNode(
       node,
       context as unknown as IExecuteFunctions,

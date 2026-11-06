@@ -23,10 +23,9 @@ type ScanOperationOptions = Omit<DocumentScannerOptions, 'outputFormat'> & {
 export class ScanOperation extends ResourceOperation {
   public readonly name: string = 'scan';
 
-  public readonly displayName: string = 'Scan Image';
+  public readonly displayName: string = 'Scan Document';
 
-  public readonly description: string =
-    'Crop the document out of an image, corrects its perspective, and outputs it as an image or PDF';
+  public readonly description: string = 'Scan a document from an image';
 
   public readonly properties: INodeProperties[] = withOperationDisplayOptions(
     this.resource,
