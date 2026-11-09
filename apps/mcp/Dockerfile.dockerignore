@@ -1,0 +1,15 @@
+# Installed and built inside the image
+node_modules
+dist
+opencv.js
+
+# Not needed to build
+.git
+.github
+.husky
+.nx
+.vscode
+coverage
+tmp
+**/*.tsbuildinfo
+**/.DS_Store

@@ -1,0 +1,38 @@
+name: Build MCP server and publish to NPM
+
+on:
+  push:
+    tags:
+      - mcp-v*.*.*
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@devantage'
+
+      # The tag must match the version of the server, so it is never published under the wrong one
+      - run: |
+          VERSION=$(jq .version apps/mcp/package.json -r)
+
+          if [ "${GITHUB_REF_NAME}" != "mcp-v${VERSION}" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match apps/mcp/package.json version ${VERSION} (expected mcp-v${VERSION})"
+
+            exit 1
+          fi
+
+      - run: npm install
+
+      - run: npm run build mcp
+
+      - run: npm publish dist/apps/mcp --access public

@@ -1,3 +1,4 @@
+import { type DocumentOutput, DocumentScanner } from '@devantage/docscanify';
 import { TestUtil } from '@devantage/n8n-custom-nodes-framework';
 import type {
   IBinaryData,
@@ -6,24 +7,38 @@ import type {
   INodePropertyOptions,
 } from 'n8n-workflow';
 
-import { DocumentScanner, type ScanResult } from '../shared';
 import { ScanOperation } from './scan.operation';
 
 type ScanContext = ReturnType<typeof TestUtil.createExecuteFunctionsMock>;
 
-const SCAN_RESULT: ScanResult = {
-  data: Buffer.from('pdf'),
-  mimeType: 'application/pdf',
-  fileExtension: 'pdf',
-  detected: true,
-  corners: {
-    topLeftCorner: { x: 1, y: 2 },
-    topRightCorner: { x: 3, y: 4 },
-    bottomRightCorner: { x: 5, y: 6 },
-    bottomLeftCorner: { x: 7, y: 8 },
+const SCAN_RESULT: DocumentOutput = {
+  file: {
+    buffer: new Uint8Array(Buffer.from('pdf')),
+    mimeType: 'application/pdf',
+    fileExtension: 'pdf',
   },
-  width: 100,
-  height: 200,
+  report: {
+    corners: {
+      topLeft: { x: 1, y: 2 },
+      topRight: { x: 3, y: 4 },
+      bottomRight: { x: 5, y: 6 },
+      bottomLeft: { x: 7, y: 8 },
+    },
+    dimensions: { width: 100, height: 200 },
+    originalFile: {
+      name: null,
+      mimeType: 'image/jpeg',
+      dimensions: { width: 800, height: 900 },
+      size: 9,
+    },
+  },
+};
+
+const SCAN_CORNERS: Record<string, { x: number; y: number }> = {
+  topLeftCorner: { x: 1, y: 2 },
+  topRightCorner: { x: 3, y: 4 },
+  bottomRightCorner: { x: 5, y: 6 },
+  bottomLeftCorner: { x: 7, y: 8 },
 };
 
 const IMAGE_BINARY_DATA: IBinaryData = TestUtil.createBinaryData({
@@ -185,7 +200,7 @@ describe('ScanOperation', (): void => {
       outputFormat: 'pdf',
     });
     expect(getPrepareBinaryDataMock(context)).toHaveBeenCalledWith(
-      SCAN_RESULT.data,
+      Buffer.from('pdf'),
       'photo.pdf',
       'application/pdf',
     );
@@ -194,7 +209,7 @@ describe('ScanOperation', (): void => {
         id: 42,
         scan: {
           detected: true,
-          corners: SCAN_RESULT.corners,
+          corners: SCAN_CORNERS,
           width: 100,
           height: 200,
         },
@@ -229,9 +244,11 @@ describe('ScanOperation', (): void => {
   it('returns the scan as an image when the output format is image', async (): Promise<void> => {
     scan.mockResolvedValueOnce({
       ...SCAN_RESULT,
-      data: Buffer.from('png'),
-      mimeType: 'image/png',
-      fileExtension: 'png',
+      file: {
+        buffer: new Uint8Array(Buffer.from('png')),
+        mimeType: 'image/png',
+        fileExtension: 'png',
+      },
     });
 
     const context: ScanContext = createContext({ filter: 'bw' }, 'image');
@@ -262,7 +279,7 @@ describe('ScanOperation', (): void => {
       outputFormat: 'pdf',
     });
     expect(getPrepareBinaryDataMock(context)).toHaveBeenCalledWith(
-      SCAN_RESULT.data,
+      Buffer.from('pdf'),
       'id.pdf',
       'application/pdf',
     );
@@ -279,7 +296,7 @@ describe('ScanOperation', (): void => {
     await operation.execute.call(context as never, 0);
 
     expect(getPrepareBinaryDataMock(context)).toHaveBeenCalledWith(
-      SCAN_RESULT.data,
+      Buffer.from('pdf'),
       'scan.pdf',
       'application/pdf',
     );
@@ -288,8 +305,7 @@ describe('ScanOperation', (): void => {
   it('returns null corners when no document was detected', async (): Promise<void> => {
     scan.mockResolvedValueOnce({
       ...SCAN_RESULT,
-      detected: false,
-      corners: null,
+      report: { ...SCAN_RESULT.report, corners: null },
     });
 
     const context: ScanContext = createContext();

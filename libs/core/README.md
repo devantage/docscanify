@@ -124,6 +124,38 @@ const { file, report } = await document.toPdf();
 | `dimensions`      | `width` and `height` of the document, whatever the encoder does to it                                                                                 |
 | `originalFile`    | `name`, `mimeType`, `dimensions` (`width` and `height`, in pixels) and `size` (in bytes) of the original file                                         |
 
+### Scanning in a single call
+
+`DocumentScanner` is a ready-made recipe over `ScannedDocument`, for when the steps do not need to be controlled one by one: it detects the document, applies the enhancers and the filter chosen by name, and exports it. It is what the [n8n node](https://github.com/devantage/docscanify/tree/main/libs/n8n-nodes) and the [MCP server](https://github.com/devantage/docscanify/tree/main/apps/mcp) use.
+
+```ts
+import { DocumentScanner } from '@devantage/docscanify';
+
+const { file, report } = await new DocumentScanner().scan(readFileSync('photo.jpg'), {
+  outputFormat: 'image',
+  filter: 'bw',
+  rotation: 90,
+});
+```
+
+`new DocumentScanner(adapters?, openCvOptions?)` uses `DEFAULT_ADAPTERS` by default. `openCvOptions` goes to the enhancers and filters it creates: on browsers, it must have the `scriptUrl`. `scan(buffer, options?)` resolves the same `{ file, report }` as `toPdf` and `toImage`, and rejects if no document is detected, unless `onNotDetected` is `original`.
+
+| Option           | Default | Description                                                                                |
+| ---------------- | ------- | ------------------------------------------------------------------------------------------ |
+| `name`           |         | Name of the original file, kept in `report.originalFile`                                   |
+| `outputFormat`   | `pdf`   | `pdf` or `image`                                                                           |
+| `filter`         | `none`  | `none`, `grayscale` or `bw` (black and white)                                              |
+| `noiseReduction` | `false` | Smooths the noise, preserving the edges of the text                                        |
+| `sharpness`      | `off`   | `off`, `soft` or `strong`                                                                  |
+| `rotation`       | `0`     | Clockwise, in degrees: `0`, `90`, `180` or `270`                                           |
+| `pageSize`       | `a4`    | PDF only. `a4`, `letter` or `image`                                                        |
+| `margin`         | `0`     | PDF only. Page margin in points                                                            |
+| `maxDimension`   | `3000`  | Longest side (px) of the image before processing                                           |
+| `jpegQuality`    | `85`    | Quality of the JPEG image. The `bw` filter is encoded as a PNG, which keeps the text sharp |
+| `onNotDetected`  | `error` | `error` or `original` (uses the whole image)                                               |
+
+The enhancers run in the order noise, sharpness, rotation, and PDFs embed the image the same way as the `image` output.
+
 ## Architecture
 
 ```text
@@ -140,6 +172,7 @@ src/
     encoders/           PNG, JPEG and PDF
     opencv/             Detection, cropping, resizing, enhancers and filters
   default-adapters.ts   The adapters of this package, ready to use
+  document-scanner.class.ts   DocumentScanner, a ready-made recipe over the document
 ```
 
 ## Adapters
