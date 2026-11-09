@@ -13,6 +13,7 @@ export * from './adapters/opencv/opencv-sharpness-enhancer.class';
 export type { OpenCvAdapterOptions } from './adapters/opencv/opencv-adapter.class';
 export type { OpenCvQuadrilateralCandidate } from './adapters/opencv/opencv-quadrilateral-candidate.interface';
 export * from './default-adapters';
+export * from './document-scanner.class';
 export * from './domain/entities/scanned-document.class';
 export type * from './domain/models';
 export type * from './domain/ports';
