@@ -20,6 +20,7 @@ import { usePanelCollapsed } from './usePanelCollapsed';
 const SWIPE_DISTANCE: number = 24;
 
 interface PanelContextValue {
+  /** Id of the {@link PanelOptions}, which the handle controls; undefined outside a panel. */
   optionsId: string | undefined;
 }
 
@@ -29,9 +30,11 @@ const PanelContext: Context<PanelContextValue> =
   });
 
 /**
- * Side panel of a step: a `PanelBody` with the options and, pinned to the bottom, `PanelActions`
- * or `StepNav`. On phones it is a sheet at the bottom of the screen, and a handle on top collapses
- * its `PanelOptions` to leave more room for the document: tap it, or swipe it down or up.
+ * Side panel of a step: a {@link PanelBody} with the options and, pinned to the bottom,
+ * {@link PanelActions} or {@link StepNav}. On phones it is a sheet at the bottom of the screen, and
+ * a handle on top collapses its {@link PanelOptions} to leave more room for the document: tap it,
+ * or swipe it down to collapse and up to open. The choice holds for every step (see
+ * {@link usePanelCollapsed}).
  */
 export function Panel({ children }: { children: ReactNode }): JSX.Element {
   const { t } = useTranslate();
@@ -91,12 +94,15 @@ export function Panel({ children }: { children: ReactNode }): JSX.Element {
   );
 }
 
-/** Scrolling content of a `Panel`. */
+/**
+ * Content of a {@link Panel} above its actions, usually a {@link PanelHeader} and the
+ * {@link PanelOptions}. It scrolls under the actions, which stay pinned to the bottom.
+ */
 export function PanelBody({ children }: { children: ReactNode }): JSX.Element {
   return <div className="panel-body">{children}</div>;
 }
 
-/** The options of a step, which the handle of the `Panel` collapses on phones. */
+/** The options of a step, which the handle of the {@link Panel} collapses on phones. */
 export function PanelOptions({
   children,
 }: {
@@ -119,6 +125,11 @@ interface HeaderProps {
   'data-testid'?: string;
 }
 
+/**
+ * Title of a step's panel and, under it, an optional text such as the status of the step. On phones
+ * the title is left to screen readers, as the top bar already shows the step, and the text shares
+ * the first row with the handle.
+ */
 export function PanelHeader({
   title,
   text,
@@ -143,7 +154,9 @@ interface ActionsProps {
   nav?: boolean;
 }
 
-/** Buttons pinned to the bottom of a `Panel`, so the main one stays visible while it scrolls. */
+/**
+ * Buttons pinned to the bottom of a {@link Panel}, so the main one stays visible while it scrolls.
+ */
 export function PanelActions({
   children,
   nav = false,
@@ -162,7 +175,10 @@ interface NavProps {
   continueTestId?: string;
 }
 
-/** The continue and back buttons of a step, at the bottom of its `Panel`. */
+/**
+ * The continue and back buttons of a step, at the bottom of its {@link Panel}. On phones they share
+ * a row, back first.
+ */
 export function StepNav({
   onContinue,
   onBack,

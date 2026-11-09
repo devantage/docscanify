@@ -82,6 +82,7 @@ const CORNERS: Corners = {
 const CROSSED: string =
   'The corners are crossed. Drag them to form a quadrilateral.';
 
+/** A document with valid corners and no adjustments, changed by `overrides`. */
 function makeDocument(overrides: Partial<DocumentItem> = {}): DocumentItem {
   return {
     id: 'doc-1',
@@ -107,6 +108,12 @@ interface Session {
   setDraggingCorner: Mock<(dragging: boolean) => void>;
 }
 
+/**
+ * A scan session with `doc` as its only document and on display, and spies for what the step
+ * calls.
+ *
+ * @param invalidCount How many documents the session reports with invalid corners.
+ */
 function makeSession(doc: DocumentItem, invalidCount: number = 0): Session {
   const redetect: Mock<(id: string) => void> = vi.fn();
   const setCorners: Mock<(id: string, corners: Corners) => void> = vi.fn();
@@ -148,6 +155,7 @@ function makeSession(doc: DocumentItem, invalidCount: number = 0): Session {
   };
 }
 
+/** Renders the Crop step in English, with the session and a spy `goTo` as its contexts. */
 function renderStep(session: Session): void {
   render(
     <TranslateProvider defaultLocale="en">
@@ -162,6 +170,7 @@ function renderStep(session: Session): void {
   );
 }
 
+/** Toasts on screen, in order, as `kind: message`. */
 const toasts = (): string[] =>
   screen
     .queryAllByTestId('toast')

@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { CameraProvider } from './CameraProvider';
 import { useCamera } from './useCamera';
 
+/** Wraps the hook in the camera provider. */
 const wrapper = ({ children }: { children: ReactNode }): JSX.Element => (
   <CameraProvider>{children}</CameraProvider>
 );

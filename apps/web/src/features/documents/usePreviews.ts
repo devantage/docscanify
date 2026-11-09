@@ -68,7 +68,10 @@ export const previewKey = (mode: PreviewMode, doc: DocumentItem): string =>
  */
 const canPreview = (doc: DocumentItem): boolean => !!doc.corners && doc.valid;
 
-/** Adjustments a thumbnail shows in the given mode. */
+/**
+ * Adjustments a thumbnail shows in the given mode: none in `crop` mode, the document's own in
+ * `enhance` mode.
+ */
 const modeOptions = (mode: PreviewMode, doc: DocumentItem): EnhanceOptions =>
   mode === 'crop' ? NO_ENHANCEMENTS : doc.options;
 

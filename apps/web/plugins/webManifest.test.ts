@@ -151,12 +151,14 @@ interface IndexHtml {
   tags: HtmlTagDescriptor[];
 }
 
+/** What the plugin does to `html`, as Vite asks it for `index.html`. */
 const transformIndexHtml = (plugin: Plugin, html: string): IndexHtml =>
   callHook(plugin.transformIndexHtml, {}, html, {
     path: '/index.html',
     filename: 'index.html',
   }) as IndexHtml;
 
+/** The description in a language file of the app at `root`. */
 const readDescription = (root: string, locale: string): string =>
   (
     JSON.parse(
@@ -174,6 +176,7 @@ function fixtureRoot(files: Record<string, string>): string {
   return root;
 }
 
+/** Contents of a language file with this description, plus a message the plugin ignores. */
 const messages = (description: string): string =>
   JSON.stringify({ app: { description, other: 'ignored' } });
 

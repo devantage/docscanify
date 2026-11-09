@@ -22,6 +22,7 @@ const OPTIONS: EnhanceOptions = {
   denoise: true,
 };
 
+/** A document with valid corners and the given adjustments, named after its id. */
 function makeDocument(
   id: string,
   options: EnhanceOptions = OPTIONS,
@@ -52,6 +53,10 @@ interface Session {
   applyOptionsToAll: Mock<(sourceId: string) => void>;
 }
 
+/**
+ * Renders the panel in English at the Enhance step, with a session of the given documents, and
+ * returns the mocks of the session operations the panel calls.
+ */
 function renderPanel(
   documents: DocumentItem[],
   active: DocumentItem,
@@ -104,6 +109,7 @@ function renderPanel(
   return session;
 }
 
+/** The toasts on screen, in order, as `kind: text`. */
 const toasts = (): string[] =>
   screen
     .queryAllByTestId('toast')

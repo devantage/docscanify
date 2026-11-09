@@ -15,6 +15,7 @@ function Sample(): JSX.Element {
   return <p data-testid="sample">{t('upload.emptyTitle')}</p>;
 }
 
+/** Renders the picker after a button to press or move focus to, and before a {@link Sample}. */
 function renderSelect(): void {
   render(
     <TranslateProvider>
@@ -25,14 +26,17 @@ function renderSelect(): void {
   );
 }
 
+/** The button that opens the list. */
 function button(): HTMLElement {
   return screen.getByTestId('language');
 }
 
+/** The list of languages; throws while it is closed. */
 function listbox(): HTMLElement {
   return screen.getByRole('listbox');
 }
 
+/** The option the keyboard is on, from `aria-activedescendant`; throws when there is none. */
 function activeOption(): HTMLElement {
   const id: string | null = listbox().getAttribute('aria-activedescendant');
   const option: HTMLElement | null = id ? document.getElementById(id) : null;

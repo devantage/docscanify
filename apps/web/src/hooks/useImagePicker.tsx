@@ -2,13 +2,17 @@ import { type ChangeEvent, type JSX, type RefObject, useRef } from 'react';
 
 interface Options {
   onFiles(files: File[]): void;
-  /** Called by `takePhoto` when the browser gives access to the camera. */
+  /** Called by `takePhoto` when the browser supports the in-app camera (getUserMedia). */
   onCamera(): void;
 }
 
-/** Without getUserMedia (e.g. plain HTTP on a phone), the camera only works through the file picker. */
+/**
+ * Whether the in-app camera can be opened. Without getUserMedia (e.g. plain HTTP on a phone), the
+ * camera only works through the file picker.
+ */
 const canUseCamera = (): boolean => {
-  // `mediaDevices` is undefined outside secure contexts (plain HTTP), which the DOM types don't model
+  // `mediaDevices` is undefined outside secure contexts (plain HTTP), which the DOM types don't
+  // model
   const mediaNavigator: { mediaDevices?: MediaDevices } = navigator;
   return !!mediaNavigator.mediaDevices?.getUserMedia;
 };
@@ -21,7 +25,11 @@ export interface UseImagePickerResult {
   fileInput: JSX.Element;
 }
 
-/** The two ways of adding images: taking photos or choosing files. */
+/**
+ * The two ways of adding images: taking photos or choosing files. Without the in-app camera,
+ * taking a photo opens the file picker, which then offers the native camera. Chosen files go to
+ * `onFiles`, and the input is cleared so the same file can be chosen again.
+ */
 export function useImagePicker({
   onFiles,
   onCamera,

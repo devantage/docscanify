@@ -12,9 +12,10 @@ const CREEP_SHARE: number = 0.35;
 const CREEP_MS: number = 2500;
 
 /**
- * Progress to show on screen, from 0 to 1. It glides toward the real progress instead of jumping
- * and, while no real progress arrives, keeps creeping toward a cap short of the next step. It
- * never goes back and only reaches 1 when the real progress does.
+ * Progress to show on screen, from 0 to 1. It glides toward the real progress instead of jumping.
+ * Once it catches up and no new progress arrives, it keeps creeping slowly into
+ * {@link CREEP_SHARE} (35%) of what is left, so a long step still shows activity. It never goes
+ * back and only reaches 1 when the real progress does.
  *
  * @param value Real progress, from 0 to 1.
  */

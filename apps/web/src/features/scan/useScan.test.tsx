@@ -22,12 +22,14 @@ const doc: DocumentItem = {
   options: { filter: 'none', turns: 0, sharpen: 'off', denoise: false },
 };
 
+/** A session with only `active` on display (and in the list), or no documents for null. */
 const sessionWith = (active: DocumentItem | null): ScanContextValue =>
   ({
     documents: active ? [active] : [],
     active,
   }) as ScanContextValue;
 
+/** A wrapper that provides `value` as the session, as {@link ScanProvider} does. */
 const providing =
   (value: ScanContextValue) =>
   ({ children }: { children: ReactNode }): JSX.Element => (

@@ -33,5 +33,6 @@ export const LOCALES: {
   { locale: 'pt-BR', name: 'Português (Brasil)', short: 'PT', flag: 'br' },
 ];
 
+/** Whether a value, such as one read from storage, is exactly the tag of a supported language. */
 export const isLocale = (value: unknown): value is Locale =>
   LOCALES.some((l: (typeof LOCALES)[number]) => l.locale === value);

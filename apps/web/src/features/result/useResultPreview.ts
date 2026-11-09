@@ -17,8 +17,8 @@ const FAILED_TOAST: string = 'render-failed';
 
 /**
  * The main preview of the Enhance and Export steps: renders the document on display (see
- * `useRenderedDocument`), shares the result as that document's thumbnail, and reports a failed
- * render in a toast.
+ * {@link useRenderedDocument}), shares the result as that document's thumbnail, and reports a
+ * failed render in a toast.
  *
  * @param doc Document on display, with its crop corners set.
  */

@@ -40,6 +40,7 @@ export const FIXTURE_CORNERS: Record<'invoice.jpg' | 'receipt.jpg', Quad> = {
   ],
 };
 
+/** The absolute path of a fixture photo, to hand to a file chooser or read from disk. */
 export function fixturePath(name: Fixture): string {
   return path.join(import.meta.dirname, 'fixtures', name);
 }
@@ -50,6 +51,7 @@ export async function openApp(page: Page): Promise<void> {
   await expect(page.getByTestId('upload-files')).toBeVisible();
 }
 
+/** Every document tile of the carousel, in order: the elements whose test id starts with `doc-`. */
 export function documentTiles(page: Page): Locator {
   return page.locator('[data-testid^="doc-"]');
 }
@@ -81,6 +83,7 @@ export async function uploadImages(
   });
 }
 
+/** Clicks the button named exactly "Continue", which moves to the next step. */
 export async function clickContinue(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
 }
@@ -112,6 +115,12 @@ export function maxCornerError(a: Quad, b: Quad): number {
   );
 }
 
+/**
+ * The center of the handle of a corner of the crop editor on the screen, in CSS pixels of the
+ * page, to drag it with the mouse. Corners count from 0, clockwise from the top left.
+ *
+ * @throws When the handle is not rendered.
+ */
 export async function cornerOnScreen(
   page: Page,
   index: number,
@@ -130,6 +139,12 @@ export interface DownloadedFile {
   data: Buffer;
 }
 
+/**
+ * Runs an action that starts a download, waits up to a minute for it, and returns the file with
+ * the name the app suggested.
+ *
+ * @throws When the download fails.
+ */
 export async function downloadFrom(
   page: Page,
   action: () => Promise<void>,
@@ -151,6 +166,7 @@ export interface PdfInfo {
   pageSizes: { width: number; height: number }[];
 }
 
+/** Reads how many pages a PDF has and the size of each. */
 export async function readPdf(data: Uint8Array): Promise<PdfInfo> {
   const pdf: PDFDocument = await PDFDocument.load(data);
   const pages: PDFPage[] = pdf.getPages();
@@ -171,7 +187,11 @@ export interface ImageInfo {
   height: number;
 }
 
-/** Reads the format and dimensions of a PNG or JPEG from its header. */
+/**
+ * Reads the format and dimensions of a PNG or JPEG from its header, without decoding it.
+ *
+ * @throws When the data is neither a PNG nor a JPEG.
+ */
 export function readImage(data: Uint8Array): ImageInfo {
   const bytes: Buffer = Buffer.from(data);
   if (bytes.readUInt32BE(0) === 0x89504e47) {

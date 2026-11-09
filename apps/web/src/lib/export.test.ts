@@ -86,10 +86,12 @@ function item(name: string, id: number): ExportItem {
   };
 }
 
+/** The default export settings, with the given ones changed. */
 function settings(overrides: Partial<ExportSettings>): ExportSettings {
   return { ...DEFAULT_EXPORT_SETTINGS, ...overrides };
 }
 
+/** Reads the bytes of an exported blob. */
 async function bytesOf(blob: Blob): Promise<Uint8Array> {
   return new Uint8Array(await blob.arrayBuffer());
 }
@@ -116,6 +118,7 @@ function zipEntries(
   );
 }
 
+/** Width of each page of a PDF, in points: the fake encoder derives it from the render. */
 async function pageWidths(pdfBytes: Uint8Array): Promise<number[]> {
   const pdf: PDFDocument = await PDFDocument.load(pdfBytes);
   return pdf.getPages().map((page: PDFPage): number => page.getWidth());

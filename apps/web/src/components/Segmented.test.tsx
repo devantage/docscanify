@@ -36,6 +36,7 @@ function Controlled({
   );
 }
 
+/** The radio button with this label. */
 const radio = (name: string): HTMLInputElement =>
   screen.getByRole<HTMLInputElement>('radio', { name });
 

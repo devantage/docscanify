@@ -28,6 +28,7 @@ const CORNERS: Corners = {
   bottomRight: { x: 100, y: 100 },
 };
 
+/** A document with valid corners, named after its id. */
 function makeDocument(id: string): DocumentItem {
   return {
     id,
@@ -50,6 +51,10 @@ interface ScanState {
   importProgress?: ImportProgress | null;
 }
 
+/**
+ * Makes {@link useScan} return `documents` documents with valid corners, the first one active, and
+ * the given `invalidCount` and `importProgress`.
+ */
 function mockScan({
   documents = 0,
   invalidCount = 0,
@@ -111,6 +116,7 @@ function Probe(): JSX.Element {
   );
 }
 
+/** Renders the top bar with the real steps and camera, and a {@link Probe} on them. */
 function renderHeader(): void {
   render(
     <TranslateProvider>
@@ -124,10 +130,12 @@ function renderHeader(): void {
   );
 }
 
+/** The four step buttons of the top bar, in order. */
 function stepButtons(): HTMLElement[] {
   return [0, 1, 2, 3].map((i: number) => screen.getByTestId(`step-${i}`));
 }
 
+/** The list items of the steps, which carry the current and done classes. */
 function stepItems(): HTMLElement[] {
   return within(screen.getByRole('list', { name: 'Steps' })).getAllByRole(
     'listitem',

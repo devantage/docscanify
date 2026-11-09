@@ -7,7 +7,7 @@ import { ScanContext, type ScanContextValue } from './ScanContext';
 /**
  * The scanning session: documents, their operations, thumbnails, import, and export options.
  *
- * @throws When used outside `ScanProvider`.
+ * @throws When used outside {@link ScanProvider}.
  */
 export function useScan(): ScanContextValue {
   const value: ScanContextValue | null = useContext(ScanContext);
@@ -16,7 +16,7 @@ export function useScan(): ScanContextValue {
 }
 
 /**
- * The document on display, for steps that are only shown with one (see `CurrentStep`).
+ * The document on display, for steps that are only shown with one (see {@link CurrentStep}).
  *
  * @throws When there is no document.
  */

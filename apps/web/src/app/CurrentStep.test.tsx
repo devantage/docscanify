@@ -39,6 +39,7 @@ const CORNERS: Corners = {
   bottomRight: { x: 100, y: 100 },
 };
 
+/** A document with these corners; `null` makes it one the detector failed on. */
 function makeDocument(corners: Corners | null): DocumentItem {
   return {
     id: 'doc',
@@ -55,6 +56,7 @@ function makeDocument(corners: Corners | null): DocumentItem {
   };
 }
 
+/** Makes {@link useScan} return a session whose only document, if any, is the active one. */
 function mockActive(active: DocumentItem | null): void {
   const value: ScanContextValue = {
     documents: active ? [active] : [],
@@ -108,6 +110,7 @@ function Controls(): JSX.Element {
   );
 }
 
+/** Renders the current step in a workspace, with {@link Controls} to change the step and camera. */
 function renderWorkspace(): { workspace: HTMLElement } {
   render(
     <StepsProvider>
@@ -129,6 +132,7 @@ function shown(workspace: HTMLElement): string[] {
   );
 }
 
+/** Goes to a step through {@link Controls}. */
 async function openStep(user: UserEvent, step: Step): Promise<void> {
   await user.click(screen.getByRole('button', { name: `go-${step}` }));
 }

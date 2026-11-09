@@ -10,6 +10,7 @@ import { useTranslate } from './useTranslate';
 
 const STORAGE_KEY: string = 'docscanify.locale';
 
+/** The manifest link the provider sets for a language, under the base path. */
 const manifestHref = (locale: Locale): string =>
   `${import.meta.env.BASE_URL}manifest.${locale}.webmanifest`;
 
@@ -28,10 +29,12 @@ const writeHead = (): void => {
   ].join('');
 };
 
+/** Content of the description meta, or null when the page has none. */
 const description = (): string | null =>
   document.querySelector('meta[name="description"]')?.getAttribute('content') ??
   null;
 
+/** Href of the manifest link, or null when the page has none. */
 const manifest = (): string | null =>
   document.querySelector('link[rel="manifest"]')?.getAttribute('href') ?? null;
 
@@ -63,6 +66,7 @@ function Probe(): JSX.Element {
   );
 }
 
+/** Renders the provider around {@link Probe}. */
 const renderProvider = (defaultLocale?: Locale): void => {
   render(
     <TranslateProvider defaultLocale={defaultLocale}>
@@ -71,6 +75,11 @@ const renderProvider = (defaultLocale?: Locale): void => {
   );
 };
 
+/**
+ * The value {@link Probe} saw on its last render.
+ *
+ * @throws When Probe has not rendered yet.
+ */
 const currentValue = (): TranslateContextValue => {
   if (!latest) throw new Error('Probe has not rendered');
   return latest;

@@ -16,6 +16,7 @@ function Icon({
   );
 }
 
+/** Camera: takes photos of documents. */
 export const CameraIcon = (props: IconProps): JSX.Element => (
   <Icon {...props}>
     <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z" />
@@ -23,6 +24,7 @@ export const CameraIcon = (props: IconProps): JSX.Element => (
   </Icon>
 );
 
+/** Tray with an arrow going up: uploads images from the device. */
 export const UploadIcon = (props: IconProps): JSX.Element => (
   <Icon {...props}>
     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -31,24 +33,28 @@ export const UploadIcon = (props: IconProps): JSX.Element => (
   </Icon>
 );
 
+/** Plus sign: adds more documents. */
 export const PlusIcon = (props: IconProps): JSX.Element => (
   <Icon {...props}>
     <path d="M12 5v14M5 12h14" />
   </Icon>
 );
 
+/** Cross: closes or removes something, such as a toast or a document. */
 export const CloseIcon = (props: IconProps): JSX.Element => (
   <Icon {...props}>
     <path d="M18 6 6 18M6 6l12 12" />
   </Icon>
 );
 
+/** Check mark: a finished step or the chosen option. */
 export const CheckIcon = (props: IconProps): JSX.Element => (
   <Icon {...props}>
     <path d="M20 6 9 17l-5-5" />
   </Icon>
 );
 
+/** Padlock: the images stay on the device. */
 export const LockIcon = (props: IconProps): JSX.Element => (
   <Icon {...props}>
     <rect x="4" y="11" width="16" height="10" rx="2" />
@@ -64,6 +70,7 @@ export const AutoDetectIcon = (props: IconProps): JSX.Element => (
   </Icon>
 );
 
+/** Arrow turning counterclockwise: rotates the document a quarter turn to the left. */
 export const RotateLeftIcon = (props: IconProps): JSX.Element => (
   <Icon {...props}>
     <path d="M2.5 2v6h6" />
@@ -71,6 +78,7 @@ export const RotateLeftIcon = (props: IconProps): JSX.Element => (
   </Icon>
 );
 
+/** Arrow turning clockwise: rotates the document a quarter turn to the right. */
 export const RotateRightIcon = (props: IconProps): JSX.Element => (
   <Icon {...props}>
     <path d="M21.5 2v6h-6" />
@@ -78,6 +86,7 @@ export const RotateRightIcon = (props: IconProps): JSX.Element => (
   </Icon>
 );
 
+/** Two overlapping sheets: applies the options to every document. */
 export const CopyIcon = (props: IconProps): JSX.Element => (
   <Icon {...props}>
     <rect x="8" y="8" width="13" height="13" rx="2" />
@@ -85,6 +94,7 @@ export const CopyIcon = (props: IconProps): JSX.Element => (
   </Icon>
 );
 
+/** Chevron pointing down: a list that opens, or the panel handle (turned up while collapsed). */
 export const ChevronDownIcon = (props: IconProps): JSX.Element => (
   <Icon {...props}>
     <path d="m6 9 6 6 6-6" />

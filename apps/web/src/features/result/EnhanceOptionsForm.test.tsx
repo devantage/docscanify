@@ -16,6 +16,7 @@ const OPTIONS: EnhanceOptions = {
 
 type OnChange = Mock<(options: EnhanceOptions) => void>;
 
+/** Renders the form in English with the given options, and returns its `onChange` mock. */
 function renderForm(options: EnhanceOptions = OPTIONS): OnChange {
   const onChange: OnChange = vi.fn();
   render(
@@ -26,9 +27,11 @@ function renderForm(options: EnhanceOptions = OPTIONS): OnChange {
   return onChange;
 }
 
+/** The fieldset whose legend is `legend`. */
 const group = (legend: string): HTMLElement =>
   screen.getByRole('group', { name: legend });
 
+/** Labels of the radio buttons of a fieldset, in order. */
 const radioNames = (legend: string): string[] =>
   within(group(legend))
     .getAllByRole('radio')

@@ -43,11 +43,12 @@ const PNG_SIGNATURE: number[] = [
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
 ];
 
+/** The toast that confirms a file was downloaded. */
 function savedToast(page: Page): Locator {
   return page.getByTestId('toast').filter({ hasText: 'File downloaded' });
 }
 
-/** Picks the page of the PDF. */
+/** Picks the page of the PDF: A4, Letter, or the size of the document (`image`). */
 async function choosePage(
   page: Page,
   format: 'a4' | 'letter' | 'image',
@@ -69,7 +70,7 @@ function documentSizePage(size: Size, margin: number = 0): Size {
   };
 }
 
-/** Checks a PDF page size, to a hundredth of a point. */
+/** Checks a PDF page size, to about a twentieth of a point. */
 function expectPageSize(actual: Size, expected: Size): void {
   expect(actual.width).toBeCloseTo(expected.width, 1);
   expect(actual.height).toBeCloseTo(expected.height, 1);
@@ -86,7 +87,10 @@ async function documentSizes(page: Page): Promise<Size[]> {
   return sizes;
 }
 
-/** Checks a batch file name: `documents-<UTC date and time>.<extension>`, stamped during the export. */
+/**
+ * Checks a batch file name: `documents-<UTC date and time>.<extension>`, with a stamp between the
+ * `before` and `after` ones taken around the export.
+ */
 function expectBatchName(
   name: string,
   extension: string,
@@ -483,7 +487,7 @@ test.describe('Export step', (): void => {
     await openExport(page, ['invoice.jpg', 'receipt.jpg']);
     const [invoice, receipt] = await documentSizes(page);
 
-    // Grayscale, strong sharpness and noise reduction applied to all, the invoice rotated on its own
+    // Grayscale, strong sharpness and noise reduction applied to all; only the invoice rotated
     await page.getByTestId('step-2').click();
     await showDocument(page, 0);
     await choose(page, 'Grayscale');

@@ -26,6 +26,7 @@ interface Matrix {
   inverse(): Matrix;
 }
 
+/** A scale by `a` and `d` followed by a translation by `e` and `f`, with no rotation or skew. */
 function matrix(a: number, d: number, e: number, f: number): Matrix {
   return {
     a,
@@ -45,6 +46,7 @@ interface Point {
   matrixTransform(m: Matrix): Point;
 }
 
+/** A point that can be mapped through a {@link Matrix}, as `DOMPoint` can. */
 function point(x: number, y: number): Point {
   return {
     x,
@@ -90,6 +92,7 @@ const toScreen = (
   clientY: y * SCREEN.d + SCREEN.f,
 });
 
+/** A `IMAGE_W` × `IMAGE_H` source image, without a real document behind it. */
 function makeSource(): SourceImage {
   const image: HTMLImageElement = document.createElement('img');
   Object.defineProperty(image, 'naturalWidth', { value: IMAGE_W });
@@ -186,9 +189,11 @@ function ControlledEditor({
   );
 }
 
+/** Handle of the corner at `index`, in outline order. */
 const corner = (index: number): HTMLElement =>
   screen.getByTestId(`corner-${index}`);
 
+/** Center of the dot of the corner at `index`, in image units, as the SVG attributes say. */
 const centerOf = (index: number): { cx: string | null; cy: string | null } => {
   const dot: Element | null = corner(index).querySelector('.corner-dot');
   return {

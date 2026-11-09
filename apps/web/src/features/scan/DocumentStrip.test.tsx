@@ -17,6 +17,7 @@ import { useScan } from './useScan';
 vi.mock('./useScan', () => ({ useScan: vi.fn() }));
 vi.mock('@/features/camera/useCamera', () => ({ useCamera: vi.fn() }));
 
+/** A document with valid corners and no adjustments, named after its id, changed by `patch`. */
 function makeDoc(id: string, patch: Partial<DocumentItem> = {}): DocumentItem {
   return {
     id,
@@ -39,6 +40,11 @@ function makeDoc(id: string, patch: Partial<DocumentItem> = {}): DocumentItem {
   };
 }
 
+/**
+ * A session with the given documents and thumbnails, whose operations are mocks.
+ *
+ * @param activeId Id of the document on display; null, or an id not in `documents`, for none.
+ */
 function fakeScan(
   documents: DocumentItem[],
   activeId: string | null,
@@ -78,10 +84,12 @@ const camera: CameraContextValue = {
   close: vi.fn(),
 };
 
+/** The language provider the strip needs. */
 const wrapper = ({ children }: { children: ReactNode }): JSX.Element => (
   <TranslateProvider>{children}</TranslateProvider>
 );
 
+/** Renders the strip with {@link useScan} returning `scan`, and returns `scan` for its mocks. */
 function renderStrip(scan: ScanContextValue): ScanContextValue {
   vi.mocked(useScan).mockReturnValue(scan);
   render(<DocumentStrip />, { wrapper });

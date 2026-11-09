@@ -24,6 +24,11 @@ export type TranslateFunction = (
   params?: TranslationParams,
 ) => string;
 
+/**
+ * Follows a dot-separated key through the message tree.
+ *
+ * @returns The message (a string or plural forms), or undefined when the key is missing.
+ */
 const lookup = (messages: Messages, key: string): unknown =>
   key
     .split('.')
@@ -36,7 +41,9 @@ const lookup = (messages: Messages, key: string): unknown =>
     );
 
 /**
- * Builds the translate function of a language.
+ * Builds the translate function of a language. It fills `{name}` placeholders from the params,
+ * keeping those without a param, and picks plural forms by `count` (0 when missing), falling back
+ * to `other`. A key missing in both `messages` and `fallback` comes back as the key itself.
  *
  * @param locale Language, used for plural rules.
  * @param fallback Messages used for keys missing in `messages`.

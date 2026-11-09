@@ -57,6 +57,7 @@ async function recordImportProgress(page: Page): Promise<void> {
   });
 }
 
+/** What {@link recordImportProgress} has recorded in the page so far. */
 async function recordedProgress(page: Page): Promise<ProgressWindow> {
   return page.evaluate((): ProgressWindow => ({
     progressLabels: (window as unknown as ProgressWindow).progressLabels,
@@ -84,7 +85,9 @@ async function tileNumbers(page: Page): Promise<string[]> {
   return page.locator('.doc-tile-n').allTextContents();
 }
 
-/** Where to press a tile with the mouse: its center, a bit low to stay clear of the remove button. */
+/**
+ * Where to press a tile with the mouse: its center, a bit low to stay clear of the remove button.
+ */
 async function tileCenter(
   page: Page,
   index: number,
@@ -655,7 +658,6 @@ test.describe('Reordering in the Upload step', (): void => {
     await openApp(page);
     await uploadImages(page, ['invoice.jpg', 'receipt.jpg', 'blank.png']);
 
-    // receipt, invoice, blank
     await dragTile(page, 1, 0, -20);
     await expect
       .poll(async (): Promise<string[]> => uploadedPhotos(page))

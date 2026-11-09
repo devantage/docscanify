@@ -25,8 +25,9 @@ interface Props {
 }
 
 /**
- * Panel of the Export step: the export options and the export button, which builds and downloads
- * the file. While the file is made, a progress bar takes the place of the button.
+ * Panel of the Export step: the export options, which the user can collapse on phones, and the
+ * export button, which builds and downloads the file. While the file is made, a progress bar takes
+ * the place of the button.
  */
 export function ExportPanel({ status, ready }: Props): JSX.Element {
   const { t } = useTranslate();

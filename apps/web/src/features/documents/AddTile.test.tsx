@@ -12,6 +12,7 @@ interface Callbacks {
   onChooseFiles: Mock<() => void>;
 }
 
+/** Renders the tile, not hovered and not compact unless given otherwise, with spy callbacks. */
 function renderTile(
   props: { over?: boolean; compact?: boolean } = {},
 ): Callbacks & { container: HTMLElement } {

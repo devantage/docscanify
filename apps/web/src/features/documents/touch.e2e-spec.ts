@@ -106,7 +106,7 @@ async function tileNumbers(page: Page): Promise<string[]> {
   return page.locator('.doc-tile-n').allTextContents();
 }
 
-/** What the init script of `recordDrags` saw in the page. */
+/** What the init script of {@link recordDrags} saw in the page. */
 interface DragRecord {
   /** When the last touch pointer went down, in ms of `performance.now()`. */
   touchDownAt: number | null;
@@ -152,6 +152,7 @@ async function recordDrags(page: Page): Promise<void> {
   });
 }
 
+/** What {@link recordDrags} has seen in the page so far. */
 async function dragRecord(page: Page): Promise<DragRecord> {
   return page.evaluate(
     (): DragRecord =>
@@ -168,7 +169,10 @@ async function editorScale(page: Page): Promise<number> {
   });
 }
 
-/** Describes the focused element, or `body` when nothing has the focus. */
+/**
+ * Describes the focused element by its test id, or its tag name without one, or `body` when
+ * nothing has the focus.
+ */
 async function focused(page: Page): Promise<string> {
   return page.evaluate((): string => {
     const el: Element | null = document.activeElement;
@@ -178,6 +182,7 @@ async function focused(page: Page): Promise<string> {
   });
 }
 
+/** Whether the focused element is inside a document carousel. */
 async function focusInCarousel(page: Page): Promise<boolean> {
   return page.evaluate(
     (): boolean => !!document.activeElement?.closest('.doc-carousel'),

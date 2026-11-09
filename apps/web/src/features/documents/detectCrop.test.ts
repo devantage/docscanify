@@ -17,6 +17,7 @@ const CORNERS: Corners = {
   bottomLeft: { x: 5, y: 410 },
 };
 
+/** A source image whose document is a plain stand-in, for the mocked detector to receive. */
 function makeSource(): SourceImage {
   return {
     image: document.createElement('img'),

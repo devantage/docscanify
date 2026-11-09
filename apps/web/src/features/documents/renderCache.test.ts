@@ -30,6 +30,7 @@ const GRAYSCALE: EnhanceOptions = { ...NO_ENHANCEMENTS, filter: 'grayscale' };
 const BW: EnhanceOptions = { ...NO_ENHANCEMENTS, filter: 'bw' };
 const ROTATED: EnhanceOptions = { ...NO_ENHANCEMENTS, turns: 1 };
 
+/** A document with valid corners and no adjustments, changed by `overrides`. */
 function makeDoc(
   id: string,
   overrides: Partial<DocumentItem> = {},
@@ -50,6 +51,7 @@ function makeDoc(
   };
 }
 
+/** How many renders actually started, that is, missed the cache. */
 const renderCount = (): number => vi.mocked(renderWith).mock.calls.length;
 
 /** Lets the cache see that a render settled. */
@@ -59,7 +61,10 @@ async function flush(): Promise<void> {
   });
 }
 
-/** Renders and settles it right away, so later requests find it finished. */
+/**
+ * Renders and settles it right away, so later requests find it finished. The PNG holds a single
+ * byte: how many renders started so far.
+ */
 async function renderNow(
   doc: DocumentItem,
   options?: EnhanceOptions,

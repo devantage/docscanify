@@ -33,6 +33,7 @@ let bitmaps: FakeBitmap[];
 let contexts: FakeContext[];
 let drawCalls: { canvas: HTMLCanvasElement; args: unknown[] }[];
 
+/** A bitmap of the given size with a spied `close`, recorded in `bitmaps`. */
 function fakeBitmap(width: number, height: number): FakeBitmap {
   const bitmap: FakeBitmap = { width, height, close: vi.fn() };
   bitmaps.push(bitmap);
@@ -75,6 +76,7 @@ function stubCanvasContext(available: boolean = true): void {
   );
 }
 
+/** The bytes of a blob, as plain numbers for easy comparison. */
 async function blobBytes(blob: Blob): Promise<number[]> {
   return [...new Uint8Array(await blob.arrayBuffer())];
 }

@@ -79,6 +79,10 @@ const sw: FakeServiceWorker = {
   setNeedRefresh: (): void => undefined,
 };
 
+/**
+ * Stand-in for {@link useRegisterSW}: keeps `needRefresh` in React state, records the values the
+ * component sets, and exposes the setter in {@link sw} so tests can announce a new version.
+ */
 function useFakeRegisterSW(_options?: RegisterSWOptions): {
   needRefresh: [boolean, Dispatch<SetStateAction<boolean>>];
   offlineReady: [boolean, Dispatch<SetStateAction<boolean>>];
@@ -139,30 +143,36 @@ function renderApp(): void {
   );
 }
 
+/** The session of the rendered app. Throws before {@link renderApp}. */
 function scan(): ScanContextValue {
   if (!session.scan) throw new Error('The session is not rendered');
   return session.scan;
 }
 
+/** The step on display in the rendered app. Throws before {@link renderApp}. */
 function currentStep(): Step {
   if (!session.steps) throw new Error('The session is not rendered');
   return session.steps.step;
 }
 
+/** The toast API of the rendered app, to show other toasts. Throws before {@link renderApp}. */
 function toastApi(): ToastContextValue {
   if (!session.toast) throw new Error('The session is not rendered');
   return session.toast;
 }
 
+/** Moves the rendered app to a step, as the top bar does. */
 function goTo(step: Step): void {
   act((): void => {
     session.steps?.goTo(step);
   });
 }
 
+/** A PNG file named `<name>.png`; its content does not matter, image decoding is mocked. */
 const file = (name: string): File =>
   new File(['x'], `${name}.png`, { type: 'image/png' });
 
+/** Imports one image per name through the session and waits for the import to end. */
 async function addFiles(...names: string[]): Promise<void> {
   await act(async (): Promise<void> => {
     await scan().addFiles(names.map(file));
@@ -207,6 +217,10 @@ interface FakeContainer {
   postMessage: Mock<(message: unknown) => void>;
 }
 
+/**
+ * Replaces `navigator.serviceWorker` with a fake container whose registration has a waiting
+ * worker, and returns it along with that worker's `postMessage` mock.
+ */
 function installServiceWorker(): FakeContainer {
   const postMessage: Mock<(message: unknown) => void> =
     vi.fn<(message: unknown) => void>();
@@ -226,6 +240,7 @@ function installServiceWorker(): FakeContainer {
   return { container, postMessage };
 }
 
+/** Replaces `window.location` with one whose `reload` is a mock, and returns that mock. */
 function stubReload(): Mock<() => void> {
   const reload: Mock<() => void> = vi.fn<() => void>();
   // Only reload is used; jsdom cannot reload the page

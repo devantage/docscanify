@@ -18,6 +18,7 @@ const NO_ENHANCEMENTS: EnhanceOptions = {
   denoise: false,
 };
 
+/** Corners of a `size` × `size` square at the origin. */
 const square = (size: number): Corners => ({
   topLeft: { x: 0, y: 0 },
   topRight: { x: size, y: 0 },
@@ -49,6 +50,10 @@ function fakeScannedDocument(): ScannedDocument {
   return fake as unknown as ScannedDocument;
 }
 
+/**
+ * A document with valid corners (a 10 × 10 square) and no adjustments, changed by `patch`. Its
+ * scanned document is a {@link fakeScannedDocument}.
+ */
 function makeDoc(id: string, patch: Partial<DocumentItem> = {}): DocumentItem {
   return {
     id,
@@ -66,6 +71,7 @@ function makeDoc(id: string, patch: Partial<DocumentItem> = {}): DocumentItem {
   };
 }
 
+/** Ids of the documents, in list order. */
 const ids = (documents: DocumentItem[]): string[] =>
   documents.map((d: DocumentItem) => d.id);
 
@@ -86,6 +92,7 @@ interface Deferred<T> {
   resolve(value: T): void;
 }
 
+/** A promise that settles only when the test resolves it, to finish detections in any order. */
 function deferred<T>(): Deferred<T> {
   let resolve: (value: T) => void = () => undefined;
   const promise: Promise<T> = new Promise<T>((r: (value: T) => void) => {

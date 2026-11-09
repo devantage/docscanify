@@ -163,7 +163,7 @@
     padding: 0.4rem 0.25rem;
   }
 
-  /* Only the numbers: the panel of each step already shows its name */
+  /* Only the numbers, so the four steps fit in the bar */
   .step-label {
     display: none;
   }

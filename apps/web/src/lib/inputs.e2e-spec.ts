@@ -71,6 +71,7 @@ async function loadInvoice(): Promise<Image> {
   return loadImage(await readFile(fixturePath('invoice.jpg')));
 }
 
+/** A new blank canvas of Node, of this size in pixels, with its 2D context. */
 function canvasOf(
   width: number,
   height: number,
@@ -94,6 +95,7 @@ async function largeInvoice(): Promise<UploadFile> {
   };
 }
 
+/** invoice.jpg converted to WebP, at the same size. */
 async function webpInvoice(): Promise<UploadFile> {
   const invoice: Image = await loadInvoice();
   const { canvas, context } = canvasOf(invoice.width, invoice.height);
@@ -224,7 +226,10 @@ function transparentDocument(): UploadFile {
   };
 }
 
-/** Uploads a file through the file picker of the empty Upload step and waits until it is imported. */
+/**
+ * Uploads a file through the file picker of the empty Upload step and waits until it is imported,
+ * with no toast.
+ */
 async function uploadFile(page: Page, file: UploadFile): Promise<void> {
   const [chooser] = await Promise.all([
     page.waitForEvent('filechooser'),
@@ -263,6 +268,7 @@ async function goToExport(page: Page): Promise<Size> {
   return resultSize(page);
 }
 
+/** The corners scaled by `factor` from the top left of the photo, as the photo is scaled. */
 function scaleQuad(quad: Quad, factor: number): Quad {
   return quad.map((point: Point): Point => ({
     x: point.x * factor,
@@ -270,7 +276,10 @@ function scaleQuad(quad: Quad, factor: number): Quad {
   })) as Quad;
 }
 
-/** Checks an exported image is the invoice sheet, upright: a bit taller than wide. */
+/**
+ * Checks an exported image is the invoice sheet, upright: a bit taller than wide, and the size of
+ * {@link INVOICE_DOCUMENT} times `scale`, within 5%.
+ */
 function expectUprightInvoiceShape(image: ImageInfo, scale: number): void {
   const aspect: number = image.width / image.height;
   expect(aspect, 'portrait-ish, as the invoice sheet').toBeGreaterThan(0.85);
@@ -322,7 +331,9 @@ async function pixelsAt(
   );
 }
 
-/** Decodes an image in the page and counts its dark red pixels, in all and in the top left quarter. */
+/**
+ * Decodes an image in the page and counts its dark red pixels, in all and in the top left quarter.
+ */
 async function redPixels(page: Page, data: Uint8Array): Promise<RedPixels> {
   return page.evaluate(async (base64: string): Promise<RedPixels> => {
     const bytes: Uint8Array<ArrayBuffer> = Uint8Array.from(

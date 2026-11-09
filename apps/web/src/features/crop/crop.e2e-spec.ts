@@ -42,10 +42,12 @@ async function openCrop(page: Page, files: Fixture[]): Promise<void> {
   );
 }
 
+/** A point moved by `delta`, in the same unit as both. */
 function offset(point: Point, delta: Point): Point {
   return { x: point.x + delta.x, y: point.y + delta.y };
 }
 
+/** The straight-line distance between two points, in their unit. */
 function distance(a: Point, b: Point): number {
   return Math.hypot(a.x - b.x, a.y - b.y);
 }
@@ -140,10 +142,12 @@ function alertMark(page: Page, index: number): Locator {
   return page.getByTestId(`doc-${String(index)}`).locator('.doc-tile-alert');
 }
 
+/** The image of a carousel tile, by its position from 0. */
 function thumbnail(page: Page, index: number): Locator {
   return page.getByTestId(`doc-${String(index)}`).locator('img');
 }
 
+/** The toasts of one kind on screen. */
 function toasts(page: Page, kind: 'error' | 'warning'): Locator {
   return page.locator(`[data-testid="toast"][data-kind="${kind}"]`);
 }
@@ -534,7 +538,6 @@ test.describe('Crop step', (): void => {
     const first: Locator = page.getByTestId('doc-0');
     const second: Locator = page.getByTestId('doc-1');
 
-    // The first document opens first
     await expect(first).toHaveAttribute('aria-current', 'true');
     await expect(second).not.toHaveAttribute('aria-current', 'true');
     await expect(editor).toHaveAttribute('viewBox', '0 0 1600 1200');

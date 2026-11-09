@@ -26,7 +26,10 @@ export interface UseDocumentsResult {
   clear(): void;
 }
 
-/** The list of documents being scanned, in export order, and the one on display. */
+/**
+ * The list of documents being scanned, in export order, and the one on display: the selected one
+ * or, without a selection, the first.
+ */
 export function useDocuments(): UseDocumentsResult {
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);

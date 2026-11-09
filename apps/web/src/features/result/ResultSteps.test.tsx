@@ -43,6 +43,7 @@ vi.mock('@/features/scan/DocumentStrip', (): Record<string, unknown> => ({
   DocumentStrip: (): JSX.Element => <div data-testid="document-strip" />,
 }));
 
+/** A document with valid corners and the given color filter, named after its id. */
 function makeDocument(id: string, filter: Filter = 'none'): DocumentItem {
   return {
     id,
@@ -64,6 +65,7 @@ function makeDocument(id: string, filter: Filter = 'none'): DocumentItem {
   };
 }
 
+/** An empty canvas of the given size in px, standing in for a render. */
 function canvas(width: number, height: number): HTMLCanvasElement {
   const element: HTMLCanvasElement = document.createElement('canvas');
   element.width = width;
@@ -71,6 +73,7 @@ function canvas(width: number, height: number): HTMLCanvasElement {
   return element;
 }
 
+/** What the mocked {@link useResultPreview} returns: a ready 600 × 800 px render by default. */
 function preview(
   overrides: Partial<UseRenderedDocumentResult> = {},
 ): UseRenderedDocumentResult {
@@ -84,6 +87,10 @@ function preview(
   };
 }
 
+/**
+ * Renders the steps in English at the given step, with a session of the given documents and
+ * `active` on display (the first one by default).
+ */
 function renderSteps(
   step: Step,
   documents: DocumentItem[],

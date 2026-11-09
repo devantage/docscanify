@@ -31,7 +31,10 @@ export interface ImportProgress {
   value: number;
 }
 
-/** User-facing description of the import in progress. */
+/**
+ * User-facing description of the import in progress: what is happening to the current file and,
+ * with more than one file, which one it is out of how many.
+ */
 export function describeProgress(
   { phase, current, total }: ImportProgress,
   t: TranslateFunction,
@@ -75,8 +78,8 @@ export interface UseImportFilesResult {
  * @returns
  * - `progress`: the import in progress, or null. It stays at 1 after the import is done, until
  *   `dismissProgress` is called, so the full bar can be shown for a moment.
- * - `importFiles(files)`: imports the files; resolves when they are done, or to null when an
- *   import is already running.
+ * - `importFiles(files)`: imports the files; resolves when they are done, or to null when there
+ *   are no files or an import is already running.
  */
 export function useImportFiles(): UseImportFilesResult {
   const { t } = useTranslate();

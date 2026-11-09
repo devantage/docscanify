@@ -1,9 +1,10 @@
 import type { Corner } from '@devantage/docscanify';
 
+/** Limits `v` to the range from `min` to `max`, both included. */
 export const clamp = (v: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, v));
 
-/** Unit vector from `a` to `b`. */
+/** Unit vector from `a` to `b`; the zero vector when they are the same point. */
 export function direction(a: Corner, b: Corner): Corner {
   const len: number = Math.hypot(b.x - a.x, b.y - a.y) || 1;
   return { x: (b.x - a.x) / len, y: (b.y - a.y) / len };

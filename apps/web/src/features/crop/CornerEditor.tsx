@@ -22,7 +22,10 @@ import { Loupe } from './Loupe';
 const LOUPE_SIZE: number = 128;
 /** Distance between the loupe and the cursor, in screen px. */
 const LOUPE_GAP_MOUSE: number = 32;
-/** Distance between the loupe and the finger: larger than for a mouse, so the finger does not cover it. */
+/**
+ * Distance between the loupe and the finger, in screen px: larger than for a mouse, so the finger
+ * does not cover it.
+ */
 const LOUPE_GAP_TOUCH: number = 64;
 
 /** In outline order: each corner neighbors the previous and the next one. */
@@ -115,6 +118,7 @@ export function CornerEditor({
     [corners, onChange, W, H],
   );
 
+  /** Moves the loupe next to the pointer, farther away for a finger, always inside the editor. */
   const followPointer = (e: PointerEvent): void => {
     const editor: HTMLDivElement | null = editorRef.current;
     if (!editor) return;
@@ -131,6 +135,10 @@ export function CornerEditor({
     );
   };
 
+  /**
+   * Starts dragging the corner at `index`. The corner keeps its offset from the pointer, so it does
+   * not jump under it.
+   */
   const onPointerDown =
     (index: number) =>
     (e: PointerEvent): void => {

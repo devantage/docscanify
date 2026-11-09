@@ -57,6 +57,7 @@ interface Deferred<T> {
   resolve(value: T): void;
 }
 
+/** A promise that settles only when the test resolves it, to keep the camera request pending. */
 function deferred<T>(): Deferred<T> {
   let resolve: (value: T) => void = () => undefined;
   const promise: Promise<T> = new Promise<T>((r: (value: T) => void) => {
@@ -67,6 +68,7 @@ function deferred<T>(): Deferred<T> {
 
 type StreamHook = RenderHookResult<UseCameraStreamResult, unknown>;
 
+/** Renders the hook playing into the video of `ref`. */
 const renderStream = (ref: RefObject<HTMLVideoElement | null>): StreamHook =>
   renderHook(() => useCameraStream(ref));
 
@@ -293,6 +295,7 @@ class FakeResizeObserver {
   }
 }
 
+/** Overrides read-only size properties of an element, such as `clientWidth` or `videoWidth`. */
 const setSize = (el: HTMLElement, props: Record<string, number>): void => {
   for (const [key, value] of Object.entries(props))
     Object.defineProperty(el, key, { value, configurable: true });

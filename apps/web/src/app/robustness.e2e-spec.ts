@@ -90,6 +90,11 @@ async function dragOutcome(page: Page, target: Locator): Promise<DragOutcome> {
   );
 }
 
+/**
+ * The center of an element on the screen, in CSS pixels of the page.
+ *
+ * @throws When the element is not rendered.
+ */
 async function centerOf(target: Locator): Promise<Point> {
   const box: { x: number; y: number; width: number; height: number } | null =
     await target.boundingBox();
@@ -166,7 +171,10 @@ async function editorScale(page: Page): Promise<number> {
   return scale;
 }
 
-/** Drags a corner handle with the mouse by an amount in photo pixels and releases it. */
+/**
+ * Drags a corner handle with the mouse by an amount in photo pixels, releases it and waits until
+ * the loupe is gone.
+ */
 async function dragCorner(
   page: Page,
   index: number,
@@ -183,6 +191,7 @@ async function dragCorner(
   await expect(page.getByTestId('loupe')).toHaveCount(0);
 }
 
+/** The button named exactly "Continue", which moves to the next step. */
 function continueButton(page: Page): Locator {
   return page.getByRole('button', { name: 'Continue', exact: true });
 }

@@ -28,7 +28,7 @@ export interface UseRenderedDocumentResult {
 /**
  * The final document with its adjustments applied, for the main preview. A render that is already
  * cached (same document, corners, and adjustments) shows up without a loading state; a new render
- * lasts at least the minimum loading duration (`MIN_LOADING_MS`).
+ * lasts at least the minimum loading duration ({@link MIN_LOADING_MS}).
  *
  * @param doc Document on display, with its crop corners set.
  */

@@ -11,10 +11,15 @@ import { useScan } from './useScan';
 
 vi.mock('./useScan', () => ({ useScan: vi.fn() }));
 
+/** The language provider the progress label needs. */
 const wrapper = ({ children }: { children: ReactNode }): JSX.Element => (
   <TranslateProvider>{children}</TranslateProvider>
 );
 
+/**
+ * Renders the component with {@link useScan} reporting `importProgress`, and returns the
+ * `dismissImportProgress` mock.
+ */
 function renderProgress(
   importProgress: Progress | null,
 ): ScanContextValue['dismissImportProgress'] {

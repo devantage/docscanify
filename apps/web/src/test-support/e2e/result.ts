@@ -120,7 +120,7 @@ export async function uploadAs(
   });
 }
 
-/** What `watchTransients` saw in the page. */
+/** What {@link watchTransients} saw in the page. */
 export interface Transients {
   /** The selectors that matched an element, even for a moment, in the order they first did. */
   selectors: string[];
@@ -128,7 +128,7 @@ export interface Transients {
   statuses: string[];
 }
 
-/** The page global where `watchTransients` keeps what it sees. */
+/** The page global where {@link watchTransients} keeps what it sees. */
 interface TransientsWatch {
   transients?: Transients;
 }
@@ -136,7 +136,7 @@ interface TransientsWatch {
 /**
  * Starts noting states of the page that may last too short to assert on, such as a loading state
  * while OpenCV blocks the page: which selectors match and which texts the status shows, after
- * every change of the page. Read them with `seenTransients`.
+ * every change of the page. Read them with {@link seenTransients}.
  */
 export async function watchTransients(
   page: Page,
@@ -169,7 +169,11 @@ export async function watchTransients(
   }, selectors);
 }
 
-/** What the page went through since `watchTransients`. */
+/**
+ * What the page went through since {@link watchTransients}.
+ *
+ * @throws When {@link watchTransients} was not called on the page.
+ */
 export async function seenTransients(page: Page): Promise<Transients> {
   return page.evaluate((): Transients => {
     const seen: Transients | undefined = (globalThis as TransientsWatch)
@@ -196,6 +200,7 @@ export async function showDocument(page: Page, index: number): Promise<void> {
   );
 }
 
+/** Downloads the file of the Export step with its download button. */
 export async function exportFile(page: Page): Promise<DownloadedFile> {
   return downloadFrom(page, async (): Promise<void> => {
     await page.getByTestId('download').click();
@@ -287,7 +292,7 @@ export interface Placement {
 
 type Matrix = [number, number, number, number, number, number];
 
-/** `a` then `b`, as PDF matrices compose with `cm`. */
+/** Composes two PDF transformation matrices, `a` applied first, as the `cm` operator does. */
 function multiply(a: Matrix, b: Matrix): Matrix {
   return [
     a[0] * b[0] + a[1] * b[2],
@@ -321,7 +326,10 @@ function pageContent(page: PDFPage): string {
     .join('\n');
 }
 
-/** Where each page draws its image (the `Do` operator), following the `cm` and `q`/`Q` operators. */
+/**
+ * Where the content of a page draws each image (the `Do` operator), as boxes in points, following
+ * the `cm` and `q`/`Q` operators.
+ */
 function placementsOf(content: string): Placement[] {
   const placements: Placement[] = [];
   const stack: Matrix[] = [];
@@ -418,7 +426,7 @@ export function expectedPlacement(
   };
 }
 
-/** Checks two placements are the same, to a hundredth of a point. */
+/** Checks two placements are the same, to about a twentieth of a point. */
 export function expectPlacement(actual: Placement, expected: Placement): void {
   expect(actual.x).toBeCloseTo(expected.x, 1);
   expect(actual.y).toBeCloseTo(expected.y, 1);
@@ -426,7 +434,7 @@ export function expectPlacement(actual: Placement, expected: Placement): void {
   expect(actual.height).toBeCloseTo(expected.height, 1);
 }
 
-/** The current date as the app stamps batch files: `YYYYMMDDhhmm`, in UTC. */
+/** A date, now by default, as the app stamps batch files: `YYYYMMDDhhmm`, in UTC. */
 export function fileStamp(date: Date = new Date()): string {
   return date.toISOString().slice(0, 16).replace(/[-:T]/g, '');
 }
@@ -437,7 +445,10 @@ export interface DecodedImage {
   height: number;
   /** Largest difference between two channels of any pixel: 0 for a gray image. */
   maxChannelSpread: number;
-  /** A hash of every pixel, computed as `PreviewPixels.checksum`, to compare with the preview. */
+  /**
+   * A hash of every pixel, computed as {@link PreviewPixels.checksum}, to compare with the
+   * preview.
+   */
   checksum: number;
 }
 

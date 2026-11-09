@@ -9,6 +9,10 @@ import {
 /** Why the camera could not be opened. Each one has its own user-facing message. */
 export type CameraError = 'unsupported' | 'denied' | 'notFound' | 'unknown';
 
+/**
+ * Reason for a failed camera request: `denied` when the user or the browser refused access,
+ * `notFound` when there is no camera, `unknown` otherwise.
+ */
 function cameraError(error: unknown): CameraError {
   const name: string | undefined = (error as DOMException | null | undefined)
     ?.name;
@@ -26,7 +30,10 @@ export interface UseCameraStreamResult {
   stop(): void;
 }
 
-/** Plays the rear camera in a video element and turns it off on unmount. */
+/**
+ * Plays the camera in a video element, preferring the rear one in Full HD, and turns it off on
+ * unmount, also when access is granted only after that.
+ */
 export function useCameraStream(
   videoRef: RefObject<HTMLVideoElement | null>,
 ): UseCameraStreamResult {
@@ -45,7 +52,8 @@ export function useCameraStream(
   useEffect(() => {
     let cancelled: boolean = false;
     void (async (): Promise<void> => {
-      // `mediaDevices` is undefined outside secure contexts (plain HTTP), which the DOM types don't model
+      // `mediaDevices` is undefined outside secure contexts (plain HTTP), which the DOM types
+      // don't model
       const mediaNavigator: { mediaDevices?: MediaDevices } = navigator;
       if (!mediaNavigator.mediaDevices?.getUserMedia) {
         setError('unsupported');
@@ -89,8 +97,9 @@ export function useCameraStream(
 }
 
 /**
- * Area where the video shows up inside its container (`object-fit: contain`), inset by a small
- * margin. The framing marks are placed in it.
+ * Area where the video shows up inside its container (`object-fit: contain`), inset by 6% of its
+ * shorter side, kept between 16 and 48 px. The framing marks are placed in it. It follows the
+ * size of the container and of the video.
  *
  * @param viewRef Container of the video.
  * @param ready Whether the video is playing, so its size is known.

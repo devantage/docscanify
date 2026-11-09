@@ -82,7 +82,10 @@ interface Session {
 
 const session: Session = { scan: null, steps: null, camera: null };
 
-/** The workspace, as `CurrentStep` shows it: the camera over the step while it is open. */
+/**
+ * The workspace, as `CurrentStep` shows it: the camera over the step while it is open. It also
+ * keeps the scan, steps, and camera contexts in `session`, for the tests to read.
+ */
 function Workspace(): JSX.Element {
   session.scan = useScan();
   session.steps = useSteps();
@@ -94,6 +97,7 @@ function Workspace(): JSX.Element {
   );
 }
 
+/** Renders the workspace inside every provider the camera and the scan session need. */
 function renderApp(): void {
   render(
     <TranslateProvider>
@@ -110,6 +114,11 @@ function renderApp(): void {
   );
 }
 
+/**
+ * The contexts the workspace rendered last.
+ *
+ * @throws When the app is not rendered.
+ */
 function current(): {
   scan: ScanContextValue;
   steps: StepsContextValue;
@@ -120,6 +129,7 @@ function current(): {
   return { scan, steps, camera };
 }
 
+/** File names of the documents in the session, in list order. */
 const names = (): string[] =>
   current().scan.documents.map((d: DocumentItem) => d.source.name);
 

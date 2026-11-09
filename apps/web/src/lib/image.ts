@@ -7,11 +7,12 @@ import type { SourceImage } from './types';
 const THUMBNAIL_WIDTH: number = 112;
 const THUMBNAIL_HEIGHT: number = 144;
 
+/** Wraps PNG bytes in a Blob, the input `createImageBitmap` takes. */
 const pngBlob = (png: Uint8Array): Blob =>
   new Blob([png as Uint8Array<ArrayBuffer>], { type: 'image/png' });
 
 /**
- * Current date and time, for file names.
+ * Current date and time, in UTC, for file names.
  *
  * @returns The date as `YYYYMMDDhhmm`.
  */
@@ -19,7 +20,11 @@ export function fileStamp(): string {
   return new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '');
 }
 
-/** Decodes a PNG into a canvas, to show the result on screen. */
+/**
+ * Decodes a PNG into a canvas, to show the result on screen.
+ *
+ * @throws When the browser cannot decode the PNG or give a 2D canvas context.
+ */
 export async function canvasFromPng(
   png: Uint8Array,
 ): Promise<HTMLCanvasElement> {
@@ -35,9 +40,11 @@ export async function canvasFromPng(
 }
 
 /**
- * Scales an image down to thumbnail size, keeping its aspect ratio.
+ * Scales an image down to thumbnail size, keeping its aspect ratio. A smaller image is never
+ * scaled up, and neither side goes below 1 px. The given image is not closed.
  *
  * @returns The thumbnail as a JPEG data URL.
+ * @throws When the browser cannot give a 2D canvas context.
  */
 export async function thumbnailFrom(
   image: HTMLCanvasElement | ImageBitmap,
@@ -66,7 +73,7 @@ export async function thumbnailFrom(
 }
 
 /**
- * Scales a PNG down to thumbnail size.
+ * Decodes a PNG and scales it down to thumbnail size, as {@link thumbnailFrom} does.
  *
  * @returns The thumbnail as a JPEG data URL.
  */
@@ -80,11 +87,13 @@ export async function thumbnailFromPng(png: Uint8Array): Promise<string> {
 }
 
 /**
- * Creates the input image from a file, without changing it, and the document from it.
+ * Creates the input image from a file, without changing it, and the document from it. On failure,
+ * the object URL is revoked and the original error is kept as the `cause` of the one thrown.
  *
  * @param fallbackName Base name used when the file has none.
  * @returns The image, shown in the editor, and the document, which does all the processing.
- * @throws When the browser cannot read the file.
+ * @throws `Could not open <file name>` when the file cannot be read or decoded, or the document
+ * cannot be created from it.
  */
 export async function sourceFromFile(
   file: File,
@@ -117,6 +126,7 @@ export async function sourceFromFile(
  *
  * @param video Camera video, already playing.
  * @param name File name, without extension.
+ * @throws When the browser cannot give a 2D canvas context or encode the frame.
  */
 export async function frameFromVideo(
   video: HTMLVideoElement,

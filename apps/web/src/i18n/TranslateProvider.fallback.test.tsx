@@ -17,6 +17,7 @@ vi.mock('./config', async (importOriginal: () => Promise<typeof Config>) => {
   return { ...actual, MESSAGES: { ...actual.MESSAGES, es } };
 });
 
+/** Shows `common.back`, which the mocked Spanish lacks, and `common.continue`, which it has. */
 function Probe(): JSX.Element {
   const { t }: TranslateContextValue = useTranslate();
   return (
@@ -27,6 +28,7 @@ function Probe(): JSX.Element {
   );
 }
 
+/** Renders the provider with Spanish as the browser language and the given default language. */
 const renderInSpanish = (defaultLocale?: Locale): void => {
   vi.spyOn(navigator, 'languages', 'get').mockReturnValue(['es']);
   render(

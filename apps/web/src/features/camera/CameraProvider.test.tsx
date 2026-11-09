@@ -14,6 +14,7 @@ interface Session {
   steps: StepsContextValue;
 }
 
+/** Wraps the hooks in the steps and camera providers, as the app does. */
 const wrapper = ({ children }: { children: ReactNode }): JSX.Element => (
   <StepsProvider>
     <CameraProvider>{children}</CameraProvider>
@@ -22,6 +23,7 @@ const wrapper = ({ children }: { children: ReactNode }): JSX.Element => (
 
 type Hook = RenderHookResult<Session, unknown>;
 
+/** Renders the camera and the steps contexts together, to see how one affects the other. */
 const renderSession = (): Hook =>
   renderHook((): Session => ({ camera: useCamera(), steps: useSteps() }), {
     wrapper,

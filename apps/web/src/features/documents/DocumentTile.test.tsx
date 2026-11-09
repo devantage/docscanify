@@ -16,6 +16,7 @@ const CORNERS: Corners = {
   bottomRight: { x: 100, y: 100 },
 };
 
+/** A document with valid corners and no adjustments, changed by `overrides`. */
 function makeDocument(
   id: string,
   overrides: Partial<DocumentItem> = {},
@@ -50,6 +51,10 @@ interface Rendered {
   container: HTMLElement;
 }
 
+/**
+ * Renders the first tile of the list for a document that is not on display, with spy callbacks.
+ * It is selectable only with `selectable`.
+ */
 function renderTile(props: TileProps = {}): Rendered {
   const onSelect: Mock<(id: string) => void> = vi.fn<(id: string) => void>();
   const onRemove: Mock<(id: string) => void> = vi.fn<(id: string) => void>();

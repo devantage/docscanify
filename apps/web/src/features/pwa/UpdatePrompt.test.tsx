@@ -60,6 +60,11 @@ const sw: FakeServiceWorker = {
   setNeedRefresh: (): void => undefined,
 };
 
+/**
+ * Stand-in for {@link useRegisterSW}: keeps `needRefresh` in React state, records the options it
+ * was called with and the values the component sets, and exposes the setter in {@link sw} so
+ * tests can announce a new version.
+ */
 function useFakeRegisterSW(options?: RegisterSWOptions): {
   needRefresh: [boolean, Dispatch<SetStateAction<boolean>>];
   offlineReady: [boolean, Dispatch<SetStateAction<boolean>>];
@@ -92,6 +97,7 @@ const CORNERS: Corners = {
   bottomRight: { x: 100, y: 100 },
 };
 
+/** A document with valid corners and no adjustments; only how many there are matters here. */
 function makeDocument(id: string): DocumentItem {
   return {
     id,
@@ -108,6 +114,7 @@ function makeDocument(id: string): DocumentItem {
   };
 }
 
+/** Makes {@link useScan} return a session with `count` documents, the first one on display. */
 function mockDocuments(count: number): void {
   const documents: DocumentItem[] = Array.from(
     { length: count },
@@ -137,6 +144,7 @@ function mockDocuments(count: number): void {
   vi.mocked(useScan).mockReturnValue(value);
 }
 
+/** The update prompt inside the language and toast providers, ready to render or rerender. */
 function prompt(): JSX.Element {
   return (
     <TranslateProvider>
@@ -147,6 +155,7 @@ function prompt(): JSX.Element {
   );
 }
 
+/** Renders {@link prompt}; the session comes from {@link mockDocuments}. */
 function renderPrompt(): RenderResult {
   return render(prompt());
 }
@@ -166,6 +175,13 @@ interface FakeContainer {
   postMessage: Mock<(message: unknown) => void>;
 }
 
+/**
+ * Replaces `navigator.serviceWorker` with a fake container and returns it, along with the
+ * `postMessage` mock of its waiting worker.
+ *
+ * @param waiting Whether the registration has a waiting worker; without one, as when another
+ * tab already activated the new version, updating only reloads.
+ */
 function installServiceWorker(waiting: boolean): FakeContainer {
   const postMessage: Mock<(message: unknown) => void> =
     vi.fn<(message: unknown) => void>();
@@ -187,6 +203,7 @@ function installServiceWorker(waiting: boolean): FakeContainer {
   return { container, postMessage };
 }
 
+/** Replaces `window.location` with one whose `reload` is a mock, and returns that mock. */
 function stubReload(): Mock<() => void> {
   const reload: Mock<() => void> = vi.fn<() => void>();
   // Only reload is used; jsdom cannot reload the page

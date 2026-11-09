@@ -6,7 +6,8 @@ import {
 } from '@/components/toast/ToastContext';
 
 /**
- * Shows success, warning, and error toasts.
+ * Shows success, info, warning, and error toasts, and dismisses them, through the nearest
+ * `ToastProvider`.
  *
  * @throws When used outside `ToastProvider`.
  */

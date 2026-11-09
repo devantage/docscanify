@@ -5,12 +5,14 @@ import { describe, expect, it, vi } from 'vitest';
 import { StepsProvider, useSteps } from './index';
 import type { StepsContextValue } from './StepsContext';
 
+/** Wraps the hook in the real {@link StepsProvider}. */
 const wrapper = ({ children }: { children: ReactNode }): JSX.Element => (
   <StepsProvider>{children}</StepsProvider>
 );
 
 type Hook = RenderHookResult<StepsContextValue, unknown>;
 
+/** Renders {@link useSteps} inside a fresh {@link StepsProvider}. */
 const renderSteps = (): Hook => renderHook(() => useSteps(), { wrapper });
 
 describe('StepsProvider and useSteps', (): void => {

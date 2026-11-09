@@ -32,6 +32,7 @@ const CORNERS: Corners = {
   bottomRight: { x: 100, y: 100 },
 };
 
+/** A document with valid corners and no adjustments, changed by `overrides`. */
 function makeDocument(
   id: string,
   overrides: Partial<DocumentItem> = {},
@@ -52,6 +53,7 @@ function makeDocument(
   };
 }
 
+/** A tiny PNG file, as chosen or dropped by the user. */
 function imageFile(name: string): File {
   return new File(['x'], name, { type: 'image/png' });
 }
@@ -72,6 +74,7 @@ interface CarouselProps {
   previews?: Record<string, Preview>;
 }
 
+/** A spy for each callback of the carousel. */
 function makeHandlers(): Handlers {
   return {
     onFiles: vi.fn<(files: File[]) => void>(),
@@ -82,6 +85,10 @@ function makeHandlers(): Handlers {
   };
 }
 
+/**
+ * The carousel with the given props and handlers, `large` unless given otherwise and selectable
+ * only with `selectable`. Passing new props to `rerender` keeps the same handlers.
+ */
 function carousel(props: CarouselProps, handlers: Handlers): JSX.Element {
   return (
     <TranslateProvider>
@@ -100,6 +107,7 @@ function carousel(props: CarouselProps, handlers: Handlers): JSX.Element {
   );
 }
 
+/** Renders the {@link carousel} with new spy handlers. */
 function renderCarousel(
   props: CarouselProps,
 ): Handlers & { result: RenderResult } {

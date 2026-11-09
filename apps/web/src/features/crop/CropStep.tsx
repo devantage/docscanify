@@ -21,9 +21,10 @@ import { CornerEditor } from './CornerEditor';
 import { useCropAlerts, type UseCropAlertsResult } from './useCropAlerts';
 
 /**
- * Crop step: the corner editor over the document on display, the carousel, and the panel with
- * automatic detection (also on Ctrl + Z, Cmd + Z on a Mac). Continuing needs every document with
- * valid corners.
+ * Crop step: the corner editor over the document on display (or an error when the edge detector
+ * could not be loaded), the carousel, and the panel with automatic detection (also on Ctrl + Z,
+ * Cmd + Z on a Mac), whose options collapse on phones. Continuing needs every document with valid
+ * corners.
  */
 export function CropStep(): JSX.Element {
   const { t } = useTranslate();

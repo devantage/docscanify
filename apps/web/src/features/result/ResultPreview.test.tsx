@@ -8,7 +8,7 @@ type DrawImage = Mock<(image: CanvasImageSource, x: number, y: number) => void>;
 let drawImage: DrawImage;
 let getContext: Mock<(this: HTMLCanvasElement) => unknown>;
 
-/** A rendered document of the given size, as `useRenderedDocument` returns it. */
+/** A rendered document of the given size, as {@link useRenderedDocument} returns it. */
 function renderedCanvas(width: number, height: number): HTMLCanvasElement {
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   canvas.width = width;

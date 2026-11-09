@@ -104,6 +104,7 @@ interface WorkerState {
   waiting: boolean;
 }
 
+/** Reads the state of the service worker registration of the page, from inside it. */
 async function workerState(page: Page): Promise<WorkerState> {
   return page.evaluate(async (): Promise<WorkerState> => {
     const registration: ServiceWorkerRegistration | undefined =
@@ -161,6 +162,10 @@ interface VersionedServer {
   close(): Promise<void>;
 }
 
+/**
+ * Starts a {@link VersionedServer} on a free port of localhost. It forwards every request to the
+ * production build at {@link APP_ORIGIN}, uncached, and answers 502 when that fails.
+ */
 async function startVersionedServer(): Promise<VersionedServer> {
   let version: number = 1;
   let workerRequests: number = 0;

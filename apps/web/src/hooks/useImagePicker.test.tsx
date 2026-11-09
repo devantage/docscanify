@@ -43,9 +43,11 @@ afterEach((): void => {
   Reflect.deleteProperty(navigator, 'mediaDevices');
 });
 
+/** The hidden file input that the hook renders. */
 const input = (): HTMLInputElement =>
   screen.getByTestId<HTMLInputElement>('file-input');
 
+/** A tiny JPEG file with the given name. */
 const image = (name: string): File =>
   new File(['x'], name, { type: 'image/jpeg' });
 

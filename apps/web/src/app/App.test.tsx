@@ -52,10 +52,12 @@ const CORNERS: Corners = {
   bottomRight: { x: 90, y: 90 },
 };
 
+/** A JPEG file; decoding is mocked, so only its name matters. */
 function imageFile(name: string): File {
   return new File(['x'], name, { type: 'image/jpeg' });
 }
 
+/** Renders the app inside the language and toast providers, as `main.tsx` does. */
 function renderApp(): void {
   render(
     <TranslateProvider>
@@ -66,10 +68,12 @@ function renderApp(): void {
   );
 }
 
+/** Button of a step in the top bar, from 0 (Upload) to 3 (Export). */
 function step(index: number): HTMLElement {
   return screen.getByTestId(`step-${String(index)}`);
 }
 
+/** Uploads the named images through the file input and waits for the import to end. */
 async function uploadImages(user: UserEvent, names: string[]): Promise<void> {
   await user.upload(screen.getByTestId('file-input'), names.map(imageFile));
   // The import ends when its progress goes away

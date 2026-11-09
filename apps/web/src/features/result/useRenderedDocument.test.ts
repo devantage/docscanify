@@ -36,6 +36,7 @@ interface Deferred<T> {
   reject(reason: unknown): void;
 }
 
+/** A promise that the test settles from outside, to finish each render when it chooses. */
 function deferred<T>(): Deferred<T> {
   let resolve: (value: T) => void = (): void => undefined;
   let reject: (reason: unknown) => void = (): void => undefined;
@@ -62,6 +63,7 @@ const OPTIONS: EnhanceOptions = {
   denoise: false,
 };
 
+/** Document `doc-1` with valid corners and no adjustments, changed by `overrides`. */
 function makeDocument(overrides: Partial<DocumentItem> = {}): DocumentItem {
   return {
     id: 'doc-1',
@@ -87,6 +89,7 @@ const png = (width: number): Uint8Array => new Uint8Array([width]);
 
 type Hook = RenderHookResult<UseRenderedDocumentResult, { doc: DocumentItem }>;
 
+/** Renders the hook for `doc`; `rerender({ doc })` puts another document or version on display. */
 function renderPreview(doc: DocumentItem): Hook {
   return renderHook(
     ({ doc: current }: { doc: DocumentItem }): UseRenderedDocumentResult =>
@@ -95,6 +98,7 @@ function renderPreview(doc: DocumentItem): Hook {
   );
 }
 
+/** Lets pending promises run once, to check that nothing else happens. */
 async function settle(): Promise<void> {
   await act(async (): Promise<void> => {
     await Promise.resolve();

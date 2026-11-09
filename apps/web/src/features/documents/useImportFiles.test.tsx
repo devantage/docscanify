@@ -53,6 +53,7 @@ const NO_ENHANCEMENTS: EnhanceOptions = {
 
 const t: TranslateFunction = createTranslate('en', MESSAGES.en, MESSAGES.en);
 
+/** Corners of a `size` × `size` square at the origin. */
 const square = (size: number): Corners => ({
   topLeft: { x: 0, y: 0 },
   topRight: { x: size, y: 0 },
@@ -60,9 +61,11 @@ const square = (size: number): Corners => ({
   bottomLeft: { x: 0, y: size },
 });
 
+/** A tiny PNG file with this name, as chosen by the user. */
 const file = (name: string): File =>
   new File(['x'], name, { type: 'image/png' });
 
+/** The source image the mocked `sourceFromFile` opens from a file, named without the extension. */
 const sourceOf = (f: File): SourceImage => ({
   image: new Image(),
   url: `blob:${f.name}`,
@@ -83,6 +86,7 @@ interface Deferred<T> {
   reject(reason: unknown): void;
 }
 
+/** A promise the test settles by hand, to hold an import at a given file and phase. */
 function deferred<T>(): Deferred<T> {
   let resolve: (value: T) => void = () => undefined;
   let reject: (reason: unknown) => void = () => undefined;
@@ -95,12 +99,14 @@ function deferred<T>(): Deferred<T> {
   return { promise, resolve, reject };
 }
 
+/** Wraps the hook in the translation provider, for the default file name. */
 const wrapper = ({ children }: { children: ReactNode }): JSX.Element => (
   <TranslateProvider>{children}</TranslateProvider>
 );
 
 type Hook = RenderHookResult<UseImportFilesResult, unknown>;
 
+/** Renders the hook with no import running and no progress. */
 const renderImport = (): Hook =>
   renderHook(() => useImportFiles(), { wrapper });
 

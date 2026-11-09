@@ -53,6 +53,7 @@ const NO_ENHANCEMENTS: EnhanceOptions = {
 };
 const BW: EnhanceOptions = { ...NO_ENHANCEMENTS, filter: 'bw' };
 
+/** Corners of a `size` × `size` square at the origin. */
 const square = (size: number): Corners => ({
   topLeft: { x: 0, y: 0 },
   topRight: { x: size, y: 0 },
@@ -60,6 +61,7 @@ const square = (size: number): Corners => ({
   bottomLeft: { x: 0, y: size },
 });
 
+/** A document with valid corners (a 10 × 10 square) and no adjustments, changed by `patch`. */
 function makeDoc(id: string, patch: Partial<DocumentItem> = {}): DocumentItem {
   return {
     id,
@@ -94,6 +96,7 @@ interface Props {
 
 type Hook = RenderHookResult<Record<string, Preview>, Props>;
 
+/** Renders the hook with `props`; `rerender` changes the documents, the mode, or the options. */
 const renderPreviews = (props: Props): Hook =>
   renderHook(
     ({ documents, mode, options }: Props) =>
@@ -115,6 +118,7 @@ interface Deferred<T> {
   resolve(value: T): void;
 }
 
+/** A promise the test resolves by hand, to hold a render or a scale-down in progress. */
 function deferred<T>(): Deferred<T> {
   let resolve: (value: T) => void = () => undefined;
   const promise: Promise<T> = new Promise<T>((r: (value: T) => void) => {
@@ -123,7 +127,7 @@ function deferred<T>(): Deferred<T> {
   return { promise, resolve };
 }
 
-/** Lets pending promises and zero-delay timers run. */
+/** Lets pending promises and timers of up to 5 ms run. */
 const settle = async (): Promise<void> => {
   await act(async () => {
     await new Promise<void>((resolve: () => void) => setTimeout(resolve, 5));

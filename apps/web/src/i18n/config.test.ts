@@ -17,13 +17,15 @@ const LOCALE_FILES: Record<string, unknown> = import.meta.glob<unknown>(
   { eager: true, import: 'default' },
 );
 
+/** Language of a locale file path: `./locales/pt-BR.json` → `pt-BR`. */
 const languageOfFile = (file: string): string =>
   file.replace('./locales/', '').replace(/\.json$/, '');
 
+/** Whether a value is a plain object, a branch of the message tree; arrays and null are not. */
 const isObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
-/** Plural forms are objects whose keys are all plural categories, including `other`. */
+/** Every `Intl.PluralRules` category. */
 const PLURAL_CATEGORIES: readonly string[] = [
   'zero',
   'one',
@@ -33,6 +35,7 @@ const PLURAL_CATEGORIES: readonly string[] = [
   'other',
 ];
 
+/** Plural forms are objects whose keys are all plural categories, including `other`. */
 const isPluralForms = (value: unknown): value is Record<string, string> =>
   isObject(value) &&
   'other' in value &&

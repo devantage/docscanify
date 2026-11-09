@@ -22,9 +22,11 @@ function DropZone({
   );
 }
 
+/** A tiny PNG file with the given name. */
 const image = (name: string): File =>
   new File(['x'], name, { type: 'image/png' });
 
+/** The element that uses the hook. */
 const zone = (): HTMLElement => screen.getByTestId('zone');
 
 describe('useFileDrop', (): void => {

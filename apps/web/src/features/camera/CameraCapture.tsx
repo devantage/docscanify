@@ -19,8 +19,8 @@ interface Props {
 
 /**
  * Camera to photograph documents in a row. It opens the rear camera, shows framing marks over the
- * video, and stays open after each photo until the user is done. It shows a message when the camera is
- * unavailable or blocked, and turns it off when leaving the screen.
+ * video, and stays open after each photo until the user is done. It shows a message when the
+ * camera is unavailable or blocked, and turns it off when leaving the screen.
  */
 export function CameraCapture({ onDone, onCancel }: Props): JSX.Element {
   const { t } = useTranslate();

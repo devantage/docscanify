@@ -233,7 +233,6 @@ describe('Loupe', (): void => {
     const loupe: HTMLCanvasElement = screen.getByTestId('loupe');
     expect(loupe.width).toBe(256);
     expect(loupe.height).toBe(256);
-    // The CSS size does not change
     expect(loupe.style.width).toBe('128px');
     expect(context.of('stroke')).toEqual([
       [10, '#ffffff'],

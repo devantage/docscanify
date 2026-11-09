@@ -19,7 +19,7 @@ import {
 /** Time for a new render of the preview, which runs OpenCV. */
 const RENDER_TIMEOUT: { timeout: number } = { timeout: 30_000 };
 
-/** The preview canvas. */
+/** The canvas that shows the render of the document on display. */
 function preview(page: Page): Locator {
   return page.getByTestId('result');
 }
@@ -40,6 +40,7 @@ async function rotate(page: Page, direction: 'Left' | 'Right'): Promise<void> {
   await page.getByRole('button', { name: direction, exact: true }).click();
 }
 
+/** The width and the height of a size, swapped, as a quarter turn does. */
 const swapped = (size: Size): Size => ({
   width: size.height,
   height: size.width,

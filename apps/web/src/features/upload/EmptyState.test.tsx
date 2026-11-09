@@ -12,6 +12,11 @@ interface Rendered {
   container: HTMLElement;
 }
 
+/**
+ * Renders the card and returns its callback mocks and container.
+ *
+ * @param over Whether images are being dragged over the screen.
+ */
 function renderEmptyState(over: boolean = false): Rendered {
   const onFiles: Mock<(files: File[]) => void> =
     vi.fn<(files: File[]) => void>();
@@ -24,6 +29,10 @@ function renderEmptyState(over: boolean = false): Rendered {
   return { onFiles, onCamera, container };
 }
 
+/**
+ * Gives the browser a `getUserMedia`, so the take-photo button opens the in-app camera; the
+ * tests remove it after each test.
+ */
 function grantCamera(): void {
   Object.defineProperty(navigator, 'mediaDevices', {
     configurable: true,
@@ -31,6 +40,7 @@ function grantCamera(): void {
   });
 }
 
+/** A JPEG file with the given file name; its content does not matter. */
 function imageFile(name: string): File {
   return new File(['x'], name, { type: 'image/jpeg' });
 }

@@ -4,8 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAnimatedProgress } from './useAnimatedProgress';
 
 /**
- * Animation frames driven by the test: each `frames(n)` runs n frames, 16 ms apart, with the
- * fake clock (and so `performance.now()`) moving along.
+ * Animation frames driven by the test, through {@link frame} and {@link frames}, with the fake
+ * clock (and so `performance.now()`) moving along.
  */
 let queue: Map<number, FrameRequestCallback>;
 let nextFrame: number;
@@ -50,6 +50,7 @@ function frames(count: number, ms: number = 16): void {
 
 type Hook = RenderHookResult<number, { value: number }>;
 
+/** Renders the hook with this real progress; `rerender({ value })` changes it. */
 const renderProgress = (value: number): Hook =>
   renderHook(
     ({ value: real }: { value: number }) => useAnimatedProgress(real),

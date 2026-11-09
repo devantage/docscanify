@@ -54,6 +54,7 @@ const DEFAULT_SETTINGS: ExportSettings = {
   combine: true,
 };
 
+/** Valid corners of a square with sides of `size` px at the origin. */
 const square = (size: number): Corners => ({
   topLeft: { x: 0, y: 0 },
   topRight: { x: size, y: 0 },
@@ -61,6 +62,7 @@ const square = (size: number): Corners => ({
   bottomLeft: { x: 0, y: size },
 });
 
+/** A PNG file named `<name>.png`; its content does not matter, image decoding is mocked. */
 const file = (name: string): File =>
   new File(['x'], `${name}.png`, { type: 'image/png' });
 
@@ -84,6 +86,7 @@ interface Session {
 
 const session: Session = { scan: null, steps: null, camera: null };
 
+/** Renders nothing; keeps the session, steps, and camera in {@link session} for the tests. */
 function Probe(): null {
   session.scan = useScan();
   session.steps = useSteps();
@@ -91,6 +94,7 @@ function Probe(): null {
   return null;
 }
 
+/** Renders the session inside the providers it depends on, nested as in the app. */
 function renderSession(): void {
   render(
     <TranslateProvider>
@@ -107,31 +111,40 @@ function renderSession(): void {
   );
 }
 
+/** The rendered session. Throws before {@link renderSession}. */
 function scan(): ScanContextValue {
   if (!session.scan) throw new Error('The session is not rendered');
   return session.scan;
 }
 
+/** The step on display. Throws before {@link renderSession}. */
 function currentStep(): Step {
   if (!session.steps) throw new Error('The session is not rendered');
   return session.steps.step;
 }
 
+/** Moves to a step, as the top bar does. */
 function goTo(step: Step): void {
   act(() => {
     session.steps?.goTo(step);
   });
 }
 
+/**
+ * Imports one image per name through the session and waits for the import to end. Names
+ * starting with `bad` fail to open; see {@link cropOf} for the crop of the others.
+ */
 async function addFiles(...names: string[]): Promise<void> {
   await act(async () => {
     await scan().addFiles(names.map(file));
   });
 }
 
+/** Names of the documents, in list order. */
 const names = (): string[] =>
   scan().documents.map((d: DocumentItem) => d.source.name);
 
+/** Arguments of the last call to the mocked {@link usePreviews}; throws when never called. */
 const lastPreviews = (): Parameters<typeof usePreviews> => {
   const call: Parameters<typeof usePreviews> | undefined = vi
     .mocked(usePreviews)
@@ -140,6 +153,7 @@ const lastPreviews = (): Parameters<typeof usePreviews> => {
   return call;
 };
 
+/** The toasts on screen, in order, with their kind and text. */
 const toasts = (): { kind: string | null; text: string }[] =>
   screen.queryAllByTestId('toast').map((el: HTMLElement) => ({
     kind: el.getAttribute('data-kind'),

@@ -13,7 +13,10 @@ interface Props {
   panel: ReactNode;
 }
 
-/** Layout of a step with a stage on the left and a panel on the right. */
+/**
+ * Layout of a step: the stage, with its footer under it, on the left and the panel on the right.
+ * On phones the panel goes below the stage.
+ */
 export function StepLayout({
   label,
   children,

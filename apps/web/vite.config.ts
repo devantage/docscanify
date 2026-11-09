@@ -18,7 +18,7 @@ export default defineConfig(() => ({
     VitePWA({
       // The manifests come from webManifest(), one per language
       manifest: false,
-      // Registered in src/main.tsx
+      // Registered by UpdatePrompt (src/features/pwa), which offers new versions
       injectRegister: false,
       // No skipWaiting: a new version takes over the next time the app opens, never in the middle
       // of a scan (the documents only live in the page memory)

@@ -46,6 +46,7 @@ interface Deferred<T> {
   reject(reason: unknown): void;
 }
 
+/** A promise that the test settles from outside, to hold the export at a given point. */
 function deferred<T>(): Deferred<T> {
   let resolve: (value: T) => void = (): void => undefined;
   let reject: (reason: unknown) => void = (): void => undefined;
@@ -70,6 +71,7 @@ const FILE: ExportedFile = {
   fileName: 'documents-202611060840.pdf',
 };
 
+/** A document without corners or adjustments whose image is named `scan-<id>`. */
 function makeDocument(id: string): DocumentItem {
   return {
     id,
@@ -99,6 +101,10 @@ interface PanelOptions {
   status?: string;
 }
 
+/**
+ * Renders the panel in English at the Export step and returns the mocks of the session
+ * operations it calls. By default the session has three documents, exported as a single PDF.
+ */
 function renderPanel({
   documents = [makeDocument('a'), makeDocument('b'), makeDocument('c')],
   settings = SETTINGS,
@@ -147,6 +153,7 @@ function renderPanel({
   return session;
 }
 
+/** The toasts on screen, in order, as `kind: text`. */
 const toasts = (): string[] =>
   screen
     .queryAllByTestId('toast')
@@ -164,18 +171,21 @@ function exportOptions(): ExportOptions {
   return call[2];
 }
 
+/** Reports export progress as {@link exportDocuments} does, after `done` of `total` documents. */
 function reportProgress(done: number, total: number): void {
   act((): void => {
     exportOptions().onProgress?.(done, total);
   });
 }
 
+/** Advances the fake clock by `ms` and lets React render the result. */
 async function advance(ms: number): Promise<void> {
   await act(async (): Promise<void> => {
     await vi.advanceTimersByTimeAsync(ms);
   });
 }
 
+/** The export progress bar; throws when the export button shows instead. */
 const progressBar = (): HTMLElement => screen.getByRole('progressbar');
 
 beforeEach((): void => {

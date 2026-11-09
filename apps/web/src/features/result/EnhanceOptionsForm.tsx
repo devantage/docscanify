@@ -13,7 +13,10 @@ interface Props {
 const FILTERS: Filter[] = ['none', 'grayscale', 'bw'];
 const SHARPENS: Sharpen[] = ['off', 'soft', 'strong'];
 
-/** Fields of the adjustments of a document: color, sharpness, rotation, and noise reduction. */
+/**
+ * Fields of the adjustments of a document: color, sharpness, rotation, and noise reduction. On
+ * phones, rotation and noise reduction share a row and the rotation buttons show only their icons.
+ */
 export function EnhanceOptionsForm({ options, onChange }: Props): JSX.Element {
   const { t } = useTranslate();
   const filters: SegmentedItem<Filter>[] = FILTERS.map((value: Filter) => ({

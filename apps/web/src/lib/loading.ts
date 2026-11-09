@@ -4,6 +4,7 @@ export const PAINT_DELAY: number = 30;
 /** Minimum duration of any loading state, in ms: anything shorter just flickers. */
 export const MIN_LOADING_MS: number = 1000;
 
+/** Resolves after `ms` milliseconds. */
 const delay = async (ms: number): Promise<void> =>
   new Promise<void>((resolve: (value: void | PromiseLike<void>) => void) =>
     setTimeout(resolve, ms),
@@ -16,10 +17,10 @@ const delay = async (ms: number): Promise<void> =>
 export const waitForPaint = async (): Promise<void> => delay(PAINT_DELAY);
 
 /**
- * Runs a task and only resolves after the minimum duration, whether it succeeds or not.
+ * Runs a task and only settles after the minimum duration, whether it succeeds or not.
  *
  * @param ms Minimum duration, in ms.
- * @returns The result of `work`. If `work` fails, the error is rethrown after the minimum duration.
+ * @returns The result of `work`. If `work` fails, its error is rethrown after the minimum duration.
  */
 export async function withMinDuration<T>(
   work: () => Promise<T>,

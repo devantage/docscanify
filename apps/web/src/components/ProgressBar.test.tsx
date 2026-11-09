@@ -52,11 +52,12 @@ function frame(): void {
   });
 }
 
+/** Runs `count` animation frames, 16 ms apart. */
 function frames(count: number): void {
   for (let i: number = 0; i < count; i++) frame();
 }
 
-/** Runs frames until the bar shows 100%; returns how many it took. */
+/** Runs frames until the bar shows 100%, up to 1000; returns how many it took. */
 function framesUntilComplete(): number {
   for (let count: number = 1; count <= 1000; count++) {
     frames(1);
@@ -65,16 +66,19 @@ function framesUntilComplete(): number {
   throw new Error('The bar never reached 100%');
 }
 
+/** Moves the fake clock by `ms` without running animation frames. */
 const advance = (ms: number): void => {
   act(() => {
     vi.advanceTimersByTime(ms);
   });
 };
 
+/** Wraps `ui` in the translations, which format the percentage in the current language. */
 const inLocale = (ui: JSX.Element): JSX.Element => (
   <TranslateProvider>{ui}</TranslateProvider>
 );
 
+/** Renders `ui` inside the translations. */
 const renderBar = (ui: JSX.Element): RenderResult => render(inLocale(ui));
 
 /** Percentage shown above the bar. */

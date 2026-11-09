@@ -25,6 +25,7 @@ const CROSSED: string =
   'The corners are crossed. Drag them to form a quadrilateral.';
 const DETECTOR: string = 'The edge detector could not be loaded';
 
+/** A document with valid corners and no adjustments, changed by `overrides`. */
 function makeDocument(overrides: Partial<DocumentItem> = {}): DocumentItem {
   return {
     id: 'doc-1',
@@ -42,6 +43,7 @@ function makeDocument(overrides: Partial<DocumentItem> = {}): DocumentItem {
   };
 }
 
+/** The translation (in English) and toast providers the hook needs. */
 function Providers({ children }: { children: ReactNode }): JSX.Element {
   return (
     <TranslateProvider defaultLocale="en">
@@ -55,6 +57,7 @@ interface HookProps {
   invalidCount: number;
 }
 
+/** Renders the hook with `initial` as its props; `rerender` changes the document or the count. */
 function renderAlerts(
   initial: HookProps,
 ): RenderHookResult<UseCropAlertsResult, HookProps> {

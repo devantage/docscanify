@@ -42,6 +42,10 @@ interface EncodedFile {
   mimeType: string;
 }
 
+/**
+ * Picks the docscanify encoder for the export format. The PDF margin is converted from
+ * millimeters to points; JPG uses the highest quality.
+ */
 function createEncoder(settings: ExportSettings): DocumentEncoder {
   if (settings.format === 'pdf') {
     return new PdfDocumentEncoder({
@@ -54,6 +58,7 @@ function createEncoder(settings: ExportSettings): DocumentEncoder {
     : new JpegImageEncoder({ quality: 100 });
 }
 
+/** Renders a document and encodes the render, keeping the MIME type of the result. */
 async function encode(
   item: ExportItem,
   encoder: DocumentEncoder,
@@ -75,6 +80,7 @@ async function mergePdfs(pdfs: Uint8Array[]): Promise<Uint8Array> {
   return merged.save();
 }
 
+/** Wraps encoded bytes in a Blob of the given MIME type, for download. */
 const toBlob = (bytes: Uint8Array, type: string): Blob =>
   new Blob([bytes as Uint8Array<ArrayBuffer>], { type });
 
@@ -138,7 +144,10 @@ export async function exportDocuments(
   return { blob: toBlob(zip, 'application/zip'), fileName: `${batchFile}.zip` };
 }
 
-/** Downloads a file through a temporary link. */
+/**
+ * Downloads a file through a temporary link, which is removed right after the click. Its object
+ * URL is revoked 10 seconds later.
+ */
 export function downloadFile({ blob, fileName }: ExportedFile): void {
   const url: string = URL.createObjectURL(blob);
   const link: HTMLAnchorElement = document.createElement('a');

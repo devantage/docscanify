@@ -35,6 +35,7 @@ const CORNERS: Corners = {
   bottomRight: { x: 100, y: 100 },
 };
 
+/** A document with valid corners and no adjustments, named after its id. */
 function makeDocument(id: string): DocumentItem {
   return {
     id,
@@ -51,6 +52,7 @@ function makeDocument(id: string): DocumentItem {
   };
 }
 
+/** A PNG file with the given file name; its content does not matter. */
 function imageFile(name: string): File {
   return new File(['x'], name, { type: 'image/png' });
 }
@@ -61,6 +63,10 @@ interface ScanSpies {
   reorder: Mock<(from: number, to: number) => void>;
 }
 
+/**
+ * Makes {@link useScan} return a session with the given documents, the first one on display, and
+ * returns the mocks of the operations the step calls.
+ */
 function mockScan(documents: DocumentItem[]): ScanSpies {
   const spies: ScanSpies = {
     addFiles: vi
@@ -103,6 +109,7 @@ function Probe(): JSX.Element {
   );
 }
 
+/** Renders the step with the real steps and camera providers, next to {@link Probe}. */
 function renderStep(): { container: HTMLElement } {
   return render(
     <TranslateProvider>

@@ -57,6 +57,7 @@ const messages = (): string[] =>
     .queryAllByTestId('toast')
     .map((el: HTMLElement) => el.querySelector('p')?.textContent ?? '');
 
+/** Moves the fake clock by `ms`, so the toasts due to go away by then do. */
 const advance = (ms: number): void => {
   act(() => {
     vi.advanceTimersByTime(ms);

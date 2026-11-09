@@ -25,6 +25,7 @@ vi.mock('@/features/scan/useScan', () => ({
   useActiveDocument: vi.fn(),
 }));
 
+/** Makes {@link useScan} return a session with no documents and this import progress. */
 function mockScan(importProgress: ImportProgress | null): void {
   const value: ScanContextValue = {
     documents: [],
@@ -50,6 +51,7 @@ function mockScan(importProgress: ImportProgress | null): void {
   vi.mocked(useScan).mockReturnValue(value);
 }
 
+/** Renders the shell inside the language, steps and camera providers it needs. */
 function renderShell(): { container: HTMLElement } {
   return render(
     <TranslateProvider>

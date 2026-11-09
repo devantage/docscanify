@@ -7,6 +7,7 @@ import type { TranslateContextValue } from './TranslateContext';
 import { TranslateProvider } from './TranslateProvider';
 import { useTranslate } from './useTranslate';
 
+/** Wraps the hook in a provider whose default language is pt-BR. */
 const wrapper = ({ children }: { children: ReactNode }): JSX.Element => (
   <TranslateProvider defaultLocale="pt-BR">{children}</TranslateProvider>
 );

@@ -21,7 +21,8 @@ export interface UseCropAlertsResult {
  *   document opens, and cleared once the corners are fixed;
  * - other documents that still need a crop fix, a warning shown again whenever their count
  *   changes (while the document on display has crossed corners, the error covers it);
- * - edges the detector could not find.
+ * - the edge detector that could not be loaded for the document on display, an error shown
+ *   when the document opens.
  *
  * @param doc Document on display.
  * @param invalidCount How many documents in the list have invalid corners.

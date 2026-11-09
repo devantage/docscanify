@@ -65,6 +65,7 @@ function List({
   );
 }
 
+/** A 100 px tall box at the given left edge, as `getBoundingClientRect` returns. */
 const rect = (left: number, width: number): DOMRect =>
   new DOMRect(left, 0, width, 100);
 
@@ -115,7 +116,9 @@ function runFrame(): void {
   });
 }
 
+/** The item with the given name. */
 const item = (name: string): HTMLElement => screen.getByTestId(`item-${name}`);
+/** The scrolling list that contains the items. */
 const list = (): HTMLElement => screen.getByTestId('list');
 
 /** Names of the items, in DOM order. */

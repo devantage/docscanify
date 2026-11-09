@@ -23,6 +23,7 @@ export interface DroppedFile {
   base64: string;
 }
 
+/** Reads a fixture photo from disk as a file to drop, with the MIME type of its extension. */
 export async function fixtureFile(name: Fixture): Promise<DroppedFile> {
   const bytes: Buffer = await readFile(fixturePath(name));
   return {

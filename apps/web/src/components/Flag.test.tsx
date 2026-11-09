@@ -5,6 +5,7 @@ import { type FlagCode, LOCALES } from '@/i18n';
 
 import { Flag } from './Flag';
 
+/** Renders a flag and returns its svg; throws when there is none. */
 function renderFlag(code: FlagCode): SVGSVGElement {
   const { container } = render(<Flag code={code} />);
   const svg: SVGSVGElement | null = container.querySelector('svg');

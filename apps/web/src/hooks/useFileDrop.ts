@@ -18,7 +18,11 @@ export interface UseFileDropResult {
   dropProps: FileDropProps;
 }
 
-/** Turns an element into a drop zone for files. */
+/**
+ * Turns an element into a drop zone for files. It tracks whether files are dragged over it and
+ * prevents the browser from opening dropped files; with `stopPropagation`, a parent drop zone does
+ * not see the events either. A drop without files is ignored.
+ */
 export function useFileDrop({
   onFiles,
   stopPropagation = false,

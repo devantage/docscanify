@@ -69,6 +69,7 @@ const PORTUGUESE: Language = {
 /** The languages in the order of the picker. */
 const PICKER_ORDER: Language[] = [ENGLISH, SPANISH, PORTUGUESE];
 
+/** The button of the top bar that opens the language picker. */
 function languageButton(page: Page): Locator {
   return page.getByTestId('language');
 }

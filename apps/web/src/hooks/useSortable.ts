@@ -93,9 +93,14 @@ export function useSortable<C extends HTMLElement>({
     [],
   );
 
+  /** Converts a viewport x into an x in the list content, which does not move when it scrolls. */
   const contentX = (s: Session, clientX: number): number =>
     clientX - s.container.getBoundingClientRect().left + s.container.scrollLeft;
 
+  /**
+   * Moves the dragged item with the pointer, works out its target index from the item centers,
+   * and shifts the items in between by one slot to make room.
+   */
   const update = (): void => {
     const s: Session | null = session.current;
     if (!s?.active) return;
@@ -117,6 +122,7 @@ export function useSortable<C extends HTMLElement>({
     });
   };
 
+  /** Runs every frame while dragging; scrolls the list while the pointer is at an edge. */
   const edgeScroll = (): void => {
     const s: Session | null = session.current;
     if (!s?.active) return;
@@ -134,6 +140,10 @@ export function useSortable<C extends HTMLElement>({
     s.raf = requestAnimationFrame(edgeScroll);
   };
 
+  /**
+   * Starts the drag: measures the item centers and the slot width, marks the dragged item and the
+   * list, vibrates on touch, and starts the edge scrolling.
+   */
   const activate = (): void => {
     const s: Session | null = session.current;
     if (!s || s.active) return;
@@ -157,6 +167,10 @@ export function useSortable<C extends HTMLElement>({
     s.raf = requestAnimationFrame(edgeScroll);
   };
 
+  /**
+   * Follows the pointer. Before the drag starts, a mouse that moves past the threshold starts it,
+   * while a finger that moves past the slop cancels it, since it is scrolling instead.
+   */
   const onMove = (e: globalThis.PointerEvent): void => {
     const s: Session | null = session.current;
     if (!s || e.pointerId !== s.pointerId) return;
@@ -177,12 +191,16 @@ export function useSortable<C extends HTMLElement>({
     update();
   };
 
+  /** Drops on pointerup; pointercancel ends the drag without reordering. */
   const onUp = (e: globalThis.PointerEvent): void => {
     if (session.current && e.pointerId === session.current.pointerId)
       end(e.type === 'pointerup');
   };
 
-  /** Ends the drag; with `commit`, applies the new order. */
+  /**
+   * Ends the press or drag and removes its listeners; with `commit`, applies the new order. After a
+   * drag, the click that follows the drop is swallowed.
+   */
   function end(commit: boolean): void {
     const s: Session | null = session.current;
     if (!s) return;

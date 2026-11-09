@@ -93,9 +93,15 @@ const SHARED: SharedManifest = {
   ],
 };
 
-/** File name of a language's manifest; `TranslateProvider` links the one of the current language. */
+/**
+ * File name of a language's manifest; `TranslateProvider` links the one of the current language.
+ */
 const fileName = (locale: string): string => `manifest.${locale}.webmanifest`;
 
+/**
+ * Messages of a language, read from its file under {@link LOCALES_DIR} of the app at `root`.
+ * Throws when the file is missing or is not valid JSON.
+ */
 function readMessages(root: string, locale: string): ManifestMessages {
   return JSON.parse(
     fs.readFileSync(path.resolve(root, LOCALES_DIR, `${locale}.json`), 'utf8'),
@@ -127,9 +133,9 @@ function buildManifests(root: string): Map<string, string> {
  * shows its description in the user's language. The dev server builds them on each request, so
  * edits to the messages show up right away; the build writes them next to `index.html`.
  *
- * It also gives `index.html` the language, the description and the manifest of `DEFAULT_LOCALE`,
- * which is what crawlers, link previews and the first paint see. Once the app starts,
- * `TranslateProvider` switches the three to the user's language.
+ * It also gives `index.html` the language, the description and the manifest of
+ * {@link DEFAULT_LOCALE}, which is what crawlers, link previews and the first paint see. Once the
+ * app starts, `TranslateProvider` switches the three to the user's language.
  */
 export function webManifest(): Plugin {
   let root: string = '';

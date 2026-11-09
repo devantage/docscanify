@@ -3,11 +3,15 @@ import { isLocale, type Locale, LOCALES } from './config';
 /** Where the user's explicit language choice is kept between visits. */
 const STORAGE_KEY: string = 'docscanify.locale';
 
+/** Base language of a tag, lowercased: `pt-BR` → `pt`. */
 const language = (tag: string): string => tag.toLowerCase().split('-')[0];
 
 /**
- * Picks the supported language that best matches a browser language tag: an exact match first
- * (`pt-BR`), then the same base language (`pt-PT` → `pt-BR`, `es-MX` → `es`, `en-GB` → `en`).
+ * Picks the supported language that best matches a browser language tag, ignoring case: an exact
+ * match first (`pt-BR`), then the same base language (`pt-PT` → `pt-BR`, `es-MX` → `es`,
+ * `en-GB` → `en`).
+ *
+ * @returns The matching language, or null when none is supported.
  */
 export function matchLocale(tag: string): Locale | null {
   const exact: (typeof LOCALES)[number] | undefined = LOCALES.find(
@@ -43,6 +47,12 @@ export function detectLocale(fallback: Locale): Locale {
   return fallback;
 }
 
+/**
+ * The language the user chose before, if any.
+ *
+ * @returns The stored language, or null when there is none, it is not a supported tag, or storage
+ * is unavailable.
+ */
 export function readStoredLocale(): Locale | null {
   try {
     const stored: string | null = localStorage.getItem(STORAGE_KEY);
@@ -53,6 +63,7 @@ export function readStoredLocale(): Locale | null {
   }
 }
 
+/** Remembers the user's language choice for the next visits, when storage is available. */
 export function storeLocale(locale: Locale): void {
   try {
     localStorage.setItem(STORAGE_KEY, locale);

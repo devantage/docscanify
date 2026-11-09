@@ -42,6 +42,7 @@ function swapped(size: Size): Size {
   return { width: size.height, height: size.width };
 }
 
+/** The straight-line distance between two points, in their unit. */
 function distance(a: Point, b: Point): number {
   return Math.hypot(a.x - b.x, a.y - b.y);
 }
@@ -72,10 +73,12 @@ async function rotate(page: Page, direction: 'Left' | 'Right'): Promise<void> {
   await page.getByRole('button', { name: direction, exact: true }).click();
 }
 
+/** Clicks the button named exactly "Back", which returns to the previous step. */
 async function clickBack(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Back', exact: true }).click();
 }
 
+/** The top bar marks the step at this position, from 0, as the current one. */
 async function expectStep(page: Page, index: number): Promise<void> {
   await expect(page.getByTestId(`step-${String(index)}`)).toHaveAttribute(
     'aria-current',
@@ -119,6 +122,7 @@ async function dragCorner(
   return editorCorners(page);
 }
 
+/** The image of a carousel tile, by its position from 0. */
 function thumbnail(page: Page, index: number): Locator {
   return page.getByTestId(`doc-${String(index)}`).locator('img');
 }

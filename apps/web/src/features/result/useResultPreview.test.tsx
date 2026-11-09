@@ -53,6 +53,7 @@ const OPTIONS: EnhanceOptions = {
 
 const FAILED: string = 'These options could not be applied on this device.';
 
+/** A document with valid corners and adjustments, named after its id. */
 function makeDocument(id: string = 'doc-1'): DocumentItem {
   return {
     id,
@@ -73,6 +74,7 @@ function makeDocument(id: string = 'doc-1'): DocumentItem {
 const enhanceKey = (doc: DocumentItem): string =>
   JSON.stringify([doc.corners, doc.options]);
 
+/** What the mocked {@link useRenderedDocument} returns: a first render in progress by default. */
 function rendered(
   overrides: Partial<UseRenderedDocumentResult> = {},
 ): UseRenderedDocumentResult {
@@ -88,6 +90,7 @@ function rendered(
 
 let setMainRender: Mock<(current: CurrentRender | null) => void>;
 
+/** The language (English), toast, and session providers; the session records `setMainRender`. */
 function Providers({ children }: { children: ReactNode }): JSX.Element {
   const scan: ScanContextValue = {
     documents: [],
@@ -128,6 +131,7 @@ function Providers({ children }: { children: ReactNode }): JSX.Element {
 
 type Hook = RenderHookResult<UseRenderedDocumentResult, { doc: DocumentItem }>;
 
+/** Renders the hook for `doc`; `rerender({ doc })` puts another document on display. */
 function renderPreview(doc: DocumentItem): Hook {
   return renderHook(
     ({ doc: current }: { doc: DocumentItem }): UseRenderedDocumentResult =>
@@ -136,12 +140,14 @@ function renderPreview(doc: DocumentItem): Hook {
   );
 }
 
+/** An empty canvas `width` px wide, standing in for a render. */
 const canvas = (width: number): HTMLCanvasElement => {
   const element: HTMLCanvasElement = document.createElement('canvas');
   element.width = width;
   return element;
 };
 
+/** The toasts on screen, in order, as `kind: text`. */
 const toasts = (): string[] =>
   screen
     .queryAllByTestId('toast')

@@ -14,10 +14,12 @@ import {
   StepNav,
 } from './Panel';
 
+/** Wraps `ui` in the translations, which give the handle and {@link StepNav} their labels. */
 const inLocale = (ui: JSX.Element): JSX.Element => (
   <TranslateProvider>{ui}</TranslateProvider>
 );
 
+/** A panel whose options hold a single button, for the handle to collapse. */
 const panelWithOptions = (): JSX.Element =>
   inLocale(
     <Panel>

@@ -40,7 +40,7 @@ interface Item {
   persistent: boolean;
 }
 
-/** Keeps at most `MAX_TOASTS`, removing the oldest temporary ones first. */
+/** Keeps at most {@link MAX_TOASTS}, removing the oldest temporary ones first. */
 function trim(list: Item[]): Item[] {
   const next: Item[] = [...list];
   while (next.length > MAX_TOASTS) {

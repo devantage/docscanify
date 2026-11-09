@@ -15,7 +15,7 @@ import {
 import type { EnhanceOptions } from './types';
 
 interface Recorded {
-  /** Adapters created when the module loads. */
+  /** Options of the default adapters, which the module creates when it loads. */
   adapterOptions: unknown[];
   fromImageCalls: unknown[][];
 }
@@ -65,6 +65,7 @@ function describeAdapter(adapter: ImageEnhancer | ImageFilter | null): unknown {
   ];
 }
 
+/** {@link NO_ENHANCEMENTS}, with the given adjustments changed. */
 function withOptions(overrides: Partial<EnhanceOptions>): EnhanceOptions {
   return { ...NO_ENHANCEMENTS, ...overrides };
 }

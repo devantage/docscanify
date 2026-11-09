@@ -48,6 +48,7 @@ interface Deferred<T> {
   reject(reason: unknown): void;
 }
 
+/** A promise that the test settles from outside, to hold the export at a given point. */
 function deferred<T>(): Deferred<T> {
   let resolve: (value: T) => void = (): void => undefined;
   let reject: (reason: unknown) => void = (): void => undefined;
@@ -72,6 +73,7 @@ const FILE: ExportedFile = {
   fileName: 'documents-202611060840.pdf',
 };
 
+/** A document without corners or adjustments whose image is named `name`. */
 function makeDocument(id: string, name: string): DocumentItem {
   return {
     id,
@@ -94,6 +96,7 @@ const DOCUMENTS: DocumentItem[] = [
   makeDocument('c', 'contract'),
 ];
 
+/** The language (English) and toast providers the hook needs. */
 function Providers({ children }: { children: ReactNode }): JSX.Element {
   return (
     <TranslateProvider defaultLocale="en">
@@ -102,10 +105,12 @@ function Providers({ children }: { children: ReactNode }): JSX.Element {
   );
 }
 
+/** Renders the hook inside {@link Providers}. */
 function renderExport(): RenderHookResult<UseExportDocumentsResult, unknown> {
   return renderHook(useExportDocuments, { wrapper: Providers });
 }
 
+/** The toasts on screen, in order, as `kind: text`. */
 const toasts = (): string[] =>
   screen
     .queryAllByTestId('toast')
@@ -114,7 +119,7 @@ const toasts = (): string[] =>
         `${toast.dataset.kind ?? ''}: ${toast.textContent}`,
     );
 
-/** Starts an export without waiting for it. */
+/** Starts an export with {@link SETTINGS} without waiting for it. */
 function start(
   hook: RenderHookResult<UseExportDocumentsResult, unknown>,
   documents: DocumentItem[] = DOCUMENTS,

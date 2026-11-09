@@ -21,6 +21,11 @@ const IMAGE_HINT: string =
 
 type OnChange = Mock<(settings: ExportSettings) => void>;
 
+/**
+ * Renders the form in English and returns its `onChange` mock.
+ *
+ * @param count How many documents will be exported.
+ */
 function renderForm(settings: ExportSettings, count: number): OnChange {
   const onChange: OnChange = vi.fn();
   render(
@@ -35,9 +40,11 @@ function renderForm(settings: ExportSettings, count: number): OnChange {
   return onChange;
 }
 
+/** The fieldset whose legend is `legend`. */
 const group = (legend: string): HTMLElement =>
   screen.getByRole('group', { name: legend });
 
+/** The margin field, in mm. */
 const marginInput = (): HTMLInputElement => screen.getByTestId('margin');
 
 describe('ExportOptionsForm', (): void => {

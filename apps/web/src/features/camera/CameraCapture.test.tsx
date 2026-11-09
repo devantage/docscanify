@@ -37,6 +37,12 @@ interface StreamState {
   stop: Mock<() => void>;
 }
 
+/**
+ * Makes the mocked {@link useCameraStream} return this state: ready and without error unless
+ * given otherwise.
+ *
+ * @returns The state, with its `stop` spy.
+ */
 function mockStream(
   state: Partial<Omit<StreamState, 'stop'>> = {},
 ): StreamState {
@@ -54,6 +60,7 @@ interface Rendered {
   onCancel: Mock<() => void>;
 }
 
+/** Renders the camera with spy callbacks, inside the translation and toast providers. */
 function renderCamera(): Rendered {
   const onDone: Mock<(photos: File[]) => void> =
     vi.fn<(photos: File[]) => void>();
