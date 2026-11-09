@@ -1,6 +1,6 @@
 {
   "name": "@devantage/n8n-nodes-docscanify",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "n8n community nodes that scan and crop documents out of images (edge detection and perspective correction) and output them as images or PDFs",
   "contributors": [
     "Guilherme Nogueira <guilherme.nogueira@devantage.com.br>"
@@ -34,7 +34,7 @@
     ]
   },
   "dependencies": {
-    "@devantage/docscanify": "^1.0.0",
+    "@devantage/docscanify": "^1.1.0",
     "@devantage/n8n-custom-nodes-framework": "^1.1.0"
   },
   "peerDependencies": {

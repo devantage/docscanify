@@ -1,3 +1,8 @@
+import type {
+  DocumentOutput,
+  DocumentScannerOptions,
+  OutputFormat,
+} from '@devantage/docscanify';
 import { ResourceOperation } from '@devantage/n8n-custom-nodes-framework';
 import type {
   IBinaryData,
@@ -8,15 +13,13 @@ import type {
 import * as path from 'path';
 
 import { withOperationDisplayOptions } from '../../../utils';
-import {
-  DocumentScanner,
-  type DocumentScannerOptions,
-  type OutputFormat,
-  type ScanResult,
-} from '../shared';
+import { DocumentScannerFactory, ScanCornersConverter } from '../shared';
 
 /** The options collection of the operation. */
-type ScanOperationOptions = Omit<DocumentScannerOptions, 'outputFormat'> & {
+type ScanOperationOptions = Omit<
+  DocumentScannerOptions,
+  'name' | 'outputFormat'
+> & {
   fileName?: string;
 };
 
@@ -216,29 +219,31 @@ export class ScanOperation extends ResourceOperation {
       binaryPropertyName,
     );
 
-    const result: ScanResult = await new DocumentScanner().scan(imageBuffer, {
-      ...scannerOptions,
-      outputFormat,
-    });
+    const { file, report }: DocumentOutput =
+      await DocumentScannerFactory.create().scan(imageBuffer, {
+        ...scannerOptions,
+        outputFormat,
+      });
 
     const baseName: string = binaryData.fileName
       ? path.parse(binaryData.fileName).name
       : 'scan';
 
     const outputBinaryData: IBinaryData = await this.helpers.prepareBinaryData(
-      result.data,
-      fileName || `${baseName}.${result.fileExtension}`,
-      result.mimeType,
+      Buffer.from(file.buffer),
+      fileName || `${baseName}.${file.fileExtension}`,
+      file.mimeType,
     );
 
     return {
       json: {
         ...item.json,
         scan: {
-          detected: result.detected,
-          corners: result.corners ? { ...result.corners } : null,
-          width: result.width,
-          height: result.height,
+          detected: report.corners !== null,
+          corners:
+            report.corners && ScanCornersConverter.fromCorners(report.corners),
+          width: report.dimensions.width,
+          height: report.dimensions.height,
         },
       },
       binary: {
