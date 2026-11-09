@@ -1,0 +1,43 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "importHelpers": false,
+    "emitDecoratorMetadata": false,
+    "experimentalDecorators": false,
+    "useDefineForClassFields": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@devantage/docscanify": ["../../libs/core/src/index.ts"]
+    }
+  },
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./tsconfig.e2e.json"
+    }
+  ]
+}

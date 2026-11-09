@@ -8,6 +8,10 @@
       "!{projectRoot}/.eslintrc.json",
       "!{projectRoot}/eslint.config.mjs",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/**/*.e2e-spec.[jt]s",
+      "!{projectRoot}/src/test-support/**/*",
+      "!{projectRoot}/playwright.config.ts",
+      "!{projectRoot}/tsconfig.e2e.json",
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/jest.config.[jt]s",
       "!{projectRoot}/src/test-setup.[jt]s",
@@ -27,6 +31,32 @@
       "options": {
         "targetName": "test"
       }
+    },
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "serveTargetName": "serve",
+        "devTargetName": "dev",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static",
+        "typecheckTargetName": "typecheck",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
+    },
+    {
+      "plugin": "@nx/vitest",
+      "options": {
+        "testTargetName": "test",
+        "testMode": "run"
+      }
+    },
+    {
+      "plugin": "@nx/playwright/plugin",
+      "options": {
+        "targetName": "e2e"
+      }
     }
   ],
   "targetDefaults": {
@@ -36,5 +66,9 @@
       "inputs": ["production", "^production"]
     }
   },
-  "analytics": true
+  "analytics": true,
+  "useDaemonProcess": false,
+  "tui": {
+    "enabled": false
+  }
 }

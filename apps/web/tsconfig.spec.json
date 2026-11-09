@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "types": ["node", "vite/client", "vitest"],
+    "allowImportingTsExtensions": true
+  },
+  "include": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/test-setup.ts",
+    "src/**/*.d.ts",
+    "plugins/**/*.test.ts",
+    "src/test-support/**/*.ts"
+  ],
+  "exclude": ["src/test-support/e2e"]
+}

@@ -1,0 +1,210 @@
+.upload-screen {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.upload-empty {
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 40rem);
+}
+
+.add-card {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.6rem;
+  background: #e4e7ec;
+  border: 2px dashed #b9c0cb;
+  border-radius: var(--radius-card);
+  color: var(--text-2);
+  text-align: center;
+  transition:
+    background-color 150ms var(--ease),
+    border-color 150ms var(--ease);
+}
+
+/* Images being dragged over the screen */
+.add-card.is-over {
+  background: var(--brand-soft);
+  border-color: var(--brand);
+}
+
+.add-card-large {
+  padding: 2.75rem 2rem 2.25rem;
+}
+
+.upload-filled {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.upload-head {
+  text-align: center;
+}
+
+.upload-heading {
+  margin: 0;
+  font-size: var(--fs-display);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+
+.upload-sub {
+  margin: 0.25rem 0 0;
+  color: var(--text-2);
+}
+
+.upload-footer {
+  display: flex;
+  justify-content: center;
+}
+
+.upload-footer .btn {
+  min-width: 14rem;
+}
+
+.upload-logo {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 0.5rem;
+}
+
+.upload-title {
+  max-width: 24rem;
+  margin: 0;
+  font-size: var(--fs-display);
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.upload-text {
+  max-width: 26rem;
+  margin: 0;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.upload-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.upload-actions .btn {
+  min-height: 48px;
+  padding-inline: 1.4rem;
+}
+
+.upload-actions .btn-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.upload-drop {
+  margin: 0.25rem 0 0;
+  font-size: var(--fs-small);
+  color: var(--muted);
+}
+
+/* The lock stays in the text flow: next to the first word when the note wraps */
+.upload-privacy {
+  justify-self: center;
+  max-width: 30rem;
+  margin: 0;
+  font-size: var(--fs-small);
+  color: var(--text-2);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.upload-privacy svg {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 0.35rem;
+  vertical-align: -2px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------- Phone ---------- */
+
+@media (max-width: 760px) {
+  .add-card-large {
+    padding: 2.25rem 1.25rem 1.75rem;
+  }
+
+  .upload-filled {
+    gap: 1rem;
+  }
+
+  .upload-heading,
+  .upload-title {
+    font-size: 1.375rem;
+  }
+
+  .upload-footer .btn {
+    width: 100%;
+  }
+
+  .upload-actions {
+    display: grid;
+    justify-content: stretch;
+    width: 100%;
+  }
+}
+
+/* Short screens, such as a phone in landscape: the step scrolls instead of cutting its content.
+   Aligned to the top, so what does not fit is below, where scrolling reaches it */
+@media (max-height: 560px) {
+  .stage-center {
+    place-items: start center;
+    overflow-y: auto;
+  }
+
+  .upload-screen {
+    height: auto;
+    min-height: 100%;
+  }
+
+  .upload-filled {
+    height: auto;
+  }
+
+  .upload-filled .doc-carousel.is-large {
+    flex: none;
+  }
+
+  .upload-filled .is-large .doc-item {
+    max-height: none;
+  }
+
+  .add-card-large {
+    padding: 1.5rem 1.25rem 1.25rem;
+  }
+}
+
+/* Without a mouse there is no way to drag files */
+@media (hover: none) and (pointer: coarse) {
+  .upload-drop {
+    display: none;
+  }
+}

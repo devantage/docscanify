@@ -1,0 +1,30 @@
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 3.5px solid #f1d5dc;
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  /* White disc: the preview behind it may be any color */
+  background: #fff;
+  box-shadow:
+    0 0 0 7px #fff,
+    var(--shadow-md);
+  animation: spin 800ms linear infinite;
+}
+
+.spinner.is-inline {
+  display: block;
+}
+
+.spinner.is-centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -22px 0 0 -22px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 3s;
+  }
+}

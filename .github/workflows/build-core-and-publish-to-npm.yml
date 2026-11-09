@@ -1,0 +1,28 @@
+name: Build Core and publish to NPM
+
+on:
+  push:
+    tags:
+      - core-v*.*.*
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@devantage'
+
+      - run: npm install
+
+      - run: npm run build core
+
+      - run: npm publish dist/libs/core --access public

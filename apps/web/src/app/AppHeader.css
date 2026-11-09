@@ -1,0 +1,204 @@
+/* Positioned above the workspace, so the language list covers its overlays */
+.topbar {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 60px;
+  padding: 0.75rem 1.5rem;
+  padding-top: max(0.75rem, env(safe-area-inset-top));
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  /* Never wider than the screen; the language list still opens downward */
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 650;
+  font-size: var(--fs-title);
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+}
+
+.brand img {
+  width: 30px;
+  height: 30px;
+}
+
+/* Auto left margin: the steps and the language picker sit together on the right */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0 0 0 auto;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-small);
+  color: var(--muted);
+}
+
+/* The connector and its step stay on one line, whatever the width */
+.steps li {
+  display: flex;
+  align-items: center;
+}
+
+.steps li + li::before {
+  content: '';
+  display: inline-block;
+  width: 1.25rem;
+  height: 1px;
+  margin-right: 0.25rem;
+  vertical-align: middle;
+  background: var(--line-strong);
+}
+
+.steps li.is-done + li::before {
+  background: var(--brand);
+  opacity: 0.45;
+}
+
+.step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.5rem;
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color 150ms var(--ease),
+    background-color 150ms var(--ease);
+}
+
+.step:disabled {
+  color: #98a2b3;
+  cursor: not-allowed;
+}
+
+.step-n {
+  display: inline-grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition:
+    background-color 150ms var(--ease),
+    border-color 150ms var(--ease);
+}
+
+.step-n svg {
+  width: 0.8rem;
+  height: 0.8rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.steps .is-current .step {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.steps .is-current .step-n {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--on-brand);
+}
+
+.steps .is-done .step {
+  color: var(--text-2);
+}
+
+.steps .is-done .step-n {
+  background: var(--brand-soft);
+  border-color: transparent;
+  color: var(--brand);
+}
+
+@media (hover: hover) {
+  .step:not(:disabled):hover {
+    color: var(--text);
+    background: var(--surface-sunken);
+  }
+}
+
+/* ---------- Phone ---------- */
+
+@media (max-width: 760px) {
+  .topbar {
+    gap: 0.5rem;
+    min-height: 56px;
+    padding-inline: 1rem;
+  }
+
+  .brand {
+    font-size: 1.0625rem;
+  }
+
+  .brand img {
+    width: 26px;
+    height: 26px;
+  }
+
+  .steps li + li::before {
+    width: 0.5rem;
+  }
+
+  .step {
+    padding: 0.4rem 0.25rem;
+  }
+
+  /* Only the numbers, so the four steps fit in the bar */
+  .step-label {
+    display: none;
+  }
+}
+
+/* Wide phones and small tablets: room for the name of the current step */
+@media (min-width: 521px) and (max-width: 760px) {
+  .steps li.is-current .step-label {
+    display: inline;
+  }
+}
+
+/* Narrow phones: the full name and the four steps must fit in the bar */
+@media (max-width: 400px) {
+  .topbar {
+    padding-inline: 0.75rem;
+  }
+
+  .brand {
+    font-size: 1rem;
+  }
+
+  .steps li + li::before {
+    display: none;
+  }
+}
+
+/* Very narrow phones: only the logo, so the steps and the language picker fit */
+@media (max-width: 359px) {
+  .brand-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

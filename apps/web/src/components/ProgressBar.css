@@ -1,0 +1,80 @@
+.progress {
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.progress-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: var(--fs-small);
+}
+
+.progress-label {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 500;
+  color: var(--text-2);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progress-value {
+  flex: none;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.progress-track {
+  height: 6px;
+  overflow: hidden;
+  background: var(--line);
+  border-radius: 999px;
+}
+
+/* The width follows the animated progress frame by frame (useAnimatedProgress) */
+.progress-fill {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--brand);
+  border-radius: inherit;
+}
+
+/* Sheen sweeping over the fill: a transform animation, so it keeps moving even while OpenCV
+   blocks the main thread */
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: progress-sheen 1.3s ease-in-out infinite;
+}
+
+/* Done: the sheen stops, so the full bar reads as finished */
+.progress.is-complete .progress-fill::after {
+  animation: none;
+  opacity: 0;
+}
+
+@keyframes progress-sheen {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-fill::after {
+    animation: none;
+    opacity: 0;
+  }
+}

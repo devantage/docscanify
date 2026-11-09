@@ -1,0 +1,136 @@
+/* Stack of toasts under the top bar, above everything else */
+.toasts {
+  position: fixed;
+  top: calc(max(0.75rem, env(safe-area-inset-top)) + 3.75rem);
+  left: 50%;
+  z-index: 50;
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  width: min(32rem, calc(100% - 2rem));
+  transform: translateX(-50%);
+  /* The empty area lets clicks through; only the toasts take them */
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.55rem 0.5rem 0.55rem 0.85rem;
+  border: 1px solid;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  pointer-events: auto;
+  animation: toast-in 200ms var(--ease);
+}
+
+.toast.is-success {
+  background: var(--ok-soft);
+  border-color: #abefc6;
+  color: var(--ok);
+}
+
+.toast.is-info {
+  background: var(--brand-soft);
+  border-color: #f1c4cf;
+  color: var(--brand);
+}
+
+.toast.is-warning {
+  background: var(--warning-soft);
+  border-color: #fedf89;
+  color: var(--warning);
+}
+
+.toast.is-error {
+  background: var(--danger-soft);
+  border-color: #fecdca;
+  color: var(--danger);
+}
+
+/* min-width: 0 lets a long message wrap inside the toast instead of pushing it off screen */
+.toast p {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.toast-icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Outlined in the toast color, so it fits every kind */
+.toast-action {
+  flex: none;
+  min-height: 32px;
+  padding: 0 0.75rem;
+  background: transparent;
+  border: 1.5px solid currentColor;
+  border-radius: 8px;
+  color: inherit;
+  font: inherit;
+  font-weight: 650;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.toast-close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  color: inherit;
+  cursor: pointer;
+}
+
+.toast-close svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+}
+
+@media (hover: hover) {
+  .toast-action:hover,
+  .toast-close:hover {
+    background: rgba(16, 24, 40, 0.06);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@media (max-width: 760px) {
+  .toasts {
+    top: calc(max(0.75rem, env(safe-area-inset-top)) + 3.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}
