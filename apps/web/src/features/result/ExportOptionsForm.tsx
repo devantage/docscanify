@@ -6,9 +6,7 @@ import { useTranslate } from '@/i18n';
 import type { ExportFormat, ExportSettings } from '@/lib/types';
 
 interface Props {
-  /** Current export options. */
   settings: ExportSettings;
-  /** Called with the updated options when the user changes format, file, page, or margin. */
   onChange(settings: ExportSettings): void;
   /** How many documents will be exported. */
   count: number;

@@ -58,7 +58,6 @@ const FLAGS: Record<FlagCode, ReactNode> = {
 };
 
 interface Props {
-  /** Country of the flag. */
   code: FlagCode;
 }
 

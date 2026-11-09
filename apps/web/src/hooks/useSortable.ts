@@ -45,7 +45,6 @@ interface Session {
   shift: number;
 }
 
-/** Props for a sortable item, from `itemProps(index)`. */
 export interface SortableItemProps {
   'data-sortable': number;
   onPointerDown(e: ReactPointerEvent<HTMLElement>): void;
@@ -53,7 +52,6 @@ export interface SortableItemProps {
   onContextMenu(e: ReactMouseEvent): void;
 }
 
-/** What `useSortable` returns. */
 export interface UseSortableResult<C extends HTMLElement> {
   /** Goes on the scrolling element that contains the items. */
   containerRef: RefObject<C | null>;
@@ -65,11 +63,6 @@ export interface UseSortableResult<C extends HTMLElement> {
  * Drag-and-drop reordering in a horizontally scrolling list, with mouse, touch, or keyboard
  * (Alt + ← / →). While an item is dragged, the others make room for it, and the list scrolls by
  * itself near its edges. The order only changes on drop, through `onReorder`.
- *
- * @param options What to do on reorder and what does not start a drag.
- * @returns
- * - `containerRef`: goes on the scrolling element that contains the items.
- * - `itemProps(index)`: props for each sortable item, in list order.
  */
 export function useSortable<C extends HTMLElement>({
   onReorder,

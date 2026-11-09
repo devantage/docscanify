@@ -5,7 +5,6 @@ import { type JSX, type RefObject, useEffect, useRef } from 'react';
 const ZOOM: number = 2.5;
 
 interface Props {
-  /** Image being cropped. */
   image: HTMLImageElement;
   /** The four corners, in outline order and image coordinates. */
   outline: Corner[];

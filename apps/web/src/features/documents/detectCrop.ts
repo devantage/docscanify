@@ -3,7 +3,6 @@ import type { Corners } from '@devantage/docscanify';
 import { detectCorners } from '@/lib/detect';
 import type { DocumentItem, SourceImage } from '@/lib/types';
 
-/** The crop fields of a document. */
 export type CropState = Pick<
   DocumentItem,
   'corners' | 'valid' | 'detectorFailed'
@@ -12,7 +11,6 @@ export type CropState = Pick<
 /**
  * Detects the corners of an image and returns the crop state of its document.
  *
- * @param source Input image and its document.
  * @returns The detected corners, or a failed state when OpenCV could not be loaded.
  */
 export async function detectCrop(source: SourceImage): Promise<CropState> {

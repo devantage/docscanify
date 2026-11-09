@@ -12,7 +12,6 @@ import type { DocumentItem, EnhanceOptions } from '@/lib/types';
 import { type CropState, detectCrop } from './detectCrop';
 import { forgetRenders } from './renderCache';
 
-/** The document list returned by {@link useDocuments}, with its operations. */
 export interface UseDocumentsResult {
   documents: DocumentItem[];
   active: DocumentItem | null;
@@ -27,11 +26,7 @@ export interface UseDocumentsResult {
   clear(): void;
 }
 
-/**
- * The list of documents being scanned, in export order, and the one on display.
- *
- * @returns The list, the active document, and the operations on them.
- */
+/** The list of documents being scanned, in export order, and the one on display. */
 export function useDocuments(): UseDocumentsResult {
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -141,7 +136,6 @@ export function useDocuments(): UseDocumentsResult {
     if (detectionRuns.current.get(id) === run) update(id, crop);
   };
 
-  /** Discards every document. */
   const clear = (): void => {
     documents.forEach((d: DocumentItem) => {
       URL.revokeObjectURL(d.source.url);

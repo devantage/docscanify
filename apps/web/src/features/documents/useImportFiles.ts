@@ -8,7 +8,6 @@ import type { DocumentItem, SourceImage } from '@/lib/types';
 
 import { detectCrop } from './detectCrop';
 
-/** Outcome of an import. */
 export interface ImportResult {
   /** Documents created, in the order the files were received. */
   added: DocumentItem[];
@@ -18,7 +17,6 @@ export interface ImportResult {
   total: number;
 }
 
-/** Import in progress. */
 export interface ImportProgress {
   /** What is happening to the current file. */
   phase: 'opening' | 'detecting';
@@ -64,7 +62,6 @@ export function describeImport(
   };
 }
 
-/** Import state and operations returned by {@link useImportFiles}. */
 export interface UseImportFilesResult {
   progress: ImportProgress | null;
   importFiles(files: File[]): Promise<ImportResult | null>;
@@ -80,7 +77,6 @@ export interface UseImportFilesResult {
  *   `dismissProgress` is called, so the full bar can be shown for a moment.
  * - `importFiles(files)`: imports the files; resolves when they are done, or to null when an
  *   import is already running.
- * - `dismissProgress()`: hides the finished progress.
  */
 export function useImportFiles(): UseImportFilesResult {
   const { t } = useTranslate();

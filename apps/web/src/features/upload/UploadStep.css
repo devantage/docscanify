@@ -13,7 +13,6 @@
   width: min(100%, 40rem);
 }
 
-/* Add card: dashed gray area with the take-photo and choose-images buttons */
 .add-card {
   display: grid;
   place-content: center;
@@ -170,6 +169,36 @@
     display: grid;
     justify-content: stretch;
     width: 100%;
+  }
+}
+
+/* Short screens, such as a phone in landscape: the step scrolls instead of cutting its content.
+   Aligned to the top, so what does not fit is below, where scrolling reaches it */
+@media (max-height: 560px) {
+  .stage-center {
+    place-items: start center;
+    overflow-y: auto;
+  }
+
+  .upload-screen {
+    height: auto;
+    min-height: 100%;
+  }
+
+  .upload-filled {
+    height: auto;
+  }
+
+  .upload-filled .doc-carousel.is-large {
+    flex: none;
+  }
+
+  .upload-filled .is-large .doc-item {
+    max-height: none;
+  }
+
+  .add-card-large {
+    padding: 1.5rem 1.25rem 1.25rem;
   }
 }
 

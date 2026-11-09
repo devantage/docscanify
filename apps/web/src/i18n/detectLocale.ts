@@ -43,7 +43,6 @@ export function detectLocale(fallback: Locale): Locale {
   return fallback;
 }
 
-/** The language the user chose before, if any. */
 export function readStoredLocale(): Locale | null {
   try {
     const stored: string | null = localStorage.getItem(STORAGE_KEY);
@@ -54,7 +53,6 @@ export function readStoredLocale(): Locale | null {
   }
 }
 
-/** Remembers the user's language choice for the next visits. */
 export function storeLocale(locale: Locale): void {
   try {
     localStorage.setItem(STORAGE_KEY, locale);

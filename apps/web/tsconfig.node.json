@@ -4,7 +4,9 @@
     "outDir": "../../dist/out-tsc",
     "lib": ["ES2023"],
     "types": ["node"],
-    "allowJs": true
+    "allowJs": true,
+    "allowImportingTsExtensions": true
   },
-  "include": ["plugins/**/*.ts", "scripts/**/*.mjs"]
+  "include": ["plugins/**/*.ts", "scripts/**/*.mjs", "vitest.config.ts"],
+  "exclude": ["plugins/**/*.test.ts"]
 }

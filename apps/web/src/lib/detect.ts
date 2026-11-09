@@ -3,7 +3,6 @@ import type { Corners, ScannedDocument } from '@devantage/docscanify';
 /**
  * Detects the document corners in the image. The document starts cropping by them.
  *
- * @param scannedDocument Document to run the detection on.
  * @returns The detected corners or, when no document is found, the corners of the whole image.
  * @throws When OpenCV cannot be loaded.
  */

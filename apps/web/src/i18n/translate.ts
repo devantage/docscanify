@@ -39,7 +39,6 @@ const lookup = (messages: Messages, key: string): unknown =>
  * Builds the translate function of a language.
  *
  * @param locale Language, used for plural rules.
- * @param messages Messages of the language.
  * @param fallback Messages used for keys missing in `messages`.
  */
 export function createTranslate(

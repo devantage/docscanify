@@ -8,7 +8,6 @@ interface Props {
   over: boolean;
   /** Icon-only buttons with a tooltip, for the compact carousel. */
   compact: boolean;
-  /** Called on the take-photo button. */
   onTakePhoto(): void;
   /** Called on the upload button. */
   onChooseFiles(): void;

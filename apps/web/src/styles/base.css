@@ -9,6 +9,12 @@ body,
   margin: 0;
 }
 
+/* Safari on the iPhone enlarges the text when the phone turns to landscape */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   font-family: var(--font);
   font-size: var(--fs-body);

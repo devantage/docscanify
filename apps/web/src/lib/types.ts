@@ -11,24 +11,19 @@ export type Filter = 'none' | 'grayscale' | 'bw';
 /** Sharpness level: no adjustment or one of the docscanify levels. */
 export type Sharpen = 'off' | SharpnessLevel;
 
-/** Format of the exported file. */
 export type ExportFormat = 'pdf' | 'png' | 'jpg';
 
 /** Adjustments of a single document, chosen in the Enhance step. */
 export interface EnhanceOptions {
-  /** Color filter. */
   filter: Filter;
   /** Clockwise quarter turns; negative values rotate counterclockwise. */
   turns: number;
-  /** Sharpness level. */
   sharpen: Sharpen;
-  /** Whether noise reduction is applied. */
   denoise: boolean;
 }
 
 /** Export options, chosen in the Export step. They apply to every document. */
 export interface ExportSettings {
-  /** File format. */
   format: ExportFormat;
   /** PDF page size. Only used when `format` is `"pdf"`. */
   pageFormat: PageFormat;
@@ -57,7 +52,6 @@ export interface SourceImage {
 export interface DocumentItem {
   /** Unique id within the list. */
   id: string;
-  /** Input image and its document. */
   source: SourceImage;
   /** Crop corners; null when the edge detector could not be loaded. */
   corners: Corners | null;
@@ -65,6 +59,5 @@ export interface DocumentItem {
   valid: boolean;
   /** Whether the edge detector could not be loaded for this document. */
   detectorFailed: boolean;
-  /** Adjustments of this document. */
   options: EnhanceOptions;
 }

@@ -18,7 +18,6 @@ export const waitForPaint = async (): Promise<void> => delay(PAINT_DELAY);
 /**
  * Runs a task and only resolves after the minimum duration, whether it succeeds or not.
  *
- * @param work Task to run.
  * @param ms Minimum duration, in ms.
  * @returns The result of `work`. If `work` fails, the error is rethrown after the minimum duration.
  */

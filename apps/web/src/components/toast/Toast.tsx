@@ -12,7 +12,6 @@ import { useTranslate } from '@/i18n';
 
 import type { ToastAction, ToastKind } from './ToastContext';
 
-/** One of the icon components of `icons.tsx`. */
 type IconComponent = (props: IconProps) => JSX.Element;
 
 const ICONS: {
@@ -30,9 +29,7 @@ const ICONS: {
 interface Props {
   kind: ToastKind;
   message: string;
-  /** Button next to the message. */
   action?: ToastAction;
-  /** Called when the toast is closed. */
   onClose(): void;
 }
 

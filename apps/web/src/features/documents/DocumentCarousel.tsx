@@ -21,7 +21,6 @@ interface Props {
   onFiles(files: File[]): void;
   /** Called on the take-photo button when the browser gives access to the camera. */
   onCamera(): void;
-  /** Called to remove a document. */
   onRemove(id: string): void;
   /** Called when a document is dragged to another position, with source and target indexes. */
   onReorder(from: number, to: number): void;

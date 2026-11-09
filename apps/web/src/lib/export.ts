@@ -21,7 +21,6 @@ export const DEFAULT_EXPORT_SETTINGS: ExportSettings = {
   combine: true,
 };
 
-/** A document to export. */
 export interface ExportItem {
   /** Base file name, without extension. */
   name: string;
@@ -33,7 +32,6 @@ export interface ExportItem {
   render(): Promise<Uint8Array>;
 }
 
-/** A file ready to download. */
 export interface ExportedFile {
   blob: Blob;
   fileName: string;
@@ -44,7 +42,6 @@ interface EncodedFile {
   mimeType: string;
 }
 
-/** The encoder of the chosen format. */
 function createEncoder(settings: ExportSettings): DocumentEncoder {
   if (settings.format === 'pdf') {
     return new PdfDocumentEncoder({
@@ -57,7 +54,6 @@ function createEncoder(settings: ExportSettings): DocumentEncoder {
     : new JpegImageEncoder({ quality: 100 });
 }
 
-/** Encodes one rendered document in the chosen format. */
 async function encode(
   item: ExportItem,
   encoder: DocumentEncoder,
@@ -89,13 +85,10 @@ const toBlob = (bytes: Uint8Array, type: string): Blob =>
  * - Several as PDF with `combine`: a single PDF, one page per document, in list order.
  * - Several otherwise: a ZIP with one file per document, numbered in list order.
  *
- * @param items Documents, in list order.
- * @param settings Format and, for PDF, page, margin, and whether to combine everything.
  * @param options
  * - `batchName`: base name of the file with several documents, before the date.
  * - `onProgress`: called before each document with how many are done and the total, and once
  *   more, with every document done, before the final file is put together.
- * @returns The file and the name it should be downloaded with.
  */
 export async function exportDocuments(
   items: ExportItem[],
@@ -145,11 +138,7 @@ export async function exportDocuments(
   return { blob: toBlob(zip, 'application/zip'), fileName: `${batchFile}.zip` };
 }
 
-/**
- * Downloads a file through a temporary link.
- *
- * @param file File and the name to save it with.
- */
+/** Downloads a file through a temporary link. */
 export function downloadFile({ blob, fileName }: ExportedFile): void {
   const url: string = URL.createObjectURL(blob);
   const link: HTMLAnchorElement = document.createElement('a');

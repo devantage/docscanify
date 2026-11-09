@@ -36,7 +36,6 @@ const CORNER_NAMES: (keyof Corners)[] = [
 interface Props {
   /** Input image. The corners are in its coordinates. */
   source: SourceImage;
-  /** Current crop corners. */
   corners: Corners;
   /** Called on every corner move, with all four corners updated and clamped to the image. */
   onChange(corners: Corners): void;

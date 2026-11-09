@@ -11,9 +11,8 @@ import type {
   ViteDevServer,
 } from 'vite';
 
-import { DEFAULT_LOCALE } from '../src/i18n/config';
+import { DEFAULT_LOCALE } from '../src/i18n/locale.ts';
 
-/** An icon of the manifest. */
 interface ManifestIcon {
   src: string;
   sizes: string;
@@ -21,7 +20,6 @@ interface ManifestIcon {
   purpose: string;
 }
 
-/** The members of the manifest that every language shares. */
 interface SharedManifest {
   id: string;
   name: string;
@@ -36,7 +34,6 @@ interface SharedManifest {
   icons: ManifestIcon[];
 }
 
-/** The manifest of one language. */
 interface LocaleManifest extends SharedManifest {
   lang: string;
   dir: string;
@@ -99,7 +96,6 @@ const SHARED: SharedManifest = {
 /** File name of a language's manifest; `TranslateProvider` links the one of the current language. */
 const fileName = (locale: string): string => `manifest.${locale}.webmanifest`;
 
-/** Reads the messages of a language, from its file in `LOCALES_DIR`. */
 function readMessages(root: string, locale: string): ManifestMessages {
   return JSON.parse(
     fs.readFileSync(path.resolve(root, LOCALES_DIR, `${locale}.json`), 'utf8'),

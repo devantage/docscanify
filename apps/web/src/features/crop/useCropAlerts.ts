@@ -10,7 +10,6 @@ const CROSSED_TOAST: string = 'crop-crossed';
 const INVALID_TOAST: string = 'crop-invalid';
 const DETECTOR_TOAST: string = 'crop-detector';
 
-/** What `useCropAlerts` returns. */
 export interface UseCropAlertsResult {
   /** Reported on drag end, not on every move, so the toast does not flicker. */
   dragEnded(): void;
@@ -26,7 +25,6 @@ export interface UseCropAlertsResult {
  *
  * @param doc Document on display.
  * @param invalidCount How many documents in the list have invalid corners.
- * @returns `dragEnded()`: call it when a corner drag ends.
  */
 export function useCropAlerts(
   doc: DocumentItem,
@@ -69,7 +67,6 @@ export function useCropAlerts(
   }, [doc.id, doc.detectorFailed, toast, t]);
 
   return {
-    /** Reported on drag end, not on every move, so the toast does not flicker. */
     dragEnded: (): void => {
       if (crossedRef.current) showCrossed();
     },

@@ -50,8 +50,6 @@
   }
 }
 
-/* ---------- List ---------- */
-
 .language-list {
   position: absolute;
   top: calc(100% + 0.5rem);
@@ -133,8 +131,8 @@
   }
 }
 
-/* Narrow phones: the flag alone identifies the language; the list still shows the names */
-@media (max-width: 400px) {
+/* Phones: the flag alone identifies the language; the list still shows the names */
+@media (max-width: 520px) {
   .language-button {
     gap: 0.3rem;
     padding-inline: 0.5rem 0.4rem;

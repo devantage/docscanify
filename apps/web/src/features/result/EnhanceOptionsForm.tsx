@@ -6,9 +6,7 @@ import { useTranslate } from '@/i18n';
 import type { EnhanceOptions, Filter, Sharpen } from '@/lib/types';
 
 interface Props {
-  /** Adjustments of a document. */
   options: EnhanceOptions;
-  /** Called with the updated adjustments when the user changes one of them. */
   onChange(options: EnhanceOptions): void;
 }
 

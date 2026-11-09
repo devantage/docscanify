@@ -1,3 +1,4 @@
+import type { Locale } from './locale';
 import en from './locales/en.json';
 import es from './locales/es.json';
 import ptBR from './locales/pt-BR.json';
@@ -5,14 +6,7 @@ import ptBR from './locales/pt-BR.json';
 /** Messages of one language. pt-BR is the reference shape: every language must have its keys. */
 export type Messages = typeof ptBR;
 
-/** Supported languages, as BCP 47 tags. */
-export type Locale = 'pt-BR' | 'en' | 'es';
-
-/**
- * Language used when none of the browser languages is supported. Change it here to configure
- * the app; `TranslateProvider` also accepts a `defaultLocale` prop.
- */
-export const DEFAULT_LOCALE: Locale = 'en';
+export { DEFAULT_LOCALE, type Locale } from './locale';
 
 /** Messages of every supported language. Typed as `Messages`, so a missing key fails to compile. */
 export const MESSAGES: Record<Locale, Messages> = {

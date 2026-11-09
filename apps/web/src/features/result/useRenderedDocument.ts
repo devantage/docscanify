@@ -31,12 +31,6 @@ export interface UseRenderedDocumentResult {
  * lasts at least the minimum loading duration (`MIN_LOADING_MS`).
  *
  * @param doc Document on display, with its crop corners set.
- * @returns
- * - `result`: canvas with the rendered document, or null before the first one.
- * - `ready`: `result` belongs to the current document, corners, and adjustments.
- * - `busy`: a new render is needed and `result` still shows an older one.
- * - `failed`: the render for the current options failed; `result` keeps the previous one.
- * - `rendering`: some render is in progress, to show the loading state.
  */
 export function useRenderedDocument(
   doc: DocumentItem,

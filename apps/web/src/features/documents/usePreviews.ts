@@ -57,8 +57,6 @@ interface Options {
  * What changes how a document looks in the given mode: the crop and, in `enhance` mode, the
  * adjustments.
  *
- * @param mode What the thumbnail shows.
- * @param doc Document from the list.
  * @returns A key that changes whenever the thumbnail must be regenerated.
  */
 export const previewKey = (mode: PreviewMode, doc: DocumentItem): string =>
@@ -81,9 +79,7 @@ const modeOptions = (mode: PreviewMode, doc: DocumentItem): EnhanceOptions =>
  * at least `MIN_LOADING_MS`. Results are cached per mode, so switching steps does not regenerate
  * thumbnails that did not change.
  *
- * @param documents Documents from the list.
  * @param mode What the thumbnails show; null stops generation and returns no thumbnails.
- * @param options Document on display, main preview, and pause.
  * @returns The thumbnail of each document, by id.
  */
 export function usePreviews(

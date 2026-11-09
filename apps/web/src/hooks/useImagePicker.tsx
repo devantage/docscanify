@@ -1,7 +1,6 @@
 import { type ChangeEvent, type JSX, type RefObject, useRef } from 'react';
 
 interface Options {
-  /** Called with the chosen images, in the order received. */
   onFiles(files: File[]): void;
   /** Called by `takePhoto` when the browser gives access to the camera. */
   onCamera(): void;
@@ -14,25 +13,15 @@ const canUseCamera = (): boolean => {
   return !!mediaNavigator.mediaDevices?.getUserMedia;
 };
 
-/** What `useImagePicker` returns. */
 export interface UseImagePickerResult {
   /** Opens the in-app camera, or the native camera through the file picker. */
   takePhoto(): void;
-  /** Opens the file picker. */
   chooseFiles(): void;
   /** Hidden file input that both use; render it once. */
   fileInput: JSX.Element;
 }
 
-/**
- * The two ways of adding images: taking photos or choosing files.
- *
- * @returns
- * - `takePhoto()`: opens the in-app camera, or the native camera through the file picker when the
- *   browser does not give camera access.
- * - `chooseFiles()`: opens the file picker.
- * - `fileInput`: hidden file input that both use; render it once.
- */
+/** The two ways of adding images: taking photos or choosing files. */
 export function useImagePicker({
   onFiles,
   onCamera,

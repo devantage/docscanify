@@ -29,7 +29,6 @@ import { ScanContext, type ScanContextValue } from './ScanContext';
 /** Id of the toast about the last import, so a new import replaces it. */
 const IMPORT_TOAST: string = 'import';
 
-/** What the thumbnails show in each step. */
 const PREVIEW_MODES: Record<Step, PreviewMode | null> = {
   upload: null,
   crop: 'crop',

@@ -15,7 +15,7 @@
       "cache": true,
       "inputs": ["default", "^production"],
       "options": {
-        "command": "tsc -p apps/web/tsconfig.app.json --noEmit && tsc -p apps/web/tsconfig.node.json --noEmit"
+        "command": "tsc -p apps/web/tsconfig.app.json --noEmit && tsc -p apps/web/tsconfig.node.json --noEmit && tsc -p apps/web/tsconfig.spec.json --noEmit && tsc -p apps/web/tsconfig.e2e.json --noEmit"
       },
       "executor": "nx:run-commands"
     }

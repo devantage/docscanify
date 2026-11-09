@@ -17,7 +17,6 @@ function cameraError(error: unknown): CameraError {
   return 'unknown';
 }
 
-/** What `useCameraStream` returns. */
 export interface UseCameraStreamResult {
   /** The video is playing. */
   ready: boolean;
@@ -27,15 +26,7 @@ export interface UseCameraStreamResult {
   stop(): void;
 }
 
-/**
- * Plays the rear camera in a video element and turns it off on unmount.
- *
- * @param videoRef Video element that shows the camera.
- * @returns
- * - `ready`: the video is playing.
- * - `error`: why the camera is unavailable or blocked, or null.
- * - `stop()`: turns the camera off right away.
- */
+/** Plays the rear camera in a video element and turns it off on unmount. */
 export function useCameraStream(
   videoRef: RefObject<HTMLVideoElement | null>,
 ): UseCameraStreamResult {
@@ -102,7 +93,6 @@ export function useCameraStream(
  * margin. The framing marks are placed in it.
  *
  * @param viewRef Container of the video.
- * @param videoRef The video element.
  * @param ready Whether the video is playing, so its size is known.
  * @returns Absolute position and size for the framing marks, or null before the video plays.
  */

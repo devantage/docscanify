@@ -4,7 +4,6 @@ import type { Locale } from './config';
 import type { TranslateFunction } from './translate';
 
 export interface TranslateContextValue {
-  /** Current language. */
   locale: Locale;
   /** Changes the language and remembers the choice. */
   setLocale(locale: Locale): void;

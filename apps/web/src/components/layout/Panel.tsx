@@ -16,7 +16,6 @@ export function PanelBody({ children }: { children: ReactNode }): JSX.Element {
 }
 
 interface HeaderProps {
-  /** Title of the step. */
   title: string;
   /** Text under the title. Without it, only the title shows up. */
   text?: ReactNode;
@@ -25,7 +24,6 @@ interface HeaderProps {
   'data-testid'?: string;
 }
 
-/** Title of a `Panel` and an optional text under it. */
 export function PanelHeader({
   title,
   text,
@@ -63,13 +61,9 @@ export function PanelActions({
 }
 
 interface NavProps {
-  /** Called on the continue button. */
   onContinue(): void;
-  /** Called on the back button. */
   onBack(): void;
-  /** Disables the continue button, such as while the step is not done. */
   continueDisabled?: boolean;
-  /** Test id of the continue button. */
   continueTestId?: string;
 }
 

@@ -14,9 +14,7 @@ export interface ScanContextValue {
   invalidCount: number;
   /** Thumbnails of the documents as they look in the step on display, by id. */
   previews: Record<string, Preview>;
-  /** Images being imported, or null. */
   importProgress: ImportProgress | null;
-  /** Export options. */
   exportSettings: ExportSettings;
 
   /**
@@ -32,13 +30,10 @@ export interface ScanContextValue {
   select(id: string): void;
   /** Sets the crop corners of a document. Crossed corners are kept but marked invalid. */
   setCorners(id: string, corners: Corners): void;
-  /** Detects the edges of a document again. */
   redetect(id: string): void;
-  /** Sets the adjustments of a document. */
   setOptions(id: string, options: EnhanceOptions): void;
   /** Copies color, sharpness, and noise reduction from one document to all the others. */
   applyOptionsToAll(sourceId: string): void;
-  /** Sets the export options. */
   setExportSettings(settings: ExportSettings): void;
   /** Discards every document and the export options, and starts over at the Upload step. */
   restart(): void;

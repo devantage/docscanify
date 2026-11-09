@@ -5,7 +5,6 @@ export type ToastKind = 'success' | 'info' | 'warning' | 'error';
 
 /** Button of a toast, next to its message. */
 export interface ToastAction {
-  /** Text of the button. */
   label: string;
   /** Called on the button; the toast closes. */
   onClick(): void;

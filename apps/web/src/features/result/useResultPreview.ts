@@ -21,7 +21,6 @@ const FAILED_TOAST: string = 'render-failed';
  * render in a toast.
  *
  * @param doc Document on display, with its crop corners set.
- * @returns The same as `useRenderedDocument`.
  */
 export function useResultPreview(doc: DocumentItem): UseRenderedDocumentResult {
   const { t } = useTranslate();

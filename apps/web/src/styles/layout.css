@@ -1,7 +1,10 @@
 /* App shell: top bar, then the workspace with a stage (preview) and, in some steps, a panel */
 
+/* minmax(0, 1fr): nothing inside can make the page wider than the screen, which on phones would
+   zoom it out or push parts of it off screen */
 .app {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto 1fr;
   height: 100dvh;
 }
@@ -14,8 +17,6 @@
   grid-template-rows: minmax(0, 1fr);
   min-height: 0;
 }
-
-/* ---------- Stage ---------- */
 
 .stage {
   position: relative;
@@ -53,8 +54,6 @@
   padding: 2rem;
   overflow: hidden;
 }
-
-/* ---------- Panel ---------- */
 
 .panel {
   display: flex;
@@ -126,6 +125,11 @@
   .stage:has(+ .panel) {
     grid-column: 1;
     padding: 1rem;
+  }
+
+  /* Without a panel below it, the stage keeps its buttons above the iPhone home indicator */
+  .stage:not(:has(+ .panel)) {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 
   .stage-split,

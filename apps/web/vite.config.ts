@@ -1,3 +1,4 @@
+import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
@@ -11,6 +12,8 @@ export default defineConfig(() => ({
   plugins: [
     react(),
     webManifest(),
+    // Tells Nx when the dev or preview server is listening, so the e2e tests start right then
+    nxReadySignal(),
     // Service worker that keeps the whole app on the device, so it opens and works offline
     VitePWA({
       // The manifests come from webManifest(), one per language

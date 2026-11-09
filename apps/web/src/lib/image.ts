@@ -19,12 +19,7 @@ export function fileStamp(): string {
   return new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '');
 }
 
-/**
- * Decodes a PNG into a canvas, to show the result on screen.
- *
- * @param png PNG bytes.
- * @returns A canvas the size of the image, with the image drawn on it.
- */
+/** Decodes a PNG into a canvas, to show the result on screen. */
 export async function canvasFromPng(
   png: Uint8Array,
 ): Promise<HTMLCanvasElement> {
@@ -42,7 +37,6 @@ export async function canvasFromPng(
 /**
  * Scales an image down to thumbnail size, keeping its aspect ratio.
  *
- * @param image Source canvas or bitmap.
  * @returns The thumbnail as a JPEG data URL.
  */
 export async function thumbnailFrom(
@@ -74,7 +68,6 @@ export async function thumbnailFrom(
 /**
  * Scales a PNG down to thumbnail size.
  *
- * @param png PNG bytes, such as a document render.
  * @returns The thumbnail as a JPEG data URL.
  */
 export async function thumbnailFromPng(png: Uint8Array): Promise<string> {
@@ -89,7 +82,6 @@ export async function thumbnailFromPng(png: Uint8Array): Promise<string> {
 /**
  * Creates the input image from a file, without changing it, and the document from it.
  *
- * @param file Chosen, dropped, or photographed image.
  * @param fallbackName Base name used when the file has none.
  * @returns The image, shown in the editor, and the document, which does all the processing.
  * @throws When the browser cannot read the file.
@@ -125,7 +117,6 @@ export async function sourceFromFile(
  *
  * @param video Camera video, already playing.
  * @param name File name, without extension.
- * @returns The frame as a PNG file.
  */
 export async function frameFromVideo(
   video: HTMLVideoElement,

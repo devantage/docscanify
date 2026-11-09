@@ -13,7 +13,6 @@ import {
 import { withMinDuration } from '@/lib/loading';
 import type { DocumentItem, ExportSettings } from '@/lib/types';
 
-/** Export in progress. */
 export interface ExportProgress {
   /** How many documents are encoded. */
   done: number;
@@ -27,7 +26,6 @@ export interface ExportProgress {
 const EXPORT_TOAST: string = 'export';
 
 export interface UseExportDocumentsResult {
-  /** The export in progress, or null. */
   progress: ExportProgress | null;
   /** Exports the documents, in list order, with the given options. */
   start(documents: DocumentItem[], settings: ExportSettings): Promise<void>;
@@ -42,8 +40,6 @@ export interface UseExportDocumentsResult {
  * @returns
  * - `progress`: the export in progress, or null. It stays `finished` after the download until
  *   `dismissProgress` is called, so the full bar can be shown for a moment.
- * - `start(documents, settings)`: exports the documents, in list order, with the given options.
- * - `dismissProgress()`: hides the finished progress.
  */
 export function useExportDocuments(): UseExportDocumentsResult {
   const { t } = useTranslate();

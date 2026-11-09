@@ -16,7 +16,6 @@ interface Props {
   active: boolean;
   /** Called when the document is tapped. Without it, the tile is not selectable. */
   onSelect?(id: string): void;
-  /** Called on the remove button. */
   onRemove(id: string): void;
 }
 

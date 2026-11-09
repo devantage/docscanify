@@ -32,7 +32,6 @@ export const NO_ENHANCEMENTS: EnhanceOptions = {
  * whole original image.
  *
  * @param file Bytes of any image the browser can read.
- * @param name Document name.
  */
 export async function createScannedDocument(
   file: Uint8Array,
@@ -48,7 +47,6 @@ export async function createScannedDocument(
  * Builds the enhancers chosen in the Enhance step. They run after the crop and before the
  * filter, in this order: noise reduction, sharpness, rotation.
  *
- * @param options Document adjustments.
  * @returns The active enhancers; empty when none is on.
  */
 export function createEnhancers({
@@ -72,7 +70,6 @@ export function createEnhancers({
 /**
  * Builds the color filter of a document.
  *
- * @param filter Chosen filter.
  * @returns The filter, or null to keep the original colors.
  */
 export function createFilter(filter: Filter): ImageFilter | null {
@@ -98,7 +95,6 @@ function applyOptions(
  * synchronous step, so a concurrent render with other adjustments cannot interfere.
  *
  * @param scannedDocument Document, with its crop corners already set.
- * @param options Adjustments to apply.
  * @returns The rendered document, as PNG.
  */
 export async function renderWith(

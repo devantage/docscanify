@@ -8,15 +8,12 @@ export interface SegmentedItem<T> {
 }
 
 interface Props<T> {
-  /** Group label. */
   legend: string;
   /** Radio group name; must be unique on the page. */
   name: string;
   /** Options, in display order. */
   items: SegmentedItem<T>[];
-  /** Selected value. */
   value: T;
-  /** Called with the value of the chosen option. */
   onChange(value: T): void;
 }
 

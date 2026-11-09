@@ -15,7 +15,6 @@ import { Flag } from '@/components/Flag';
 import { CheckIcon, ChevronDownIcon } from '@/components/icons';
 import { LOCALES, useTranslate } from '@/i18n';
 
-/** One language of the picker. */
 type LocaleOption = (typeof LOCALES)[number];
 
 /**
