@@ -1,0 +1,34 @@
+{
+  "name": "mcp",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/mcp/src",
+  "projectType": "application",
+  "tags": ["scope:app"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/mcp",
+        "main": "apps/mcp/src/main.ts",
+        "tsConfig": "apps/mcp/tsconfig.app.json",
+        "assets": ["apps/mcp/*.md"],
+        "generatePackageJson": true
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "continuous": true,
+      "options": {
+        "command": "mkdir -p tmp/mcp/node-path/@devantage && ln -sfn ../../../../dist/libs/core tmp/mcp/node-path/@devantage/docscanify && NODE_PATH=\"$PWD/tmp/mcp/node-path\" node dist/apps/mcp/src/main.js --transport http --port 3333"
+      }
+    },
+    "lint": {
+      "cache": false,
+      "options": {
+        "args": ["--fix"]
+      }
+    }
+  }
+}
