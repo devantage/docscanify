@@ -35,6 +35,6 @@ RUN chown -R nginx_user:nginx_group /usr/share/nginx /var/cache/nginx /run
 
 USER nginx_user
 
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]

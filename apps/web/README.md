@@ -104,11 +104,11 @@ To test the offline mode, open the preview, then turn the network off in the Dev
 
 ### Docker
 
-The [`Dockerfile`](Dockerfile) builds the app and serves it with nginx, as a non-root user, on port 80. Build it from the root of the monorepo, because the build needs the library and the workspace:
+The [`Dockerfile`](Dockerfile) builds the app and serves it with nginx, as a non-root user, on port 8080. Build it from the root of the monorepo, because the build needs the library and the workspace:
 
 ```bash
 docker build . -f apps/web/Dockerfile -t docscanify-web
-docker run -p 8080:80 docscanify-web   # http://localhost:8080
+docker run -p 8080:8080 docscanify-web   # http://localhost:8080
 ```
 
 The site configuration, in [`nginx.conf`](nginx.conf), compresses the files, caches the hashed assets for a year and makes the browser check `index.html`, `sw.js`, the manifests and `opencv.js` on every visit, so new versions are found. Put the container behind a proxy with HTTPS in production.
