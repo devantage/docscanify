@@ -6,6 +6,7 @@ import {
   Panel,
   PanelBody,
   PanelHeader,
+  PanelOptions,
   StepNav,
 } from '@/components/layout/Panel';
 import { StepLayout } from '@/components/layout/StepLayout';
@@ -52,17 +53,19 @@ export function CropStep(): JSX.Element {
               text={doc.corners ? t('crop.instructions') : undefined}
               data-testid="detect-status"
             />
-            <div className="row">
-              <button
-                type="button"
-                className="btn btn-secondary btn-small"
-                onClick={autoDetect}
-                data-testid="auto-detect"
-              >
-                <AutoDetectIcon className="btn-icon" />
-                {t('crop.autoDetect')}
-              </button>
-            </div>
+            <PanelOptions>
+              <div className="row">
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-small"
+                  onClick={autoDetect}
+                  data-testid="auto-detect"
+                >
+                  <AutoDetectIcon className="btn-icon" />
+                  {t('crop.autoDetect')}
+                </button>
+              </div>
+            </PanelOptions>
           </PanelBody>
           <StepNav
             onContinue={() => {

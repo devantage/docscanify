@@ -98,6 +98,7 @@ const THREE_DOCUMENTS: Fixture[] = [
 /** Rounding of the layout, in CSS pixels. */
 const TOLERANCE: number = 1;
 
+/** The Playwright options that emulate a phone with this screen: touch, mobile layout, 3× DPR. */
 function phone(screen: Screen): {
   viewport: { width: number; height: number };
   isMobile: boolean;
@@ -168,6 +169,7 @@ interface Box {
   bottom: number;
 }
 
+/** Where an element is on the screen, read in the page. */
 async function boxOf(target: Locator): Promise<Box> {
   return target.evaluate((element: Element): Box => {
     const rect: DOMRect = element.getBoundingClientRect();
@@ -197,6 +199,10 @@ interface TopBarLayout {
   items: StepLayout[];
 }
 
+/**
+ * Measures the top bar in the page: its content box, its three parts, and the item, button,
+ * number and connector of each step.
+ */
 async function topBarLayout(page: Page): Promise<TopBarLayout> {
   return page.locator('.topbar').evaluate((bar: HTMLElement): TopBarLayout => {
     const measure = (element: Element | null): Box => {
@@ -242,8 +248,10 @@ async function topBarLayout(page: Page): Promise<TopBarLayout> {
   });
 }
 
+/** The vertical center of a box, to tell whether parts of the top bar are on the same line. */
 const middle = (box: Box): number => (box.top + box.bottom) / 2;
 
+/** A length in CSS pixels with one decimal, for the messages of {@link topBarProblems}. */
 const px = (value: number): string => value.toFixed(1);
 
 /** What is wrong with the top bar: parts outside it, overlapping, or on more than one line. */
@@ -471,7 +479,10 @@ async function expectUploadNotCut(page: Page): Promise<void> {
   }
 }
 
-/** The preview is centered in the screen, not pushed against an edge. */
+/**
+ * The preview is centered in the stage, not pushed against an edge. The stage starts at the left
+ * edge of the screen and, up to 760 px, takes its whole width.
+ */
 async function expectCentered(
   page: Page,
   preview: Locator,
@@ -499,7 +510,7 @@ async function expectCentered(
   }
 }
 
-/** The buttons pinned to the bottom of the panel of the current step. */
+/** The buttons pinned to the bottom of the panel of the current step, once there are `count`. */
 async function panelButtons(page: Page, count: number): Promise<Locator[]> {
   const buttons: Locator = page.locator('.panel-actions button');
   await expect(buttons).toHaveCount(count);
@@ -531,6 +542,7 @@ async function expectStepFits(
   await expectPageFits(page, screen);
 }
 
+/** The top bar marks the step at this position, from 0, as the current one. */
 async function expectCurrentStep(page: Page, step: number): Promise<void> {
   await expect(page.getByTestId(`step-${String(step)}`)).toHaveAttribute(
     'aria-current',
@@ -636,6 +648,34 @@ function readScroll(carousel: HTMLElement): CarouselScroll {
   };
 }
 
+/** Share of the screen height the panel may take open: what is left goes to the document. */
+const OPEN_PANEL_SHARE: number = 0.55;
+
+/** Share of the screen height the panel of the Adjust step takes once its options collapse. */
+const COLLAPSED_PANEL_SHARE: number = 0.2;
+
+/** How tall a box is on the screen, in CSS pixels. */
+function heightOf(box: Box): number {
+  return box.bottom - box.top;
+}
+
+/** Opens the Adjust step with three documents, its preview rendered. */
+async function openAdjust(page: Page): Promise<void> {
+  await openApp(page);
+  await uploadImages(page, THREE_DOCUMENTS);
+  await page.getByTestId('upload-continue').click();
+  await page.getByTestId('crop').click();
+  await resultSize(page);
+}
+
+/** The handle of the panel tells whether the options of the panel are collapsed or open. */
+async function expectCollapsed(page: Page, collapsed: boolean): Promise<void> {
+  await expect(page.getByTestId('panel-toggle')).toHaveAttribute(
+    'aria-expanded',
+    String(!collapsed),
+  );
+}
+
 test.describe('Phone layout', (): void => {
   for (const screen of PORTRAIT) {
     test.describe(`${screen.name}, ${String(screen.width)} × ${String(screen.height)}`, (): void => {
@@ -725,5 +765,122 @@ test.describe('Phone layout', (): void => {
       ).toBeLessThan(0);
       await expectPageFits(page, IPHONE_PRO_MAX);
     });
+  });
+});
+
+test.describe('Collapsible panel on phones', (): void => {
+  for (const screen of PORTRAIT) {
+    test.describe(`${screen.name}, ${String(screen.width)} × ${String(screen.height)}`, (): void => {
+      test.use(phone(screen));
+
+      test('the open panel leaves most of the screen to the document, and collapsing it leaves even more', async ({
+        page,
+      }: {
+        page: Page;
+      }): Promise<void> => {
+        await openAdjust(page);
+        await settle(page);
+        const panel: Locator = page.locator('.panel');
+        await expectCollapsed(page, false);
+        const open: Box = await boxOf(panel);
+        const openPreview: Box = await boxOf(page.getByTestId('result'));
+        expect(heightOf(open)).toBeLessThanOrEqual(
+          screen.height * OPEN_PANEL_SHARE + TOLERANCE,
+        );
+        await expectTappable(page.getByTestId('apply-all'), '"Apply to all"');
+        await expectTappable(page.getByTestId('denoise'), '"Reduce noise"');
+
+        await page.getByTestId('panel-toggle').click();
+        await expectCollapsed(page, true);
+        await expect(page.getByTestId('apply-all')).toBeHidden();
+        await expect(page.getByTestId('denoise')).toBeHidden();
+        await expect
+          .poll(async (): Promise<number> => heightOf(await boxOf(panel)))
+          .toBeLessThanOrEqual(screen.height * COLLAPSED_PANEL_SHARE);
+        await expect(page.getByTestId('result-size')).toBeVisible();
+        const [next, back] = await panelButtons(page, 2);
+        await expectTappable(next, '"Continue"');
+        await expectTappable(back, '"Back"');
+        await expect
+          .poll(async (): Promise<number> =>
+            heightOf(await boxOf(page.getByTestId('result'))),
+          )
+          .toBeGreaterThan(heightOf(openPreview));
+        await expectPageFits(page, screen);
+
+        await page.getByTestId('panel-toggle').click();
+        await expectCollapsed(page, false);
+        await expectTappable(page.getByTestId('apply-all'), '"Apply to all"');
+      });
+    });
+  }
+
+  test.describe('iPhone 14', (): void => {
+    test.use(phone({ name: 'iPhone 14', width: 390, height: 844 }));
+
+    test('keeps the choice in the next steps and on the next visit', async ({
+      page,
+    }: {
+      page: Page;
+    }): Promise<void> => {
+      await openAdjust(page);
+      await page.getByTestId('panel-toggle').click();
+      await expectCollapsed(page, true);
+
+      await page.getByTestId('continue').click();
+      await resultSize(page);
+      await expectCollapsed(page, true);
+      await expect(page.getByTestId('margin')).toBeHidden();
+      await expectTappable(page.getByTestId('download'), '"Export"');
+
+      await page.reload();
+      await uploadImages(page, ['invoice.jpg']);
+      await page.getByTestId('upload-continue').click();
+      await expectCollapsed(page, true);
+      await expect(page.getByTestId('auto-detect')).toBeHidden();
+    });
+
+    test.describe('without animations', (): void => {
+      // The handle moves while the panel animates: a swipe must start where it ends up
+      test.use({ reducedMotion: 'reduce' });
+
+      test('a swipe down the handle collapses the panel and a swipe up opens it', async ({
+        page,
+      }: {
+        page: Page;
+      }): Promise<void> => {
+        await openAdjust(page);
+        const swipe = async (distance: number): Promise<void> => {
+          const handle: Box = await boxOf(page.getByTestId('panel-toggle'));
+          const x: number = (handle.left + handle.right) / 2;
+          const y: number = (handle.top + handle.bottom) / 2;
+          await page.mouse.move(x, y);
+          await page.mouse.down();
+          await page.mouse.move(x, y + distance, { steps: 5 });
+          await page.mouse.up();
+        };
+
+        await swipe(60);
+        await expectCollapsed(page, true);
+
+        await swipe(-60);
+        await expectCollapsed(page, false);
+      });
+    });
+  });
+
+  test('on a computer, the panel has no handle and always shows its options', async ({
+    page,
+  }: {
+    page: Page;
+  }): Promise<void> => {
+    await page.addInitScript((): void => {
+      localStorage.setItem('docscanify.panelCollapsed', 'true');
+    });
+    await openAdjust(page);
+
+    await expect(page.getByTestId('panel-toggle')).toBeHidden();
+    await expect(page.getByTestId('apply-all')).toBeVisible();
+    await expect(page.getByTestId('denoise')).toBeVisible();
   });
 });

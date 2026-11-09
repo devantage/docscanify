@@ -85,6 +85,20 @@
   color: var(--text-2);
 }
 
+.panel-toggle {
+  display: none;
+}
+
+.panel-options-content {
+  display: grid;
+  gap: 1.25rem;
+}
+
+/* Only phones put these side by side */
+.field-pair {
+  display: contents;
+}
+
 .panel-hint {
   margin: 0;
   font-size: var(--fs-small);
@@ -141,26 +155,169 @@
     padding: 1rem;
   }
 
-  /* The panel becomes a sheet attached to the bottom */
+  /* The panel becomes a compact sheet attached to the bottom, so the document keeps most of the
+     screen. Its first row holds the status of the step and the handle side by side */
   .panel {
-    gap: 0.75rem;
-    max-height: 62dvh;
-    padding: 1.25rem 1rem 0;
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-content: start;
+    gap: 0.5rem 1rem;
+    max-height: 55dvh;
+    padding: 0.5rem 1rem 0;
     border-left: 0;
     border-radius: var(--radius-card) var(--radius-card) 0 0;
     box-shadow: 0 -8px 24px -6px rgba(16, 24, 40, 0.12);
   }
 
   .panel-body {
-    gap: 1rem;
+    display: contents;
   }
 
+  .panel > *,
+  .panel-body > * {
+    grid-column: 1 / -1;
+  }
+
+  /* touch-action: a swipe on the handle collapses the panel instead of scrolling it */
+  .panel-toggle {
+    grid-row: 1;
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    margin-right: -0.5rem;
+    padding: 0 0.5rem;
+    background: none;
+    border: 0;
+    border-radius: var(--radius-control);
+    color: var(--brand);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    cursor: pointer;
+    touch-action: none;
+  }
+
+  .panel-toggle:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: -2px;
+  }
+
+  /* Part of the button, so it also takes taps and swipes */
+  .panel-handle {
+    position: absolute;
+    top: 0.3rem;
+    left: 50%;
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--line-strong);
+    transform: translateX(-50%);
+  }
+
+  .panel-toggle-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    white-space: nowrap;
+  }
+
+  .panel-toggle-icon {
+    transition: transform 200ms var(--ease);
+  }
+
+  .panel[data-collapsed] .panel-toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  /* The current step already shows in the top bar: the title stays for screen readers only */
   .panel-title {
-    font-size: var(--fs-title);
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .panel-text {
+    grid-row: 1;
+    grid-column: 1;
+    align-self: center;
+    margin: 0;
+    font-size: var(--fs-small);
+  }
+
+  /* Collapses by animating the row from its height to 0. Hidden once collapsed, so its controls
+     leave the tab order and the accessibility tree */
+  .panel-options {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 200ms var(--ease);
+  }
+
+  /* margin: no gap is left where the options were */
+  .panel[data-collapsed] .panel-options {
+    grid-template-rows: 0fr;
+    margin-top: -0.5rem;
+    visibility: hidden;
+    transition:
+      grid-template-rows 200ms var(--ease),
+      visibility 0s 200ms;
+  }
+
+  /* The padding keeps the focus rings of the controls inside the clipped area. Positioned: the
+     hidden inputs of the controls, absolutely positioned, are clipped too and do not make the
+     collapsed panel scroll */
+  .panel-options-content {
+    position: relative;
+    gap: 0.5rem;
+    min-height: 0;
+    margin: -4px;
+    padding: 4px;
+    overflow: hidden;
+  }
+
+  .panel .field {
+    gap: 0.25rem;
+  }
+
+  .panel .field legend,
+  .panel .field-label {
+    margin-bottom: 0;
+  }
+
+  .field-pair {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 0.75rem;
+  }
+
+  /* The rotation icons speak for themselves next to the other options */
+  .field-rotate legend {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* Icon-only buttons: the label stays as their accessible name */
+  .btn-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   .panel-actions {
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    gap: 0.25rem;
+    padding-top: 0.25rem;
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
 
   /* Back and Continue on a single row: leaves more height for the panel options */

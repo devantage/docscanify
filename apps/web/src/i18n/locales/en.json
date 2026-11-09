@@ -19,6 +19,10 @@
     "closeNotice": "Close message",
     "notifications": "Notifications"
   },
+  "panel": {
+    "showOptions": "Show options",
+    "hideOptions": "Hide options"
+  },
   "files": {
     "document": "document",
     "documents": "documents"

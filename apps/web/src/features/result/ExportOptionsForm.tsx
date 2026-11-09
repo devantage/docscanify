@@ -73,34 +73,36 @@ export function ExportOptionsForm({
 
       {format === 'pdf' ? (
         <>
-          <label className="field">
-            <span className="field-label">{t('export.page')}</span>
-            <select
-              value={pageFormat}
-              onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                change({ pageFormat: e.target.value as PageFormat });
-              }}
-            >
-              {PAGE_FORMATS.map((page: PageFormat) => (
-                <option key={page} value={page}>
-                  {t(`export.pageFormat.${page}`)}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="field">
-            <span className="field-label">{t('export.margin')}</span>
-            <input
-              type="number"
-              min={0}
-              max={MAX_MARGIN}
-              value={margin}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                change({ margin: clampMargin(e.target.value) });
-              }}
-              data-testid="margin"
-            />
-          </label>
+          <div className="field-pair">
+            <label className="field">
+              <span className="field-label">{t('export.page')}</span>
+              <select
+                value={pageFormat}
+                onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                  change({ pageFormat: e.target.value as PageFormat });
+                }}
+              >
+                {PAGE_FORMATS.map((page: PageFormat) => (
+                  <option key={page} value={page}>
+                    {t(`export.pageFormat.${page}`)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="field">
+              <span className="field-label">{t('export.margin')}</span>
+              <input
+                type="number"
+                min={0}
+                max={MAX_MARGIN}
+                value={margin}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  change({ margin: clampMargin(e.target.value) });
+                }}
+                data-testid="margin"
+              />
+            </label>
+          </div>
           {count > 1 && !combine && (
             <p className="panel-hint">{t('export.pdfZipHint')}</p>
           )}

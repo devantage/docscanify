@@ -5,6 +5,7 @@ import {
   Panel,
   PanelBody,
   PanelHeader,
+  PanelOptions,
   StepNav,
 } from '@/components/layout/Panel';
 import type { ToastContextValue } from '@/components/toast/ToastContext';
@@ -48,26 +49,28 @@ export function EnhancePanel({ status }: Props): JSX.Element {
           textRole="status"
           data-testid="result-size"
         />
-        <EnhanceOptionsForm
-          options={doc.options}
-          onChange={(options: EnhanceOptions) => {
-            setOptions(doc.id, options);
-          }}
-        />
-        {count > 1 && (
-          <div className="field">
-            <button
-              type="button"
-              className="btn btn-secondary btn-small"
-              onClick={applyToAll}
-              data-testid="apply-all"
-            >
-              <CopyIcon className="btn-icon" />
-              {t('enhance.applyAll')}
-            </button>
-            <p className="panel-hint">{t('enhance.applyAllHint')}</p>
-          </div>
-        )}
+        <PanelOptions>
+          <EnhanceOptionsForm
+            options={doc.options}
+            onChange={(options: EnhanceOptions) => {
+              setOptions(doc.id, options);
+            }}
+          />
+          {count > 1 && (
+            <div className="field">
+              <button
+                type="button"
+                className="btn btn-secondary btn-small"
+                onClick={applyToAll}
+                data-testid="apply-all"
+              >
+                <CopyIcon className="btn-icon" />
+                {t('enhance.applyAll')}
+              </button>
+              <p className="panel-hint">{t('enhance.applyAllHint')}</p>
+            </div>
+          )}
+        </PanelOptions>
       </PanelBody>
       <StepNav
         onContinue={() => {

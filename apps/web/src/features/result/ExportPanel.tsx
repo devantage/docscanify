@@ -7,6 +7,7 @@ import {
   PanelActions,
   PanelBody,
   PanelHeader,
+  PanelOptions,
 } from '@/components/layout/Panel';
 import { ProgressBar } from '@/components/ProgressBar';
 import { useScan } from '@/features/scan/useScan';
@@ -42,11 +43,13 @@ export function ExportPanel({ status, ready }: Props): JSX.Element {
           textRole="status"
           data-testid="result-size"
         />
-        <ExportOptionsForm
-          settings={exportSettings}
-          onChange={setExportSettings}
-          count={documents.length}
-        />
+        <PanelOptions>
+          <ExportOptionsForm
+            settings={exportSettings}
+            onChange={setExportSettings}
+            count={documents.length}
+          />
+        </PanelOptions>
       </PanelBody>
 
       <PanelActions>

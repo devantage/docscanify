@@ -13,7 +13,7 @@ interface Props {
 const FILTERS: Filter[] = ['none', 'grayscale', 'bw'];
 const SHARPENS: Sharpen[] = ['off', 'soft', 'strong'];
 
-/** Fields of the adjustments of a document: color, rotation, sharpness, and noise reduction. */
+/** Fields of the adjustments of a document: color, sharpness, rotation, and noise reduction. */
 export function EnhanceOptionsForm({ options, onChange }: Props): JSX.Element {
   const { t } = useTranslate();
   const filters: SegmentedItem<Filter>[] = FILTERS.map((value: Filter) => ({
@@ -41,32 +41,6 @@ export function EnhanceOptionsForm({ options, onChange }: Props): JSX.Element {
         }}
       />
 
-      <fieldset className="field">
-        <legend>{t('enhance.rotate')}</legend>
-        <div className="row">
-          <button
-            type="button"
-            className="btn btn-secondary btn-small"
-            onClick={() => {
-              change({ turns: options.turns - 1 });
-            }}
-          >
-            <RotateLeftIcon className="btn-icon" />
-            {t('enhance.left')}
-          </button>
-          <button
-            type="button"
-            className="btn btn-secondary btn-small"
-            onClick={() => {
-              change({ turns: options.turns + 1 });
-            }}
-          >
-            <RotateRightIcon className="btn-icon" />
-            {t('enhance.right')}
-          </button>
-        </div>
-      </fieldset>
-
       <Segmented
         legend={t('enhance.sharpness')}
         name="sharpen"
@@ -77,17 +51,45 @@ export function EnhanceOptionsForm({ options, onChange }: Props): JSX.Element {
         }}
       />
 
-      <label className="check">
-        <input
-          type="checkbox"
-          checked={options.denoise}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            change({ denoise: e.target.checked });
-          }}
-          data-testid="denoise"
-        />
-        {t('enhance.denoise')}
-      </label>
+      <div className="field-pair">
+        <fieldset className="field field-rotate">
+          <legend>{t('enhance.rotate')}</legend>
+          <div className="row">
+            <button
+              type="button"
+              className="btn btn-secondary btn-small"
+              onClick={() => {
+                change({ turns: options.turns - 1 });
+              }}
+            >
+              <RotateLeftIcon className="btn-icon" />
+              <span className="btn-label">{t('enhance.left')}</span>
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-small"
+              onClick={() => {
+                change({ turns: options.turns + 1 });
+              }}
+            >
+              <RotateRightIcon className="btn-icon" />
+              <span className="btn-label">{t('enhance.right')}</span>
+            </button>
+          </div>
+        </fieldset>
+
+        <label className="check">
+          <input
+            type="checkbox"
+            checked={options.denoise}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              change({ denoise: e.target.checked });
+            }}
+            data-testid="denoise"
+          />
+          {t('enhance.denoise')}
+        </label>
+      </div>
     </>
   );
 }
