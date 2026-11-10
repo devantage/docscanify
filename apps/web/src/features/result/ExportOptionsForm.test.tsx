@@ -108,45 +108,65 @@ describe('ExportOptionsForm', (): void => {
       });
     });
 
-    it('shows the margins in millimeters, between 0 and 100', (): void => {
-      renderForm({ ...PDF, margins: 15 }, 1);
+    it('shows the margins in centimeters, between 0 and 10, in steps of 0.01', (): void => {
+      renderForm({ ...PDF, margins: 1.5 }, 1);
 
       const margins: HTMLInputElement = screen.getByRole('spinbutton', {
-        name: 'Margins (In millimeters)',
+        name: 'Margins (In centimeters)',
       });
       expect(margins).toBe(marginsInput());
-      expect(margins).toHaveValue(15);
+      expect(margins).toHaveValue(1.5);
       expect(margins).toHaveAttribute('min', '0');
-      expect(margins).toHaveAttribute('max', '100');
+      expect(margins).toHaveAttribute('max', '10');
+      expect(margins).toHaveAttribute('step', '0.01');
+      expect(margins).toHaveAttribute('inputmode', 'decimal');
     });
 
     it('changes the margins to the number typed', (): void => {
       const onChange: OnChange = renderForm(PDF, 1);
 
+      fireEvent.change(marginsInput(), { target: { value: '3' } });
+
+      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margins: 3 });
+    });
+
+    it.each([
+      ['2.5', 2.5],
+      ['1.25', 1.25],
+      ['0.07', 0.07],
+      ['0.35', 0.35],
+      ['1.13', 1.13],
+    ])('accepts margins of %s cm', (typed: string, margins: number): void => {
+      const onChange: OnChange = renderForm(PDF, 1);
+
+      fireEvent.change(marginsInput(), { target: { value: typed } });
+
+      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margins });
+    });
+
+    it.each([
+      ['1.234', 1.23],
+      ['1.236', 1.24],
+      ['0.004', 0],
+    ])(
+      'rounds margins of %s cm to 2 decimal places',
+      (typed: string, margins: number): void => {
+        const onChange: OnChange = renderForm(PDF, 1);
+
+        fireEvent.change(marginsInput(), { target: { value: typed } });
+
+        expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margins });
+      },
+    );
+
+    it('limits the margins to 10 cm', (): void => {
+      const onChange: OnChange = renderForm(PDF, 1);
+
       fireEvent.change(marginsInput(), { target: { value: '25' } });
 
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margins: 25 });
-    });
-
-    it('accepts fractional margins', (): void => {
-      const onChange: OnChange = renderForm(PDF, 1);
-
-      fireEvent.change(marginsInput(), { target: { value: '2.5' } });
-
       expect(onChange).toHaveBeenCalledExactlyOnceWith({
         ...PDF,
-        margins: 2.5,
-      });
-    });
-
-    it('limits the margins to 100 mm', (): void => {
-      const onChange: OnChange = renderForm(PDF, 1);
-
-      fireEvent.change(marginsInput(), { target: { value: '250' } });
-
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({
-        ...PDF,
-        margins: 100,
+        margins: 10,
       });
     });
 

@@ -21,15 +21,27 @@ const FORMATS: SegmentedItem<ExportFormat>[] = [
 
 const PAGE_FORMATS: PageFormat[] = ['a4', 'letter', 'image'];
 
-/** Maximum margins, in mm: on A4 and Letter, 100 mm per side still leaves room for the image. */
-const MAX_MARGINS: number = 100;
+/** Maximum margins, in cm: on A4 and Letter, 10 cm per side still leaves room for the image. */
+const MAX_MARGINS: number = 10;
 
 /**
- * The margins typed in the field, in mm, kept between 0 and {@link MAX_MARGINS}; an empty or
- * invalid value becomes 0.
+ * The margins field takes centimeters with up to 2 decimal places, so values are rounded in
+ * hundredths of a centimeter. Multiplying by the 0.01 step instead would add float noise
+ * (1.13 would become 1.1300000000000001).
  */
-const clampMargins = (value: string): number =>
-  Math.min(MAX_MARGINS, Math.max(0, Number(value) || 0));
+const MARGINS_SCALE: number = 100;
+
+/**
+ * The margins typed in the field, in cm, rounded to 2 decimal places and kept between 0 and
+ * {@link MAX_MARGINS}; an empty or invalid value becomes 0.
+ */
+const clampMargins = (value: string): number => {
+  const margins: number = Math.min(
+    MAX_MARGINS,
+    Math.max(0, Number(value) || 0),
+  );
+  return Math.round(margins * MARGINS_SCALE) / MARGINS_SCALE;
+};
 
 /**
  * Fields of the export options: format and, for PDF, page and margins, side by side on phones.
@@ -99,6 +111,8 @@ export function ExportOptionsForm({
                 type="number"
                 min={0}
                 max={MAX_MARGINS}
+                step={1 / MARGINS_SCALE}
+                inputMode="decimal"
                 value={margins}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   change({ margins: clampMargins(e.target.value) });

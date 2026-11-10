@@ -133,7 +133,7 @@
       "letter": "Carta",
       "image": "Tamanho do documento"
     },
-    "margins": "Margens (Em milímetros)",
+    "margins": "Margens (Em centímetros)",
     "pdfZipHint": "Os PDFs são baixados juntos, num arquivo ZIP.",
     "imageZipHint": "Cada documento vira um arquivo, todos num ZIP.",
     "imageHint": "PNG preserva todos os detalhes. JPG gera um arquivo menor, com alguma perda.",

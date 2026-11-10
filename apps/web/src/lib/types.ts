@@ -27,7 +27,7 @@ export interface ExportSettings {
   format: ExportFormat;
   /** PDF page size. Only used when `format` is `"pdf"`. */
   pageFormat: PageFormat;
-  /** PDF page margins, in millimeters, the same on every side. */
+  /** PDF page margins, in centimeters with up to 2 decimal places, the same on every side. */
   margins: number;
   /**
    * With more than one document as PDF: `true` makes a single PDF with one page per document;

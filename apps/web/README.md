@@ -44,7 +44,7 @@ The app guides the user through four steps, shown in the top bar.
 
 ### 4. Export
 
-- **PDF**, with A4, Letter or document-sized pages and margins in millimeters. Several documents become a single PDF with one page each, or one PDF per document in a ZIP.
+- **PDF**, with A4, Letter or document-sized pages and margins in centimeters. Several documents become a single PDF with one page each, or one PDF per document in a ZIP.
 - **PNG or JPG**, one file per document, in a ZIP when there is more than one.
 - **Generated in the browser** and downloaded right away.
 

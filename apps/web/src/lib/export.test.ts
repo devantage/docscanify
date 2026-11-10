@@ -148,10 +148,10 @@ describe('DEFAULT_EXPORT_SETTINGS', (): void => {
 
 describe('exportDocuments', (): void => {
   describe('encoder choice', (): void => {
-    it('builds the PDF encoder with the page format and the margins converted from mm to points', async (): Promise<void> => {
+    it('builds the PDF encoder with the page format and the margins converted from cm to points', async (): Promise<void> => {
       await exportDocuments(
         [item('a', 1)],
-        settings({ format: 'pdf', pageFormat: 'letter', margins: 10 }),
+        settings({ format: 'pdf', pageFormat: 'letter', margins: 1 }),
         { batchName: 'scan' },
       );
 
@@ -160,14 +160,14 @@ describe('exportDocuments', (): void => {
       const options: { pageFormat: string; margin: number } = fakes
         .constructed[0].options as { pageFormat: string; margin: number };
       expect(options.pageFormat).toBe('letter');
-      // 10 mm = 10 / 25.4 in = 28.3465 pt
+      // 1 cm = 1 / 2.54 in = 28.3465 pt
       expect(options.margin).toBeCloseTo(28.346456, 5);
     });
 
-    it('converts 25.4 mm to exactly 72 points and keeps zero margins at zero', async (): Promise<void> => {
+    it('converts 2.54 cm to exactly 72 points and keeps zero margins at zero', async (): Promise<void> => {
       await exportDocuments(
         [item('a', 1)],
-        settings({ pageFormat: 'image', margins: 25.4 }),
+        settings({ pageFormat: 'image', margins: 2.54 }),
         { batchName: 'scan' },
       );
       await exportDocuments([item('a', 1)], settings({ margins: 0 }), {

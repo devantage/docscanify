@@ -34,8 +34,8 @@ export interface Size {
 /** Matches the size at the end of the status of the Adjust and Export panels. */
 const SIZE_PATTERN: RegExp = /(\d+) × (\d+) px$/;
 
-/** Points per millimeter, the unit of the margins field. */
-export const POINTS_PER_MM: number = 72 / 25.4;
+/** Points per centimeter, the unit of the margins field. */
+export const POINTS_PER_CM: number = 72 / 2.54;
 
 /** A4 and Letter pages in points, portrait. */
 export const A4: Size = { width: 595.28, height: 841.89 };
