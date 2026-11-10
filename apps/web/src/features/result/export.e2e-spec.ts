@@ -56,10 +56,10 @@ async function choosePage(
   await page.getByLabel('PDF page').selectOption(format);
 }
 
-/** Types the margins, in centimeters. */
+/** Fills the masked margins field, in centimeters, with the 2 decimal places it shows. */
 async function setMargins(page: Page, centimeters: number): Promise<void> {
-  await page.getByTestId('margins').fill(String(centimeters));
-  await expect(page.getByTestId('margins')).toHaveValue(String(centimeters));
+  await page.getByTestId('margins').fill(centimeters.toFixed(2));
+  await expect(page.getByTestId('margins')).toHaveValue(centimeters.toFixed(2));
 }
 
 /** A "Document size" page: the image at 150 dpi, plus the margins on each side. */
@@ -117,7 +117,7 @@ test.describe('Export step', (): void => {
       page.getByRole('radio', { name: 'PDF', exact: true }),
     ).toBeChecked();
     await expect(page.getByLabel('PDF page')).toHaveValue('a4');
-    await expect(page.getByTestId('margins')).toHaveValue('0');
+    await expect(page.getByTestId('margins')).toHaveValue('0.00');
 
     const file: DownloadedFile = await exportFile(page);
 
@@ -290,7 +290,7 @@ test.describe('Export step', (): void => {
     });
   });
 
-  test('limits the margins to 10 cm and 2 decimal places, which still exports a valid Letter page', async ({
+  test('masks and steps the margins with 2 decimal places, up to 10 cm, which still exports a valid Letter page', async ({
     page,
   }: {
     page: Page;
@@ -299,13 +299,38 @@ test.describe('Export step', (): void => {
     const size: Size = await resultSize(page);
 
     await choosePage(page, 'letter');
-    // Neither negative, nor larger than 10 cm, nor more precise than 2 decimal places
-    await page.getByTestId('margins').fill('-5');
-    await expect(page.getByTestId('margins')).toHaveValue('0');
-    await page.getByTestId('margins').fill('3.456');
-    await expect(page.getByTestId('margins')).toHaveValue('3.46');
-    await page.getByTestId('margins').fill('15');
-    await expect(page.getByTestId('margins')).toHaveValue('10');
+    const margins: Locator = page.getByTestId('margins');
+    // Typed like a money field: digits fill from the right, and the field is selected on focus
+    // wherever it is tapped, so typing starts over
+    await margins.click({ position: { x: 4, y: 8 } });
+    await page.keyboard.type('1');
+    await expect(margins).toHaveValue('0.01');
+    await page.keyboard.type('25');
+    await expect(margins).toHaveValue('1.25');
+    await page.keyboard.press('Backspace');
+    await expect(margins).toHaveValue('0.12');
+    // Only digits count: number fields would otherwise take e, +, - and separators
+    await page.keyboard.type('e+-,.a');
+    await expect(margins).toHaveValue('0.12');
+    // The arrows step by 0.01 cm, keeping 2 decimal places
+    await page.keyboard.press('ArrowUp');
+    await expect(margins).toHaveValue('0.13');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await expect(margins).toHaveValue('0.11');
+    await margins.blur();
+    await margins.click({ position: { x: 4, y: 8 } });
+    await page.keyboard.type('129');
+    await expect(margins).toHaveValue('1.29');
+    await page.keyboard.press('ArrowUp');
+    await expect(margins).toHaveValue('1.30');
+    // Never past 10 cm, whether typed or stepped
+    await page.keyboard.type('456');
+    await expect(margins).toHaveValue('10.00');
+    await page.keyboard.type('7');
+    await expect(margins).toHaveValue('10.00');
+    await page.keyboard.press('ArrowUp');
+    await expect(margins).toHaveValue('10.00');
     const file: DownloadedFile = await exportFile(page);
 
     const pdf: PdfInfo = await readPdf(file.data);
@@ -623,7 +648,7 @@ test.describe('Export step', (): void => {
       page.getByRole('radio', { name: 'One PDF with everything', exact: true }),
     ).toBeChecked();
     await expect(page.getByLabel('PDF page')).toHaveValue('a4');
-    await expect(page.getByTestId('margins')).toHaveValue('0');
+    await expect(page.getByTestId('margins')).toHaveValue('0.00');
     const file: DownloadedFile = await exportFile(page);
     expect(file.name).toMatch(/^documents-\d{12}\.pdf$/);
     const pdf: PdfInfo = await readPdf(file.data);

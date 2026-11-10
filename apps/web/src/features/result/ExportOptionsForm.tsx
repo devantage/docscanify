@@ -1,9 +1,18 @@
 import type { PageFormat } from '@devantage/docscanify';
-import type { ChangeEvent, JSX } from 'react';
+import type { ChangeEvent, FocusEvent, JSX, KeyboardEvent } from 'react';
 
 import { Segmented, type SegmentedItem } from '@/components/Segmented';
 import { useTranslate } from '@/i18n';
 import type { ExportFormat, ExportSettings } from '@/lib/types';
+
+import {
+  formatMargins,
+  isNonDigitKey,
+  isTypedChange,
+  MARGINS_STEP,
+  parseSteppedMargins,
+  parseTypedMargins,
+} from './marginsMask';
 
 interface Props {
   settings: ExportSettings;
@@ -25,26 +34,10 @@ const PAGE_FORMATS: PageFormat[] = ['a4', 'letter', 'image'];
 const MAX_MARGINS: number = 10;
 
 /**
- * The margins field takes centimeters with up to 2 decimal places, so values are rounded in
- * hundredths of a centimeter. Multiplying by the 0.01 step instead would add float noise
- * (1.13 would become 1.1300000000000001).
- */
-const MARGINS_SCALE: number = 100;
-
-/**
- * The margins typed in the field, in cm, rounded to 2 decimal places and kept between 0 and
- * {@link MAX_MARGINS}; an empty or invalid value becomes 0.
- */
-const clampMargins = (value: string): number => {
-  const margins: number = Math.min(
-    MAX_MARGINS,
-    Math.max(0, Number(value) || 0),
-  );
-  return Math.round(margins * MARGINS_SCALE) / MARGINS_SCALE;
-};
-
-/**
  * Fields of the export options: format and, for PDF, page and margins, side by side on phones.
+ * The margins field is a number field masked with 2 decimal places: typed digits fill from the
+ * right, and its arrows step by 0.01 cm. Focusing it selects the value, since a number field
+ * cannot move its caret to the end, where the mask types.
  * With several documents as PDF, it chooses between a single PDF with every page and one PDF per
  * document (ZIP); PNG and JPG are one file per document, all in a ZIP.
  */
@@ -53,7 +46,7 @@ export function ExportOptionsForm({
   onChange,
   count,
 }: Props): JSX.Element {
-  const { t } = useTranslate();
+  const { t, locale } = useTranslate();
   const { pageFormat, margins, format, combine } = settings;
 
   const change = (patch: Partial<ExportSettings>): void => {
@@ -111,11 +104,23 @@ export function ExportOptionsForm({
                 type="number"
                 min={0}
                 max={MAX_MARGINS}
-                step={1 / MARGINS_SCALE}
-                inputMode="decimal"
-                value={margins}
+                step={MARGINS_STEP}
+                inputMode="numeric"
+                lang={locale}
+                value={formatMargins(margins)}
+                onFocus={(e: FocusEvent<HTMLInputElement>) => {
+                  e.currentTarget.select();
+                }}
+                onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                  if (isNonDigitKey(e)) e.preventDefault();
+                }}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  change({ margins: clampMargins(e.target.value) });
+                  const read: typeof parseTypedMargins = isTypedChange(
+                    e.nativeEvent,
+                  )
+                    ? parseTypedMargins
+                    : parseSteppedMargins;
+                  change({ margins: read(e.target.value, MAX_MARGINS) });
                 }}
                 data-testid="margins"
               />

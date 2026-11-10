@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
+import { type JSX, useState } from 'react';
 import { describe, expect, it, type Mock, vi } from 'vitest';
 
 import { TranslateProvider } from '@/i18n';
@@ -40,11 +41,32 @@ function renderForm(settings: ExportSettings, count: number): OnChange {
   return onChange;
 }
 
+/**
+ * Renders the form in English for a single PDF without margins, keeping its settings in state like
+ * the app does, so what is typed shows up in the fields.
+ */
+function renderLiveForm(): void {
+  const Live = (): JSX.Element => {
+    const [settings, setSettings] = useState<ExportSettings>({
+      ...PDF,
+      margins: 0,
+    });
+    return (
+      <ExportOptionsForm settings={settings} onChange={setSettings} count={1} />
+    );
+  };
+  render(
+    <TranslateProvider defaultLocale="en">
+      <Live />
+    </TranslateProvider>,
+  );
+}
+
 /** The fieldset whose legend is `legend`. */
 const group = (legend: string): HTMLElement =>
   screen.getByRole('group', { name: legend });
 
-/** The margins field, in mm. */
+/** The margins field, in centimeters. */
 const marginsInput = (): HTMLInputElement => screen.getByTestId('margins');
 
 describe('ExportOptionsForm', (): void => {
@@ -108,84 +130,92 @@ describe('ExportOptionsForm', (): void => {
       });
     });
 
-    it('shows the margins in centimeters, between 0 and 10, in steps of 0.01', (): void => {
+    it('shows the margins in centimeters with 2 decimal places, stepping by 0.01 up to 10', (): void => {
       renderForm({ ...PDF, margins: 1.5 }, 1);
 
       const margins: HTMLInputElement = screen.getByRole('spinbutton', {
         name: 'Margins (In centimeters)',
       });
       expect(margins).toBe(marginsInput());
-      expect(margins).toHaveValue(1.5);
+      expect(margins.value).toBe('1.50');
       expect(margins).toHaveAttribute('min', '0');
       expect(margins).toHaveAttribute('max', '10');
       expect(margins).toHaveAttribute('step', '0.01');
-      expect(margins).toHaveAttribute('inputmode', 'decimal');
+      expect(margins).toHaveAttribute('inputmode', 'numeric');
+      expect(margins).toHaveAttribute('lang', 'en');
     });
 
-    it('changes the margins to the number typed', (): void => {
-      const onChange: OnChange = renderForm(PDF, 1);
+    it('fills the margins from the right as digits are typed, and shifts them back on delete', async (): Promise<void> => {
+      const user: UserEvent = userEvent.setup();
+      renderLiveForm();
+      expect(marginsInput().value).toBe('0.00');
 
-      fireEvent.change(marginsInput(), { target: { value: '3' } });
+      await user.click(marginsInput());
+      await user.keyboard('1');
+      expect(marginsInput().value).toBe('0.01');
+      await user.keyboard('2');
+      expect(marginsInput().value).toBe('0.12');
+      await user.keyboard('5');
+      expect(marginsInput().value).toBe('1.25');
 
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margins: 3 });
+      await user.keyboard('{Backspace}');
+      expect(marginsInput().value).toBe('0.12');
     });
 
-    it.each([
-      ['2.5', 2.5],
-      ['1.25', 1.25],
-      ['0.07', 0.07],
-      ['0.35', 0.35],
-      ['1.13', 1.13],
-    ])('accepts margins of %s cm', (typed: string, margins: number): void => {
-      const onChange: OnChange = renderForm(PDF, 1);
+    it('selects the margins on focus, so typing starts them over', async (): Promise<void> => {
+      const user: UserEvent = userEvent.setup();
+      renderLiveForm();
+      await user.click(marginsInput());
+      await user.keyboard('125');
+      await user.tab();
 
-      fireEvent.change(marginsInput(), { target: { value: typed } });
+      await user.click(marginsInput());
+      await user.keyboard('7');
 
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margins });
+      expect(marginsInput().value).toBe('0.07');
     });
 
-    it.each([
-      ['1.234', 1.23],
-      ['1.236', 1.24],
-      ['0.004', 0],
-    ])(
-      'rounds margins of %s cm to 2 decimal places',
-      (typed: string, margins: number): void => {
-        const onChange: OnChange = renderForm(PDF, 1);
+    it('ignores keys that are not digits', async (): Promise<void> => {
+      const user: UserEvent = userEvent.setup();
+      renderLiveForm();
 
-        fireEvent.change(marginsInput(), { target: { value: typed } });
+      await user.click(marginsInput());
+      await user.keyboard('e+-.,a5');
 
-        expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margins });
-      },
-    );
+      expect(marginsInput().value).toBe('0.05');
+    });
 
-    it('limits the margins to 10 cm', (): void => {
-      const onChange: OnChange = renderForm(PDF, 1);
+    it('limits the typed margins to 10 cm', (): void => {
+      const onChange: OnChange = renderForm({ ...PDF, margins: 1.23 }, 1);
 
-      fireEvent.change(marginsInput(), { target: { value: '25' } });
+      // A digit typed after 1.23: the browser hands the field over as "1.234"
+      fireEvent.input(marginsInput(), {
+        target: { value: '1.234' },
+        inputType: 'insertText',
+      });
+
+      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margins: 10 });
+    });
+
+    it('reads a step of the arrows as a whole number and shows it with 2 decimal places', (): void => {
+      renderLiveForm();
+
+      // Stepping up from 1.29 gives "1.3": the step arrows send a plain Event, with no inputType
+      fireEvent.change(marginsInput(), { target: { value: '1.3' } });
+
+      expect(marginsInput().value).toBe('1.30');
+    });
+
+    it('changes the margins to those stepped to', (): void => {
+      const onChange: OnChange = renderForm({ ...PDF, margins: 1.29 }, 1);
+
+      fireEvent.change(marginsInput(), { target: { value: '1.3' } });
 
       expect(onChange).toHaveBeenCalledExactlyOnceWith({
         ...PDF,
-        margins: 10,
+        margins: 1.3,
       });
     });
-
-    it('turns negative margins into 0', (): void => {
-      const onChange: OnChange = renderForm(PDF, 1);
-
-      fireEvent.change(marginsInput(), { target: { value: '-4' } });
-
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margins: 0 });
-    });
-
-    it('turns empty margins into 0', (): void => {
-      const onChange: OnChange = renderForm(PDF, 1);
-
-      fireEvent.change(marginsInput(), { target: { value: '' } });
-
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margins: 0 });
-    });
-
     it('has no file option nor hint for a single document', (): void => {
       renderForm({ ...PDF, combine: false }, 1);
 
