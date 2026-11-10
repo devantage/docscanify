@@ -32,7 +32,7 @@ function makeDocument(
     corners: CORNERS,
     valid: true,
     detectorFailed: false,
-    options: { filter: 'none', turns: 0, sharpen: 'off', denoise: false },
+    options: { filter: 'none', turns: 0, sharpen: 'off' },
     ...overrides,
   };
 }

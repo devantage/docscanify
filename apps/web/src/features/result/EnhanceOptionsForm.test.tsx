@@ -11,7 +11,6 @@ const OPTIONS: EnhanceOptions = {
   filter: 'none',
   turns: 1,
   sharpen: 'soft',
-  denoise: false,
 };
 
 type OnChange = Mock<(options: EnhanceOptions) => void>;
@@ -67,12 +66,24 @@ describe('EnhanceOptionsForm', (): void => {
     ).toBeChecked();
   });
 
-  it('shows whether noise reduction is on', (): void => {
-    renderForm({ ...OPTIONS, denoise: true });
+  it('offers no noise reduction control, which comes with the sharpness', (): void => {
+    renderForm();
+
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+    expect(screen.queryByText('Reduce noise')).not.toBeInTheDocument();
+  });
+
+  it('shows the fields in order: color, sharpness, rotation', (): void => {
+    renderForm();
 
     expect(
-      screen.getByRole('checkbox', { name: 'Reduce noise' }),
-    ).toBeChecked();
+      screen
+        .getAllByRole('group')
+        .map(
+          (fieldset: HTMLElement) =>
+            fieldset.querySelector('legend')?.textContent,
+        ),
+    ).toEqual(['Color', 'Sharpness', 'Rotate']);
   });
 
   it('changes the filter and keeps the other adjustments', async (): Promise<void> => {
@@ -129,30 +140,6 @@ describe('EnhanceOptionsForm', (): void => {
     expect(onChange).toHaveBeenCalledExactlyOnceWith({
       ...OPTIONS,
       sharpen: 'off',
-    });
-  });
-
-  it('turns noise reduction on and off', async (): Promise<void> => {
-    const user: UserEvent = userEvent.setup();
-    const onChange: OnChange = renderForm({ ...OPTIONS, denoise: false });
-
-    await user.click(screen.getByTestId('denoise'));
-
-    expect(onChange).toHaveBeenCalledExactlyOnceWith({
-      ...OPTIONS,
-      denoise: true,
-    });
-  });
-
-  it('turns noise reduction off when it is on', async (): Promise<void> => {
-    const user: UserEvent = userEvent.setup();
-    const onChange: OnChange = renderForm({ ...OPTIONS, denoise: true });
-
-    await user.click(screen.getByRole('checkbox', { name: 'Reduce noise' }));
-
-    expect(onChange).toHaveBeenCalledExactlyOnceWith({
-      ...OPTIONS,
-      denoise: false,
     });
   });
 

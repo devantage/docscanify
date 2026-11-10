@@ -7,7 +7,7 @@ import type { DocumentItem, EnhanceOptions } from '@/lib/types';
 import { forgetRenders, hasRender, renderDocument } from './renderCache';
 
 vi.mock('@/lib/scan', (): Record<string, unknown> => ({
-  NO_ENHANCEMENTS: { filter: 'none', turns: 0, sharpen: 'off', denoise: false },
+  NO_ENHANCEMENTS: { filter: 'none', turns: 0, sharpen: 'off' },
   renderWith: vi.fn(),
 }));
 

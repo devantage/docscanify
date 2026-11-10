@@ -7,6 +7,7 @@ import { JpegImageEncoder } from './jpeg-image-encoder.class';
 import {
   PdfDocumentEncoder,
   type PdfDocumentEncoderOptions,
+  type PdfPageLayout,
 } from './pdf-document-encoder.class';
 
 async function getPage(pdf: Uint8Array): Promise<PDFPage> {
@@ -132,5 +133,75 @@ describe('PdfDocumentEncoder', (): void => {
     expect((): void => {
       new PdfDocumentEncoder({ pageFormat: 'image', margin: 1000 });
     }).not.toThrow();
+  });
+  describe('getPageLayout', (): void => {
+    it('centers the image on the page, as large as it fits, without margin by default', (): void => {
+      const layout: PdfPageLayout = new PdfDocumentEncoder().getPageLayout({
+        width: 300,
+        height: 600,
+      });
+
+      // A4 is 595.28 × 841.89 pt: the height limits a 1:2 image to 420.945 × 841.89
+      expect(layout.page).toEqual({ width: 595.28, height: 841.89 });
+      expect(layout.image.width).toBeCloseTo(420.945);
+      expect(layout.image.height).toBeCloseTo(841.89);
+      expect(layout.image.x).toBeCloseTo((595.28 - 420.945) / 2);
+      expect(layout.image.y).toBeCloseTo(0);
+    });
+
+    it('keeps the image inside the margins, centered', (): void => {
+      const layout: PdfPageLayout = new PdfDocumentEncoder({
+        pageFormat: 'letter',
+        margin: 36,
+      }).getPageLayout({ width: 1000, height: 1000 });
+
+      // Letter is 612 × 792 pt: the width leaves 540 pt for a square image
+      expect(layout.page).toEqual({ width: 612, height: 792 });
+      expect(layout.image).toEqual({ x: 36, y: 126, width: 540, height: 540 });
+    });
+
+    it('turns a fixed page to landscape for a wide image', (): void => {
+      const layout: PdfPageLayout = new PdfDocumentEncoder({
+        pageFormat: 'a4',
+      }).getPageLayout({ width: 600, height: 300 });
+
+      expect(layout.page).toEqual({ width: 841.89, height: 595.28 });
+    });
+
+    it('sizes the page to the image at the DPI plus the margins, with the image filling the rest', (): void => {
+      const layout: PdfPageLayout = new PdfDocumentEncoder({
+        pageFormat: 'image',
+        margin: 10,
+        imageDpi: 300,
+      }).getPageLayout({ width: 300, height: 600 });
+
+      expect(layout.page.width).toBeCloseTo(72 + 20);
+      expect(layout.page.height).toBeCloseTo(144 + 20);
+      expect(layout.image.x).toBeCloseTo(10);
+      expect(layout.image.y).toBeCloseTo(10);
+      expect(layout.image.width).toBeCloseTo(72);
+      expect(layout.image.height).toBeCloseTo(144);
+    });
+
+    it.each<PdfDocumentEncoderOptions>([
+      {},
+      { pageFormat: 'letter', margin: 50 },
+      { pageFormat: 'image', margin: 25 },
+    ])(
+      'describes the page encode makes, with %o',
+      async (options: PdfDocumentEncoderOptions): Promise<void> => {
+        const encoder: PdfDocumentEncoder = new PdfDocumentEncoder(options);
+        const page: PDFPage = await getPage(
+          await encoder.encode(new CanvasImage(canvas).toPng()),
+        );
+
+        const { page: expected } = encoder.getPageLayout({
+          width: canvas.width,
+          height: canvas.height,
+        });
+        expect(page.getWidth()).toBeCloseTo(expected.width);
+        expect(page.getHeight()).toBeCloseTo(expected.height);
+      },
+    );
   });
 });

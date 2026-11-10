@@ -1,6 +1,6 @@
 import type {
-  DocumentOutput,
   DocumentScannerOptions,
+  DocumentScannerOutput,
   OutputFormat,
 } from '@devantage/docscanify';
 import { ResourceOperation } from '@devantage/n8n-custom-nodes-framework';
@@ -13,7 +13,11 @@ import type {
 import * as path from 'path';
 
 import { withOperationDisplayOptions } from '../../../utils';
-import { DocumentScannerFactory, ScanCornersConverter } from '../shared';
+import {
+  DocumentScannerFactory,
+  ScanCornersConverter,
+  ScanPdfLayoutConverter,
+} from '../shared';
 
 /** The options collection of the operation. */
 type ScanOperationOptions = Omit<
@@ -219,7 +223,7 @@ export class ScanOperation extends ResourceOperation {
       binaryPropertyName,
     );
 
-    const { file, report }: DocumentOutput =
+    const { file, report, pageLayout }: DocumentScannerOutput =
       await DocumentScannerFactory.create().scan(imageBuffer, {
         ...scannerOptions,
         outputFormat,
@@ -244,6 +248,12 @@ export class ScanOperation extends ResourceOperation {
             report.corners && ScanCornersConverter.fromCorners(report.corners),
           width: report.dimensions.width,
           height: report.dimensions.height,
+          ...(pageLayout && {
+            pdf: ScanPdfLayoutConverter.fromLayout(
+              pageLayout,
+              report.dimensions,
+            ),
+          }),
         },
       },
       binary: {

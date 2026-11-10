@@ -48,6 +48,19 @@ The document is cropped, then enhanced (noise, sharpness and rotation, in this o
 
 The output JSON gets `scan.detected`, `scan.corners` (in original image pixels, even when the document is rotated), `scan.width` and `scan.height`.
 
+With the `pdf` output format, it also gets `scan.pdf`, how the document was laid out on the page, in points (1 pt = 1/72 in), measured from the top left corner of the page:
+
+```json
+{
+  "unit": "pt",
+  "page": { "width": 595.28, "height": 841.89, "orientation": "portrait" },
+  "image": { "x": 56.69, "y": 120.4, "width": 481.9, "height": 601.1 },
+  "pixelsPerPoint": 1.68
+}
+```
+
+`page` already accounts for landscape pages, used when the document is wider than it is tall. `image` is where the document was drawn. Services that place fields on a PDF, such as e-signature platforms, ask for positions in points: a point found in the document image at `px`, `py` pixels is at `image.x + px / pixelsPerPoint`, `image.y + py / pixelsPerPoint` on the page. If a service measures `y` from the bottom of the page, use `page.height` minus that value.
+
 ## Compatibility
 
 The current version is compatible with n8n installations above v1.0.0.

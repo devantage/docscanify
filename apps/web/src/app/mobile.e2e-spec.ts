@@ -781,6 +781,10 @@ test.describe('Collapsible panel on phones', (): void => {
         await openAdjust(page);
         await settle(page);
         const panel: Locator = page.locator('.panel');
+        const rotateRight: Locator = page.getByRole('button', {
+          name: 'Right',
+          exact: true,
+        });
         await expectCollapsed(page, false);
         const open: Box = await boxOf(panel);
         const openPreview: Box = await boxOf(page.getByTestId('result'));
@@ -788,12 +792,12 @@ test.describe('Collapsible panel on phones', (): void => {
           screen.height * OPEN_PANEL_SHARE + TOLERANCE,
         );
         await expectTappable(page.getByTestId('apply-all'), '"Apply to all"');
-        await expectTappable(page.getByTestId('denoise'), '"Reduce noise"');
+        await expectTappable(rotateRight, '"Right"');
 
         await page.getByTestId('panel-toggle').click();
         await expectCollapsed(page, true);
         await expect(page.getByTestId('apply-all')).toBeHidden();
-        await expect(page.getByTestId('denoise')).toBeHidden();
+        await expect(rotateRight).toBeHidden();
         await expect
           .poll(async (): Promise<number> => heightOf(await boxOf(panel)))
           .toBeLessThanOrEqual(screen.height * COLLAPSED_PANEL_SHARE);
@@ -830,7 +834,7 @@ test.describe('Collapsible panel on phones', (): void => {
       await page.getByTestId('continue').click();
       await resultSize(page);
       await expectCollapsed(page, true);
-      await expect(page.getByTestId('margin')).toBeHidden();
+      await expect(page.getByTestId('margins')).toBeHidden();
       await expectTappable(page.getByTestId('download'), '"Export"');
 
       await page.reload();
@@ -881,6 +885,8 @@ test.describe('Collapsible panel on phones', (): void => {
 
     await expect(page.getByTestId('panel-toggle')).toBeHidden();
     await expect(page.getByTestId('apply-all')).toBeVisible();
-    await expect(page.getByTestId('denoise')).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Right', exact: true }),
+    ).toBeVisible();
   });
 });

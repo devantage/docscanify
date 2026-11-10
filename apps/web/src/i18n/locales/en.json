@@ -93,6 +93,7 @@
   "result": {
     "stage": "Document preview",
     "preview": "Preview of document {number}, cropped",
+    "pagePreview": "Preview of document {number} as a PDF ({page})",
     "applying": "Applying…",
     "position": "Document {current} of {total} · {detail}",
     "failed": "These options could not be applied on this device."
@@ -114,7 +115,6 @@
       "soft": "Soft",
       "strong": "Strong"
     },
-    "denoise": "Reduce noise",
     "applyAll": "Apply to all documents",
     "applied": {
       "one": "The adjustments were applied to {count} document.",
@@ -128,16 +128,21 @@
     "file": "File",
     "fileOne": "One PDF with everything",
     "fileMany": "One PDF per document",
-    "page": "PDF page",
     "pageFormat": {
-      "a4": "A4",
-      "letter": "Letter",
-      "image": "Document size"
+      "label": "Page format",
+      "values": {
+        "a4": "A4",
+        "letter": "Letter",
+        "image": "Document size"
+      }
     },
-    "margin": "Margin (mm)",
+    "margins": "Margins (In centimeters)",
     "pdfZipHint": "The PDFs are downloaded together, in a ZIP file.",
     "imageZipHint": "Each document becomes a file, all in a ZIP.",
-    "imageHint": "PNG keeps every detail. JPG makes a smaller file, with some loss.",
+    "imageHint": {
+      "png": "Larger file, with the best quality.",
+      "jpg": "Smaller file, with slightly lower quality."
+    },
     "generating": "Creating file…",
     "generatingOf": "Creating {current} of {total}…",
     "action": "Export",

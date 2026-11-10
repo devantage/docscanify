@@ -35,7 +35,7 @@ function makeDoc(id: string, patch: Partial<DocumentItem> = {}): DocumentItem {
     },
     valid: true,
     detectorFailed: false,
-    options: { filter: 'none', turns: 0, sharpen: 'off', denoise: false },
+    options: { filter: 'none', turns: 0, sharpen: 'off' },
     ...patch,
   };
 }
@@ -59,7 +59,7 @@ function fakeScan(
     exportSettings: {
       format: 'pdf',
       pageFormat: 'a4',
-      margin: 0,
+      margins: 0,
       combine: true,
     },
     addFiles: vi.fn(async (): Promise<void> => Promise.resolve()),

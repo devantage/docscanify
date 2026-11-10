@@ -52,7 +52,7 @@ function makeDocument(corners: Corners | null): DocumentItem {
     corners,
     valid: corners !== null,
     detectorFailed: corners === null,
-    options: { filter: 'none', turns: 0, sharpen: 'off', denoise: false },
+    options: { filter: 'none', turns: 0, sharpen: 'off' },
   };
 }
 

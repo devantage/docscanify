@@ -93,9 +93,10 @@
   "result": {
     "stage": "Prévia do documento",
     "preview": "Prévia do documento {number}, recortado",
+    "pagePreview": "Prévia do documento {number} em PDF ({page})",
     "applying": "Aplicando…",
     "position": "Documento {current} de {total} · {detail}",
-    "failed": "Não foi possível aplicar estas opções neste aparelho."
+    "failed": "Não foi possível aplicar estas opções neste dispositivo."
   },
   "enhance": {
     "title": "Ajustar",
@@ -114,7 +115,6 @@
       "soft": "Suave",
       "strong": "Forte"
     },
-    "denoise": "Reduzir ruído",
     "applyAll": "Aplicar a todos os documentos",
     "applied": {
       "one": "Os ajustes foram aplicados a {count} documento.",
@@ -128,16 +128,21 @@
     "file": "Arquivo",
     "fileOne": "Um PDF com tudo",
     "fileMany": "Um PDF por documento",
-    "page": "Página do PDF",
     "pageFormat": {
-      "a4": "A4",
-      "letter": "Carta",
-      "image": "Tamanho do documento"
+      "label": "Formato da página",
+      "values": {
+        "a4": "A4",
+        "letter": "Carta",
+        "image": "Tamanho do documento"
+      }
     },
-    "margin": "Margem (mm)",
+    "margins": "Margens (Em centímetros)",
     "pdfZipHint": "Os PDFs são baixados juntos, num arquivo ZIP.",
     "imageZipHint": "Cada documento vira um arquivo, todos num ZIP.",
-    "imageHint": "PNG preserva todos os detalhes. JPG gera um arquivo menor, com alguma perda.",
+    "imageHint": {
+      "png": "Arquivo maior, com a melhor qualidade.",
+      "jpg": "Arquivo menor, com um pouco menos de qualidade."
+    },
     "generating": "Gerando arquivo…",
     "generatingOf": "Gerando {current} de {total}…",
     "action": "Exportar",

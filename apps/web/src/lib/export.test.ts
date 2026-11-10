@@ -1,3 +1,7 @@
+import type {
+  PdfDocumentEncoderOptions,
+  PdfPageArea,
+} from '@devantage/docscanify';
 import { type UnzipFileInfo, unzipSync } from 'fflate';
 import { PDFDocument, type PDFPage } from 'pdf-lib';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -8,6 +12,8 @@ import {
   exportDocuments,
   type ExportedFile,
   type ExportItem,
+  type PdfPagePreview,
+  pdfPagePreview,
 } from './export';
 import type { ExportSettings } from './types';
 
@@ -18,7 +24,8 @@ interface ConstructedEncoder {
 
 /**
  * Fake docscanify encoders. The PDF one makes a real single-page PDF whose page width is
- * 100 + the first byte of the render, so the order of merged pages can be read back.
+ * 100 + the first byte of the render, so the order of merged pages can be read back; it checks
+ * its options and lays out pages as the real encoder does.
  */
 const fakes: {
   constructed: ConstructedEncoder[];
@@ -30,14 +37,16 @@ const fakes: {
   } => ({ constructed: [], encoded: [] }),
 );
 
-vi.mock('@devantage/docscanify', (): Record<string, unknown> => {
-  class PdfDocumentEncoder {
-    public readonly mimeType: string = 'application/pdf';
-    public readonly fileExtension: string = 'pdf';
-    public constructor(options: unknown) {
+vi.mock('@devantage/docscanify', async (): Promise<Record<string, unknown>> => {
+  const core: typeof import('@devantage/docscanify') = await vi.importActual(
+    '@devantage/docscanify',
+  );
+  class PdfDocumentEncoder extends core.PdfDocumentEncoder {
+    public constructor(options: PdfDocumentEncoderOptions) {
+      super(options);
       fakes.constructed.push({ kind: 'pdf', options });
     }
-    public async encode(png: Uint8Array): Promise<Uint8Array> {
+    public override async encode(png: Uint8Array): Promise<Uint8Array> {
       fakes.encoded.push({ kind: 'pdf', input: png });
       const { PDFDocument: Pdf } = await import('pdf-lib');
       const pdf: PDFDocument = await Pdf.create();
@@ -136,11 +145,11 @@ afterEach((): void => {
 });
 
 describe('DEFAULT_EXPORT_SETTINGS', (): void => {
-  it('is an A4 PDF without margin, combining every document', (): void => {
+  it('is an A4 PDF without margins, combining every document', (): void => {
     expect(DEFAULT_EXPORT_SETTINGS).toEqual({
       format: 'pdf',
       pageFormat: 'a4',
-      margin: 0,
+      margins: 0,
       combine: true,
     });
   });
@@ -148,10 +157,10 @@ describe('DEFAULT_EXPORT_SETTINGS', (): void => {
 
 describe('exportDocuments', (): void => {
   describe('encoder choice', (): void => {
-    it('builds the PDF encoder with the page format and the margin converted from mm to points', async (): Promise<void> => {
+    it('builds the PDF encoder with the page format and the margins converted from cm to points', async (): Promise<void> => {
       await exportDocuments(
         [item('a', 1)],
-        settings({ format: 'pdf', pageFormat: 'letter', margin: 10 }),
+        settings({ format: 'pdf', pageFormat: 'letter', margins: 1 }),
         { batchName: 'scan' },
       );
 
@@ -160,17 +169,17 @@ describe('exportDocuments', (): void => {
       const options: { pageFormat: string; margin: number } = fakes
         .constructed[0].options as { pageFormat: string; margin: number };
       expect(options.pageFormat).toBe('letter');
-      // 10 mm = 10 / 25.4 in = 28.3465 pt
+      // 1 cm = 1 / 2.54 in = 28.3465 pt
       expect(options.margin).toBeCloseTo(28.346456, 5);
     });
 
-    it('converts 25.4 mm to exactly 72 points and keeps a zero margin at zero', async (): Promise<void> => {
+    it('converts 2.54 cm to exactly 72 points and keeps zero margins at zero', async (): Promise<void> => {
       await exportDocuments(
         [item('a', 1)],
-        settings({ pageFormat: 'image', margin: 25.4 }),
+        settings({ pageFormat: 'image', margins: 2.54 }),
         { batchName: 'scan' },
       );
-      await exportDocuments([item('a', 1)], settings({ margin: 0 }), {
+      await exportDocuments([item('a', 1)], settings({ margins: 0 }), {
         batchName: 'scan',
       });
 
@@ -492,6 +501,102 @@ describe('exportDocuments', (): void => {
       ),
     ).rejects.toBe(error);
     expect(renderThird).not.toHaveBeenCalled();
+  });
+});
+
+/** Checks a rectangle on the page, to a thousandth of a point. */
+function expectArea(actual: PdfPageArea, expected: PdfPageArea): void {
+  expect(actual.x).toBeCloseTo(expected.x, 3);
+  expect(actual.y).toBeCloseTo(expected.y, 3);
+  expect(actual.width).toBeCloseTo(expected.width, 3);
+  expect(actual.height).toBeCloseTo(expected.height, 3);
+}
+
+describe('pdfPagePreview', (): void => {
+  it('lays a portrait render on a portrait A4 page, filling its width without margins', (): void => {
+    const preview: PdfPagePreview = pdfPagePreview(settings({}), {
+      width: 1000,
+      height: 1500,
+    });
+
+    expect(preview.pageFormat).toBe('a4');
+    expect(preview.margin).toBe(0);
+    expect(preview.layout.page).toEqual({ width: 595.28, height: 841.89 });
+    // 595.28 / 1000 pt per pixel: 892.92 pt tall would not fit, so the height decides
+    const scale: number = 841.89 / 1500;
+    expectArea(preview.layout.image, {
+      x: (595.28 - 1000 * scale) / 2,
+      y: 0,
+      width: 1000 * scale,
+      height: 841.89,
+    });
+  });
+
+  it('turns the A4 page to landscape for a wide render', (): void => {
+    const preview: PdfPagePreview = pdfPagePreview(settings({}), {
+      width: 1600,
+      height: 900,
+    });
+
+    expect(preview.layout.page).toEqual({ width: 841.89, height: 595.28 });
+    expectArea(preview.layout.image, {
+      x: 0,
+      y: (595.28 - 900 * (841.89 / 1600)) / 2,
+      width: 841.89,
+      height: 900 * (841.89 / 1600),
+    });
+  });
+
+  it('keeps the margins, converted from cm to points, around the render on a Letter page', (): void => {
+    const preview: PdfPagePreview = pdfPagePreview(
+      settings({ pageFormat: 'letter', margins: 2.54 }),
+      { width: 800, height: 800 },
+    );
+
+    expect(preview.pageFormat).toBe('letter');
+    expect(preview.margin).toBeCloseTo(72, 10);
+    expect(preview.layout.page).toEqual({ width: 612, height: 792 });
+    // A square inside 468 × 648 pt: 468 pt wide, centered down the page
+    expectArea(preview.layout.image, {
+      x: 72,
+      y: 162,
+      width: 468,
+      height: 468,
+    });
+  });
+
+  it('makes a page the size of the render at 150 dpi, plus the margins', (): void => {
+    const preview: PdfPagePreview = pdfPagePreview(
+      settings({ pageFormat: 'image', margins: 1 }),
+      { width: 1500, height: 3000 },
+    );
+
+    const margin: number = 72 / 2.54;
+    expect(preview.margin).toBeCloseTo(margin, 10);
+    // 1500 px at 150 dpi = 10 in = 720 pt
+    expect(preview.layout.page.width).toBeCloseTo(720 + margin * 2, 10);
+    expect(preview.layout.page.height).toBeCloseTo(1440 + margin * 2, 10);
+    expectArea(preview.layout.image, {
+      x: margin,
+      y: margin,
+      width: 720,
+      height: 1440,
+    });
+  });
+
+  it('lays out the page with the encoder the export uses', async (): Promise<void> => {
+    const exportSettings: ExportSettings = settings({
+      pageFormat: 'letter',
+      margins: 1.5,
+    });
+
+    pdfPagePreview(exportSettings, { width: 10, height: 20 });
+    await exportDocuments([item('a', 1)], exportSettings, {
+      batchName: 'scan',
+    });
+
+    expect(fakes.constructed).toHaveLength(2);
+    expect(fakes.constructed[0]).toEqual(fakes.constructed[1]);
   });
 });
 

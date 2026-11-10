@@ -19,7 +19,7 @@ const doc: DocumentItem = {
   corners: null,
   valid: false,
   detectorFailed: true,
-  options: { filter: 'none', turns: 0, sharpen: 'off', denoise: false },
+  options: { filter: 'none', turns: 0, sharpen: 'off' },
 };
 
 /** A session with only `active` on display (and in the list), or no documents for null. */

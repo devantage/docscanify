@@ -125,52 +125,6 @@ input[type='number']:focus-visible {
   box-shadow: 0 0 0 4px var(--brand-ring);
 }
 
-/* Switch: the checkbox stays native for screen readers */
-.check {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  min-height: 44px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.check input {
-  order: 2;
-  position: relative;
-  flex: none;
-  width: 40px;
-  height: 24px;
-  margin: 0;
-  appearance: none;
-  background: var(--line-strong);
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background-color 150ms var(--ease);
-}
-
-.check input::before {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.2);
-  transition: transform 150ms var(--ease);
-}
-
-.check input:checked {
-  background: var(--brand);
-}
-
-.check input:checked::before {
-  transform: translateX(16px);
-}
-
 /* Touch screens: 44px minimum touch targets */
 @media (hover: none) and (pointer: coarse) {
   .btn-small {

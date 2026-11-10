@@ -1,9 +1,18 @@
 import type { PageFormat } from '@devantage/docscanify';
-import type { ChangeEvent, JSX } from 'react';
+import type { ChangeEvent, FocusEvent, JSX, KeyboardEvent } from 'react';
 
 import { Segmented, type SegmentedItem } from '@/components/Segmented';
 import { useTranslate } from '@/i18n';
 import type { ExportFormat, ExportSettings } from '@/lib/types';
+
+import {
+  formatMargins,
+  isNonDigitKey,
+  isTypedChange,
+  MARGINS_STEP,
+  parseSteppedMargins,
+  parseTypedMargins,
+} from './marginsMask';
 
 interface Props {
   settings: ExportSettings;
@@ -21,18 +30,14 @@ const FORMATS: SegmentedItem<ExportFormat>[] = [
 
 const PAGE_FORMATS: PageFormat[] = ['a4', 'letter', 'image'];
 
-/** Maximum margin, in mm: on A4 and Letter, 100 mm per side still leaves room for the image. */
-const MAX_MARGIN: number = 100;
+/** Maximum margins, in cm: on A4 and Letter, 10 cm per side still leaves room for the image. */
+const MAX_MARGINS: number = 10;
 
 /**
- * The margin typed in the field, in mm, kept between 0 and {@link MAX_MARGIN}; an empty or
- * invalid value becomes 0.
- */
-const clampMargin = (value: string): number =>
-  Math.min(MAX_MARGIN, Math.max(0, Number(value) || 0));
-
-/**
- * Fields of the export options: format and, for PDF, page and margin, side by side on phones.
+ * Fields of the export options: format and, for PDF, page and margins, side by side on phones.
+ * The margins field is a number field masked with 2 decimal places: typed digits fill from the
+ * right, and its arrows step by 0.01 cm. Focusing it selects the value, since a number field
+ * cannot move its caret to the end, where the mask types.
  * With several documents as PDF, it chooses between a single PDF with every page and one PDF per
  * document (ZIP); PNG and JPG are one file per document, all in a ZIP.
  */
@@ -41,8 +46,8 @@ export function ExportOptionsForm({
   onChange,
   count,
 }: Props): JSX.Element {
-  const { t } = useTranslate();
-  const { pageFormat, margin, format, combine } = settings;
+  const { t, locale } = useTranslate();
+  const { pageFormat, margins, format, combine } = settings;
 
   const change = (patch: Partial<ExportSettings>): void => {
     onChange({ ...settings, ...patch });
@@ -79,31 +84,47 @@ export function ExportOptionsForm({
         <>
           <div className="field-pair">
             <label className="field">
-              <span className="field-label">{t('export.page')}</span>
+              <span className="field-label">
+                {t('export.pageFormat.label')}
+              </span>
               <select
                 value={pageFormat}
                 onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                   change({ pageFormat: e.target.value as PageFormat });
                 }}
               >
-                {PAGE_FORMATS.map((page: PageFormat) => (
-                  <option key={page} value={page}>
-                    {t(`export.pageFormat.${page}`)}
+                {PAGE_FORMATS.map((curPageFormat: PageFormat) => (
+                  <option key={curPageFormat} value={curPageFormat}>
+                    {t(`export.pageFormat.values.${curPageFormat}`)}
                   </option>
                 ))}
               </select>
             </label>
             <label className="field">
-              <span className="field-label">{t('export.margin')}</span>
+              <span className="field-label">{t('export.margins')}</span>
               <input
                 type="number"
                 min={0}
-                max={MAX_MARGIN}
-                value={margin}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  change({ margin: clampMargin(e.target.value) });
+                max={MAX_MARGINS}
+                step={MARGINS_STEP}
+                inputMode="numeric"
+                lang={locale}
+                value={formatMargins(margins)}
+                onFocus={(e: FocusEvent<HTMLInputElement>) => {
+                  e.currentTarget.select();
                 }}
-                data-testid="margin"
+                onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                  if (isNonDigitKey(e)) e.preventDefault();
+                }}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  const read: typeof parseTypedMargins = isTypedChange(
+                    e.nativeEvent,
+                  )
+                    ? parseTypedMargins
+                    : parseSteppedMargins;
+                  change({ margins: read(e.target.value, MAX_MARGINS) });
+                }}
+                data-testid="margins"
               />
             </label>
           </div>
@@ -114,7 +135,7 @@ export function ExportOptionsForm({
       ) : (
         <p className="panel-hint">
           {count > 1 && `${t('export.imageZipHint')} `}
-          {t('export.imageHint')}
+          {t(`export.imageHint.${format}`)}
         </p>
       )}
     </>

@@ -32,7 +32,6 @@ vi.mock('@/lib/scan', (): Record<string, unknown> => ({
     filter: 'none',
     turns: 0,
     sharpen: 'off',
-    denoise: false,
   },
   renderWith: vi.fn(),
 }));
@@ -48,7 +47,6 @@ const OPTIONS: EnhanceOptions = {
   filter: 'grayscale',
   turns: 1,
   sharpen: 'soft',
-  denoise: true,
 };
 
 const FAILED: string = 'These options could not be applied on this device.';
@@ -101,7 +99,7 @@ function Providers({ children }: { children: ReactNode }): JSX.Element {
     exportSettings: {
       format: 'pdf',
       pageFormat: 'a4',
-      margin: 0,
+      margins: 0,
       combine: true,
     },
     addFiles: vi.fn(async (): Promise<void> => {

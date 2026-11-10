@@ -39,12 +39,12 @@ The app guides the user through four steps, shown in the top bar.
 ### 3. Adjust
 
 - **Perspective corrected.** The preview shows the document cropped and straightened.
-- **Per-document adjustments.** Color, grayscale or black and white filter, rotation, sharpness (soft or strong) and noise reduction.
-- **Apply to all.** Copies the color, sharpness and noise settings to every other document.
+- **Per-document adjustments.** Color, grayscale or black and white filter, rotation and sharpness (soft or strong). Sharpening also reduces the noise first, so it does not sharpen the grain of the photo.
+- **Apply to all.** Copies the color and sharpness settings to every other document.
 
 ### 4. Export
 
-- **PDF**, with A4, Letter or document-sized pages and a margin in millimeters. Several documents become a single PDF with one page each, or one PDF per document in a ZIP.
+- **PDF**, with A4, Letter or document-sized pages and margins in centimeters. Several documents become a single PDF with one page each, or one PDF per document in a ZIP.
 - **PNG or JPG**, one file per document, in a ZIP when there is more than one.
 - **Generated in the browser** and downloaded right away.
 

@@ -19,7 +19,6 @@ const OPTIONS: EnhanceOptions = {
   filter: 'grayscale',
   turns: 1,
   sharpen: 'soft',
-  denoise: true,
 };
 
 /** A document with valid corners and the given adjustments, named after its id. */
@@ -76,7 +75,7 @@ function renderPanel(
     exportSettings: {
       format: 'pdf',
       pageFormat: 'a4',
-      margin: 0,
+      margins: 0,
       combine: true,
     },
     addFiles: vi.fn(async (): Promise<void> => {
@@ -137,6 +136,7 @@ describe('EnhancePanel', (): void => {
     const second: DocumentItem = makeDocument('b', {
       ...OPTIONS,
       filter: 'bw',
+      sharpen: 'strong',
     });
     renderPanel([first, second], second);
 
@@ -146,7 +146,10 @@ describe('EnhancePanel', (): void => {
       }),
     ).toBeChecked();
     expect(
-      screen.getByRole('checkbox', { name: 'Reduce noise' }),
+      within(screen.getByRole('group', { name: 'Sharpness' })).getByRole(
+        'radio',
+        { name: 'Strong' },
+      ),
     ).toBeChecked();
   });
 

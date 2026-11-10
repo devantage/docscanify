@@ -39,7 +39,6 @@ vi.mock('@/lib/scan', () => ({
     filter: 'none',
     turns: 0,
     sharpen: 'off',
-    denoise: false,
   },
 }));
 vi.mock('./detectCrop', () => ({ detectCrop: vi.fn() }));
@@ -48,7 +47,6 @@ const NO_ENHANCEMENTS: EnhanceOptions = {
   filter: 'none',
   turns: 0,
   sharpen: 'off',
-  denoise: false,
 };
 
 const t: TranslateFunction = createTranslate('en', MESSAGES.en, MESSAGES.en);

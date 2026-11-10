@@ -374,9 +374,11 @@ test.describe('Renders after changes', (): void => {
 
     await watchTransients(page, [SPINNER, BUSY_PREVIEW]);
 
-    // Adjust → Export, then the other document, then back
+    // Adjust → Export, then the other document, then back. Exporting to PNG, the Export step
+    // shows the render itself, not on a PDF page
     await page.getByTestId('continue').click();
     await expectStep(page, 3);
+    await choose(page, 'PNG');
     expect((await settledPixels(page)).checksum).toBe(invoice.checksum);
     await showDocument(page, 1);
     await expect

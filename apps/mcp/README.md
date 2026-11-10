@@ -145,6 +145,20 @@ The result has:
 | `mimeType` | MIME type of the output file                                                                                                    |
 | `fileName` | Name of the output file                                                                                                         |
 | `savedTo`  | Absolute path the file was saved to, when `outputPath` was given                                                                |
+| `pdf`      | PDF only. How the document was laid out on the page, described below                                                            |
+
+`pdf` describes the page in points (1 pt = 1/72 in), with `x` and `y` from the top left corner of the page:
+
+```json
+{
+  "unit": "pt",
+  "page": { "width": 595.28, "height": 841.89, "orientation": "portrait" },
+  "image": { "x": 56.69, "y": 120.4, "width": 481.9, "height": 601.1 },
+  "pixelsPerPoint": 1.68
+}
+```
+
+`page` already accounts for landscape pages, used when the document is wider than it is tall, and `image` is where the document was drawn. Services that place fields on a PDF, such as e-signature platforms, ask for positions in points: a point found in the document image at `px`, `py` pixels is at `image.x + px / pixelsPerPoint`, `image.y + py / pixelsPerPoint` on the page. If a service measures `y` from the bottom of the page, use `page.height` minus that value.
 
 When the scan fails, for example when no document is detected with `onNotDetected` set to `error`, the tool returns an error with the reason, and the server keeps running.
 

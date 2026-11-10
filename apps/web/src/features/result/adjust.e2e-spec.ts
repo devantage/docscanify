@@ -238,11 +238,14 @@ test.describe('Adjust step', (): void => {
     ).toBeChecked();
     const plain: PreviewPixels = await settledPixels(page);
 
+    // The noise reduction that comes with any sharpness smooths the flat areas first, so Soft
+    // gains less edge energy than a sharpening alone would
     await choose(page, 'Soft');
     await expect
       .poll(measure(page, 'edgeEnergy'), RENDER_TIMEOUT)
-      .toBeGreaterThan(plain.edgeEnergy * 1.1);
+      .toBeGreaterThan(plain.edgeEnergy * 1.04);
     const soft: PreviewPixels = await settledPixels(page);
+    expect(soft.checksum).not.toBe(plain.checksum);
 
     await choose(page, 'Strong');
     await expect
@@ -261,33 +264,7 @@ test.describe('Adjust step', (): void => {
       .toBe(plain.checksum);
   });
 
-  test('smooths the preview with noise reduction, and restores it when turned off', async ({
-    page,
-  }: {
-    page: Page;
-  }): Promise<void> => {
-    await openAdjust(page, ['invoice.jpg']);
-    const denoise: Locator = page.getByTestId('denoise');
-    await expect(denoise).not.toBeChecked();
-    const plain: PreviewPixels = await settledPixels(page);
-
-    await denoise.check();
-    await expect
-      .poll(measure(page, 'edgeEnergy'), RENDER_TIMEOUT)
-      .toBeLessThan(plain.edgeEnergy * 0.9);
-    const smooth: PreviewPixels = await settledPixels(page);
-    expect(smooth.checksum).not.toBe(plain.checksum);
-    expect(smooth.maxChannelSpread).toBeGreaterThan(60);
-    expect(smooth.width).toBe(plain.width);
-    expect(smooth.height).toBe(plain.height);
-
-    await denoise.uncheck();
-    await expect
-      .poll(measure(page, 'checksum'), RENDER_TIMEOUT)
-      .toBe(plain.checksum);
-  });
-
-  test('applies color, sharpness and noise reduction to every other document, but not the rotation', async ({
+  test('applies color and sharpness to every other document, but not the rotation', async ({
     page,
   }: {
     page: Page;
@@ -307,7 +284,6 @@ test.describe('Adjust step', (): void => {
     await showDocument(page, 0);
     await choose(page, 'Grayscale');
     await choose(page, 'Strong');
-    await page.getByTestId('denoise').check();
     await rotate(page, 'Right');
     await expect(resultStatus(page)).toHaveText(
       `Document 1 of 3 · ${sizeText(swapped(sizes[0]))}`,
@@ -329,7 +305,6 @@ test.describe('Adjust step', (): void => {
       await expect(
         page.getByRole('radio', { name: 'Strong', exact: true }),
       ).toBeChecked();
-      await expect(page.getByTestId('denoise')).toBeChecked();
       await expect(preview(page)).toHaveAttribute('data-filter', 'grayscale');
       // Not rotated: the size it had before
       await expect(resultStatus(page)).toHaveText(
@@ -396,7 +371,7 @@ test.describe('Adjust step', (): void => {
       RENDER_TIMEOUT,
     );
 
-    // The invoice: black and white with noise reduction
+    // The invoice: black and white with strong sharpness
     await showDocument(page, 0);
     await expect(
       page.getByRole('radio', { name: 'Color', exact: true }),
@@ -405,7 +380,7 @@ test.describe('Adjust step', (): void => {
       page.getByRole('radio', { name: 'None', exact: true }),
     ).toBeChecked();
     await choose(page, 'Black and white');
-    await page.getByTestId('denoise').check();
+    await choose(page, 'Strong');
     await expect(resultStatus(page)).toHaveText(
       `Document 1 of 2 · ${sizeText(invoice)}`,
       RENDER_TIMEOUT,
@@ -422,7 +397,6 @@ test.describe('Adjust step', (): void => {
     await expect(
       page.getByRole('radio', { name: 'Soft', exact: true }),
     ).toBeChecked();
-    await expect(page.getByTestId('denoise')).not.toBeChecked();
     await expect(preview(page)).toHaveAttribute('data-filter', 'grayscale');
     await expect(resultStatus(page)).toHaveText(
       `Document 2 of 2 · ${sizeText(swapped(receipt))}`,
@@ -437,7 +411,9 @@ test.describe('Adjust step', (): void => {
     await expect(
       page.getByRole('radio', { name: 'Black and white', exact: true }),
     ).toBeChecked();
-    await expect(page.getByTestId('denoise')).toBeChecked();
+    await expect(
+      page.getByRole('radio', { name: 'Strong', exact: true }),
+    ).toBeChecked();
     await expect(preview(page)).toHaveAttribute('data-filter', 'bw');
     await expect(resultStatus(page)).toHaveText(
       `Document 1 of 2 · ${sizeText(invoice)}`,

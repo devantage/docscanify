@@ -24,8 +24,8 @@ interface Props {
 
 /**
  * Panel of the Enhance step: the adjustments of the document on display, which the user can
- * collapse on phones. With several documents, "apply to all" copies color, sharpness, and noise
- * reduction to the others; rotation stays per document.
+ * collapse on phones. With several documents, "apply to all" copies color and sharpness to the
+ * others; rotation stays per document.
  */
 export function EnhancePanel({ status }: Props): JSX.Element {
   const { t } = useTranslate();

@@ -36,6 +36,37 @@ export interface ScanDocumentOutput {
   fileName: string;
 
   savedTo?: string;
+
+  /** PDF only. How the document was laid out on the page */
+  pdf?: ScanPdfLayout;
+}
+
+/** A rectangle on the PDF page, in points, from the top left corner of the page. */
+export interface ScanPdfArea {
+  x: number;
+
+  y: number;
+
+  width: number;
+
+  height: number;
+}
+
+/** How the document was laid out on the PDF page, as the tool returns it. */
+export interface ScanPdfLayout {
+  unit: 'pt';
+
+  page: {
+    width: number;
+
+    height: number;
+
+    orientation: 'portrait' | 'landscape';
+  };
+
+  image: ScanPdfArea;
+
+  pixelsPerPoint: number;
 }
 
 const POINT_SCHEMA: z.ZodType<Corner> = z.object({
@@ -138,6 +169,34 @@ export const SCAN_DOCUMENT_INPUT_SCHEMA: z.ZodType<ScanDocumentInput> =
       ),
   });
 
+const PDF_LAYOUT_SCHEMA: z.ZodType<ScanPdfLayout> = z.object({
+  unit: z.literal('pt').describe('Unit of every measure: points, 1/72 in'),
+  page: z
+    .object({
+      width: z.number(),
+      height: z.number(),
+      orientation: z.enum(['portrait', 'landscape']),
+    })
+    .describe(
+      'The page, already turned to landscape when the document is wider than it is tall',
+    ),
+  image: z
+    .object({
+      x: z.number(),
+      y: z.number(),
+      width: z.number(),
+      height: z.number(),
+    })
+    .describe(
+      'Where the document was drawn, with x and y from the top left corner of the page',
+    ),
+  pixelsPerPoint: z
+    .number()
+    .describe(
+      'Pixels of the document image per point: a point at px, py pixels of the image is at image.x + px / pixelsPerPoint, image.y + py / pixelsPerPoint on the page',
+    ),
+});
+
 /** What the scan_document tool returns, besides the file. */
 export const SCAN_DOCUMENT_OUTPUT_SCHEMA: z.ZodType<ScanDocumentOutput> =
   z.object({
@@ -167,4 +226,7 @@ export const SCAN_DOCUMENT_OUTPUT_SCHEMA: z.ZodType<ScanDocumentOutput> =
       .describe(
         'Absolute path the file was saved to, when outputPath was given',
       ),
+    pdf: PDF_LAYOUT_SCHEMA.optional().describe(
+      'PDF only. How the document was laid out on the page, to place fields such as signatures on it',
+    ),
   });

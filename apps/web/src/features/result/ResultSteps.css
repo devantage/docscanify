@@ -15,6 +15,10 @@
   transition: opacity 150ms var(--ease);
 }
 
+.result.is-page {
+  border-radius: 0;
+}
+
 .result.is-busy {
   opacity: 0.5;
 }

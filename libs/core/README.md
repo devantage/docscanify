@@ -251,6 +251,15 @@ const pdf = await document.toPdf(
 );
 ```
 
+To preview a PDF before making it, `getPageLayout({ width, height })` returns how `encode` lays out an image of that size: `page`, the page dimensions (already turned to landscape for a wide image), and `image`, where the image is drawn (`x`, `y`, `width`, `height`, with `x` and `y` from the top left corner of the page). Everything is in points (1 pt = 1/72 in).
+
+```ts
+const { page, image } = new PdfDocumentEncoder({
+  pageFormat: 'a4',
+  margin: 36,
+}).getPageLayout({ width: 1200, height: 1600 });
+```
+
 ## Browsers
 
 The package also works on browsers. Your bundler must support the `browser` field of `package.json` (Vite, webpack and esbuild do), which keeps the Node.js-only dependencies out of the bundle.

@@ -18,8 +18,8 @@ export interface EnhanceOptions {
   filter: Filter;
   /** Clockwise quarter turns; negative values rotate counterclockwise. */
   turns: number;
+  /** Any level other than `"off"` also reduces the noise before sharpening. */
   sharpen: Sharpen;
-  denoise: boolean;
 }
 
 /** Export options, chosen in the Export step. They apply to every document. */
@@ -27,8 +27,8 @@ export interface ExportSettings {
   format: ExportFormat;
   /** PDF page size. Only used when `format` is `"pdf"`. */
   pageFormat: PageFormat;
-  /** PDF page margin, in millimeters. */
-  margin: number;
+  /** PDF page margins, in centimeters with up to 2 decimal places, the same on every side. */
+  margins: number;
   /**
    * With more than one document as PDF: `true` makes a single PDF with one page per document;
    * `false` makes one PDF per document, inside a ZIP. PNG and JPG are always one file per document.

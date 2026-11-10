@@ -15,7 +15,6 @@ const NO_ENHANCEMENTS: EnhanceOptions = {
   filter: 'none',
   turns: 0,
   sharpen: 'off',
-  denoise: false,
 };
 
 /** Corners of a `size` × `size` square at the origin. */
@@ -404,7 +403,6 @@ describe('useDocuments', (): void => {
         filter: 'grayscale',
         turns: 1,
         sharpen: 'strong',
-        denoise: true,
       };
 
       act(() => {
@@ -417,11 +415,11 @@ describe('useDocuments', (): void => {
   });
 
   describe('applyOptionsToAll', (): void => {
-    it('copies color, sharpness and noise reduction to every other document, keeping each rotation', (): void => {
+    it('copies color and sharpness to every other document, keeping each rotation', (): void => {
       const { result } = renderWith(
         makeDoc('a', { options: { ...NO_ENHANCEMENTS, turns: 3 } }),
         makeDoc('b', {
-          options: { filter: 'bw', turns: 2, sharpen: 'soft', denoise: true },
+          options: { filter: 'bw', turns: 2, sharpen: 'soft' },
         }),
         makeDoc('c', { options: { ...NO_ENHANCEMENTS, turns: -1 } }),
       );
@@ -433,9 +431,9 @@ describe('useDocuments', (): void => {
       expect(
         result.current.documents.map((d: DocumentItem) => d.options),
       ).toEqual([
-        { filter: 'bw', turns: 3, sharpen: 'soft', denoise: true },
-        { filter: 'bw', turns: 2, sharpen: 'soft', denoise: true },
-        { filter: 'bw', turns: -1, sharpen: 'soft', denoise: true },
+        { filter: 'bw', turns: 3, sharpen: 'soft' },
+        { filter: 'bw', turns: 2, sharpen: 'soft' },
+        { filter: 'bw', turns: -1, sharpen: 'soft' },
       ]);
     });
 
@@ -443,7 +441,7 @@ describe('useDocuments', (): void => {
       const { result } = renderWith(
         makeDoc('a'),
         makeDoc('b', {
-          options: { filter: 'bw', turns: 0, sharpen: 'soft', denoise: true },
+          options: { filter: 'bw', turns: 0, sharpen: 'soft' },
         }),
       );
       const source: DocumentItem = result.current.documents[1];

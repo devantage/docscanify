@@ -95,7 +95,7 @@ function makeDocument(overrides: Partial<DocumentItem> = {}): DocumentItem {
     corners: CORNERS,
     valid: true,
     detectorFailed: false,
-    options: { filter: 'none', turns: 0, sharpen: 'off', denoise: false },
+    options: { filter: 'none', turns: 0, sharpen: 'off' },
     ...overrides,
   };
 }
@@ -127,7 +127,7 @@ function makeSession(doc: DocumentItem, invalidCount: number = 0): Session {
     exportSettings: {
       format: 'pdf',
       pageFormat: 'a4',
-      margin: 0,
+      margins: 0,
       combine: true,
     },
     addFiles: vi.fn(async (): Promise<void> => {

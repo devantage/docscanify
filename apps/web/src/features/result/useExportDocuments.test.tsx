@@ -64,7 +64,7 @@ function deferred<T>(): Deferred<T> {
 const SETTINGS: ExportSettings = {
   format: 'pdf',
   pageFormat: 'letter',
-  margin: 5,
+  margins: 5,
   combine: true,
 };
 
@@ -86,7 +86,7 @@ function makeDocument(id: string, name: string): DocumentItem {
     corners: null,
     valid: true,
     detectorFailed: false,
-    options: { filter: 'none', turns: 0, sharpen: 'off', denoise: false },
+    options: { filter: 'none', turns: 0, sharpen: 'off' },
   };
 }
 

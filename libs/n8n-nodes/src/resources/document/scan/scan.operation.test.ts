@@ -1,4 +1,7 @@
-import { type DocumentOutput, DocumentScanner } from '@devantage/docscanify';
+import {
+  DocumentScanner,
+  type DocumentScannerOutput,
+} from '@devantage/docscanify';
 import { TestUtil } from '@devantage/n8n-custom-nodes-framework';
 import type {
   IBinaryData,
@@ -11,7 +14,7 @@ import { ScanOperation } from './scan.operation';
 
 type ScanContext = ReturnType<typeof TestUtil.createExecuteFunctionsMock>;
 
-const SCAN_RESULT: DocumentOutput = {
+const SCAN_RESULT: DocumentScannerOutput = {
   file: {
     buffer: new Uint8Array(Buffer.from('pdf')),
     mimeType: 'application/pdf',
@@ -31,6 +34,11 @@ const SCAN_RESULT: DocumentOutput = {
       dimensions: { width: 800, height: 900 },
       size: 9,
     },
+  },
+  // A 100 × 200 px document on a Letter page: the height limits it to 396 × 792 pt
+  pageLayout: {
+    page: { width: 612, height: 792 },
+    image: { x: 108, y: 0, width: 396, height: 792 },
   },
 };
 
@@ -212,6 +220,12 @@ describe('ScanOperation', (): void => {
           corners: SCAN_CORNERS,
           width: 100,
           height: 200,
+          pdf: {
+            unit: 'pt',
+            page: { width: 612, height: 792, orientation: 'portrait' },
+            image: { x: 108, y: 0, width: 396, height: 792 },
+            pixelsPerPoint: 100 / 396,
+          },
         },
       },
       binary: {
@@ -249,13 +263,19 @@ describe('ScanOperation', (): void => {
         mimeType: 'image/png',
         fileExtension: 'png',
       },
+      pageLayout: null,
     });
 
     const context: ScanContext = createContext({ filter: 'bw' }, 'image');
 
     const operation: ScanOperation = new ScanOperation('document');
 
-    await operation.execute.call(context as never, 0);
+    const result: INodeExecutionData = await operation.execute.call(
+      context as never,
+      0,
+    );
+
+    expect(result.json.scan).not.toHaveProperty('pdf');
 
     expect(scan).toHaveBeenCalledWith(expect.any(Buffer), {
       filter: 'bw',

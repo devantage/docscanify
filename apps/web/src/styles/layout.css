@@ -294,18 +294,8 @@
     gap: 0.75rem;
   }
 
-  /* The rotation icons speak for themselves next to the other options */
+  /* The Left and Right buttons speak for themselves */
   .field-rotate legend {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  /* Icon-only buttons: the label stays as their accessible name */
-  .btn-label {
     position: absolute;
     width: 1px;
     height: 1px;

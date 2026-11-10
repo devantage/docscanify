@@ -41,7 +41,6 @@ vi.mock('@/lib/scan', () => ({
     filter: 'none',
     turns: 0,
     sharpen: 'off',
-    denoise: false,
   },
 }));
 vi.mock('@/features/documents/detectCrop', () => ({ detectCrop: vi.fn() }));
@@ -50,7 +49,7 @@ vi.mock('@/features/documents/usePreviews', () => ({ usePreviews: vi.fn() }));
 const DEFAULT_SETTINGS: ExportSettings = {
   format: 'pdf',
   pageFormat: 'a4',
-  margin: 0,
+  margins: 0,
   combine: true,
 };
 
@@ -366,7 +365,6 @@ describe('ScanProvider', (): void => {
       filter: 'grayscale',
       turns: 1,
       sharpen: 'strong',
-      denoise: true,
     };
 
     act(() => {
@@ -396,7 +394,7 @@ describe('ScanProvider', (): void => {
     const settings: ExportSettings = {
       format: 'jpg',
       pageFormat: 'letter',
-      margin: 10,
+      margins: 10,
       combine: false,
     };
 
@@ -413,7 +411,7 @@ describe('ScanProvider', (): void => {
       scan().setExportSettings({
         format: 'png',
         pageFormat: 'image',
-        margin: 5,
+        margins: 5,
         combine: false,
       });
     });

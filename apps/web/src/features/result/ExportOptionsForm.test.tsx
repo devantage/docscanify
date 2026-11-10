@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
+import { type JSX, useState } from 'react';
 import { describe, expect, it, type Mock, vi } from 'vitest';
 
 import { TranslateProvider } from '@/i18n';
@@ -10,14 +11,14 @@ import { ExportOptionsForm } from './ExportOptionsForm';
 const PDF: ExportSettings = {
   format: 'pdf',
   pageFormat: 'a4',
-  margin: 10,
+  margins: 10,
   combine: true,
 };
 
 const PDF_ZIP_HINT: string = 'The PDFs are downloaded together, in a ZIP file.';
 const IMAGE_ZIP_HINT: string = 'Each document becomes a file, all in a ZIP.';
-const IMAGE_HINT: string =
-  'PNG keeps every detail. JPG makes a smaller file, with some loss.';
+const PNG_HINT: string = 'Larger file, with the best quality.';
+const JPG_HINT: string = 'Smaller file, with slightly lower quality.';
 
 type OnChange = Mock<(settings: ExportSettings) => void>;
 
@@ -40,12 +41,33 @@ function renderForm(settings: ExportSettings, count: number): OnChange {
   return onChange;
 }
 
+/**
+ * Renders the form in English for a single PDF without margins, keeping its settings in state like
+ * the app does, so what is typed shows up in the fields.
+ */
+function renderLiveForm(): void {
+  const Live = (): JSX.Element => {
+    const [settings, setSettings] = useState<ExportSettings>({
+      ...PDF,
+      margins: 0,
+    });
+    return (
+      <ExportOptionsForm settings={settings} onChange={setSettings} count={1} />
+    );
+  };
+  render(
+    <TranslateProvider defaultLocale="en">
+      <Live />
+    </TranslateProvider>,
+  );
+}
+
 /** The fieldset whose legend is `legend`. */
 const group = (legend: string): HTMLElement =>
   screen.getByRole('group', { name: legend });
 
-/** The margin field, in mm. */
-const marginInput = (): HTMLInputElement => screen.getByTestId('margin');
+/** The margins field, in centimeters. */
+const marginsInput = (): HTMLInputElement => screen.getByTestId('margins');
 
 describe('ExportOptionsForm', (): void => {
   it('offers PDF, PNG and JPG, in order, with the current format selected', (): void => {
@@ -76,7 +98,7 @@ describe('ExportOptionsForm', (): void => {
       renderForm({ ...PDF, pageFormat: 'letter' }, 1);
 
       const select: HTMLSelectElement = screen.getByRole('combobox', {
-        name: 'PDF page',
+        name: 'Page format',
       });
       expect(select.value).toBe('letter');
       expect(
@@ -98,7 +120,7 @@ describe('ExportOptionsForm', (): void => {
       const onChange: OnChange = renderForm(PDF, 1);
 
       await user.selectOptions(
-        screen.getByRole('combobox', { name: 'PDF page' }),
+        screen.getByRole('combobox', { name: 'Page format' }),
         'image',
       );
 
@@ -108,58 +130,92 @@ describe('ExportOptionsForm', (): void => {
       });
     });
 
-    it('shows the margin in millimeters, between 0 and 100', (): void => {
-      renderForm({ ...PDF, margin: 15 }, 1);
+    it('shows the margins in centimeters with 2 decimal places, stepping by 0.01 up to 10', (): void => {
+      renderForm({ ...PDF, margins: 1.5 }, 1);
 
-      const margin: HTMLInputElement = screen.getByRole('spinbutton', {
-        name: 'Margin (mm)',
+      const margins: HTMLInputElement = screen.getByRole('spinbutton', {
+        name: 'Margins (In centimeters)',
       });
-      expect(margin).toBe(marginInput());
-      expect(margin).toHaveValue(15);
-      expect(margin).toHaveAttribute('min', '0');
-      expect(margin).toHaveAttribute('max', '100');
+      expect(margins).toBe(marginsInput());
+      expect(margins.value).toBe('1.50');
+      expect(margins).toHaveAttribute('min', '0');
+      expect(margins).toHaveAttribute('max', '10');
+      expect(margins).toHaveAttribute('step', '0.01');
+      expect(margins).toHaveAttribute('inputmode', 'numeric');
+      expect(margins).toHaveAttribute('lang', 'en');
     });
 
-    it('changes the margin to the number typed', (): void => {
-      const onChange: OnChange = renderForm(PDF, 1);
+    it('fills the margins from the right as digits are typed, and shifts them back on delete', async (): Promise<void> => {
+      const user: UserEvent = userEvent.setup();
+      renderLiveForm();
+      expect(marginsInput().value).toBe('0.00');
 
-      fireEvent.change(marginInput(), { target: { value: '25' } });
+      await user.click(marginsInput());
+      await user.keyboard('1');
+      expect(marginsInput().value).toBe('0.01');
+      await user.keyboard('2');
+      expect(marginsInput().value).toBe('0.12');
+      await user.keyboard('5');
+      expect(marginsInput().value).toBe('1.25');
 
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margin: 25 });
+      await user.keyboard('{Backspace}');
+      expect(marginsInput().value).toBe('0.12');
     });
 
-    it('accepts a fractional margin', (): void => {
-      const onChange: OnChange = renderForm(PDF, 1);
+    it('selects the margins on focus, so typing starts them over', async (): Promise<void> => {
+      const user: UserEvent = userEvent.setup();
+      renderLiveForm();
+      await user.click(marginsInput());
+      await user.keyboard('125');
+      await user.tab();
 
-      fireEvent.change(marginInput(), { target: { value: '2.5' } });
+      await user.click(marginsInput());
+      await user.keyboard('7');
 
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margin: 2.5 });
+      expect(marginsInput().value).toBe('0.07');
     });
 
-    it('limits the margin to 100 mm', (): void => {
-      const onChange: OnChange = renderForm(PDF, 1);
+    it('ignores keys that are not digits', async (): Promise<void> => {
+      const user: UserEvent = userEvent.setup();
+      renderLiveForm();
 
-      fireEvent.change(marginInput(), { target: { value: '250' } });
+      await user.click(marginsInput());
+      await user.keyboard('e+-.,a5');
 
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margin: 100 });
+      expect(marginsInput().value).toBe('0.05');
     });
 
-    it('turns a negative margin into 0', (): void => {
-      const onChange: OnChange = renderForm(PDF, 1);
+    it('limits the typed margins to 10 cm', (): void => {
+      const onChange: OnChange = renderForm({ ...PDF, margins: 1.23 }, 1);
 
-      fireEvent.change(marginInput(), { target: { value: '-4' } });
+      // A digit typed after 1.23: the browser hands the field over as "1.234"
+      fireEvent.input(marginsInput(), {
+        target: { value: '1.234' },
+        inputType: 'insertText',
+      });
 
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margin: 0 });
+      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margins: 10 });
     });
 
-    it('turns an empty margin into 0', (): void => {
-      const onChange: OnChange = renderForm(PDF, 1);
+    it('reads a step of the arrows as a whole number and shows it with 2 decimal places', (): void => {
+      renderLiveForm();
 
-      fireEvent.change(marginInput(), { target: { value: '' } });
+      // Stepping up from 1.29 gives "1.3": the step arrows send a plain Event, with no inputType
+      fireEvent.change(marginsInput(), { target: { value: '1.3' } });
 
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margin: 0 });
+      expect(marginsInput().value).toBe('1.30');
     });
 
+    it('changes the margins to those stepped to', (): void => {
+      const onChange: OnChange = renderForm({ ...PDF, margins: 1.29 }, 1);
+
+      fireEvent.change(marginsInput(), { target: { value: '1.3' } });
+
+      expect(onChange).toHaveBeenCalledExactlyOnceWith({
+        ...PDF,
+        margins: 1.3,
+      });
+    });
     it('has no file option nor hint for a single document', (): void => {
       renderForm({ ...PDF, combine: false }, 1);
 
@@ -167,7 +223,8 @@ describe('ExportOptionsForm', (): void => {
         screen.queryByRole('group', { name: 'File' }),
       ).not.toBeInTheDocument();
       expect(screen.queryByText(PDF_ZIP_HINT)).not.toBeInTheDocument();
-      expect(screen.queryByText(IMAGE_HINT)).not.toBeInTheDocument();
+      expect(screen.queryByText(PNG_HINT)).not.toBeInTheDocument();
+      expect(screen.queryByText(JPG_HINT)).not.toBeInTheDocument();
     });
 
     it('offers one PDF with everything or one PDF per document with several documents', (): void => {
@@ -227,31 +284,43 @@ describe('ExportOptionsForm', (): void => {
   });
 
   describe('as an image', (): void => {
-    it('hides the page, margin and file options', (): void => {
+    it('hides the page, margins and file options', (): void => {
       renderForm({ ...PDF, format: 'jpg' }, 3);
 
       expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('margin')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('margins')).not.toBeInTheDocument();
       expect(
         screen.queryByRole('group', { name: 'File' }),
       ).not.toBeInTheDocument();
       expect(screen.queryByText(PDF_ZIP_HINT)).not.toBeInTheDocument();
     });
 
-    it('explains PNG and JPG for a single document, without a ZIP', (): void => {
-      renderForm({ ...PDF, format: 'png' }, 1);
+    it.each([
+      ['png', PNG_HINT],
+      ['jpg', JPG_HINT],
+    ] as const)(
+      'explains the trade-off of %s for a single document, without a ZIP',
+      (format: 'png' | 'jpg', expected: string): void => {
+        renderForm({ ...PDF, format }, 1);
 
-      const hint: HTMLElement = screen.getByText(IMAGE_HINT);
-      expect(hint).toHaveClass('panel-hint');
-      expect(hint.textContent).toBe(IMAGE_HINT);
-    });
+        const hint: HTMLElement = screen.getByText(expected);
+        expect(hint).toHaveClass('panel-hint');
+        expect(hint.textContent).toBe(expected);
+      },
+    );
 
-    it('tells that several documents come as one file each, in a ZIP', (): void => {
-      renderForm({ ...PDF, format: 'png' }, 2);
+    it.each([
+      ['png', PNG_HINT],
+      ['jpg', JPG_HINT],
+    ] as const)(
+      'tells that several documents come as one %s file each, in a ZIP',
+      (format: 'png' | 'jpg', expected: string): void => {
+        renderForm({ ...PDF, format }, 2);
 
-      expect(screen.getByText(`${IMAGE_ZIP_HINT} ${IMAGE_HINT}`)).toHaveClass(
-        'panel-hint',
-      );
-    });
+        expect(screen.getByText(`${IMAGE_ZIP_HINT} ${expected}`)).toHaveClass(
+          'panel-hint',
+        );
+      },
+    );
   });
 });

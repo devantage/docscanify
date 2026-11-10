@@ -60,7 +60,6 @@ const OPTIONS: EnhanceOptions = {
   filter: 'none',
   turns: 0,
   sharpen: 'off',
-  denoise: false,
 };
 
 /** Document `doc-1` with valid corners and no adjustments, changed by `overrides`. */
@@ -390,7 +389,7 @@ describe('useRenderedDocument', (): void => {
     });
 
     hook.rerender({
-      doc: makeDocument({ options: { ...OPTIONS, denoise: true } }),
+      doc: makeDocument({ options: { ...OPTIONS, sharpen: 'soft' } }),
     });
     expect(hook.result.current.failed).toBe(false);
     await waitFor((): void => {

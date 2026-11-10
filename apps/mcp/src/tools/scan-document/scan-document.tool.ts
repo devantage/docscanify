@@ -1,6 +1,9 @@
 import { parse } from 'node:path';
 
-import type { DocumentOutput, DocumentScanner } from '@devantage/docscanify';
+import type {
+  DocumentScanner,
+  DocumentScannerOutput,
+} from '@devantage/docscanify';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type {
   CallToolResult,
@@ -19,6 +22,7 @@ import {
   type ScanDocumentOutput,
 } from './scan-document.schema';
 import type { ScanOutputWriter } from './scan-output-writer.class';
+import { ScanPdfLayoutConverter } from './scan-pdf-layout-converter.class';
 
 /** What the scan_document tool works with. */
 export interface ScanDocumentToolDependencies {
@@ -49,7 +53,7 @@ export class ScanDocumentTool {
       {
         title: 'Scan document',
         description:
-          'Scans a document out of a photo, like a "CamScanner" app: detects the edges of the document, crops it, corrects its perspective, optionally reduces the noise, sharpens, rotates and applies a grayscale or black and white filter, and returns it as a PDF or an image, with the corners it was cropped from.',
+          'Scans a document out of a photo, like a "CamScanner" app: detects the edges of the document, crops it, corrects its perspective, optionally reduces the noise, sharpens, rotates and applies a grayscale or black and white filter, and returns it as a PDF or an image, with the corners it was cropped from and, for a PDF, where it was placed on the page (to position signatures or stamps).',
         inputSchema: SCAN_DOCUMENT_INPUT_SCHEMA,
         outputSchema: SCAN_DOCUMENT_OUTPUT_SCHEMA,
         annotations: {
@@ -91,7 +95,7 @@ export class ScanDocumentTool {
 
     const image: ResolvedImage =
       await this.dependencies.imageSourceResolver.resolve(input);
-    const { file, report }: DocumentOutput =
+    const { file, report, pageLayout }: DocumentScannerOutput =
       await this.dependencies.scanner.scan(image.buffer, {
         name: image.name,
         outputFormat: input.outputFormat,
@@ -123,6 +127,9 @@ export class ScanDocumentTool {
       mimeType: file.mimeType,
       fileName,
       ...(savedTo && { savedTo }),
+      ...(pageLayout && {
+        pdf: ScanPdfLayoutConverter.fromLayout(pageLayout, report.dimensions),
+      }),
     };
 
     return {
