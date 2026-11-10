@@ -61,7 +61,7 @@ function makeDocument(id: string, filter: Filter = 'none'): DocumentItem {
     },
     valid: true,
     detectorFailed: false,
-    options: { filter, turns: 0, sharpen: 'off', denoise: false },
+    options: { filter, turns: 0, sharpen: 'off' },
   };
 }
 

@@ -53,7 +53,6 @@ vi.mock('@/lib/scan', () => ({
     filter: 'none',
     turns: 0,
     sharpen: 'off',
-    denoise: false,
   },
 }));
 vi.mock('@/features/documents/detectCrop', () => ({ detectCrop: vi.fn() }));

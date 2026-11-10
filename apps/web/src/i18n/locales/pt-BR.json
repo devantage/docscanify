@@ -114,7 +114,6 @@
       "soft": "Suave",
       "strong": "Forte"
     },
-    "denoise": "Reduzir ruído",
     "applyAll": "Aplicar a todos os documentos",
     "applied": {
       "one": "Os ajustes foram aplicados a {count} documento.",

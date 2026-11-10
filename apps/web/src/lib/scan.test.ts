@@ -80,7 +80,6 @@ describe('NO_ENHANCEMENTS', (): void => {
       filter: 'none',
       turns: 0,
       sharpen: 'off',
-      denoise: false,
     });
   });
 });
@@ -139,22 +138,27 @@ describe('createEnhancers', (): void => {
     expect(createEnhancers(withOptions({ filter: 'bw' }))).toEqual([]);
   });
 
-  it('adds noise reduction when denoise is on', (): void => {
-    expect(
-      createEnhancers(withOptions({ denoise: true })).map(describeAdapter),
-    ).toEqual([['OpenCvNoiseReductionEnhancer', { scriptUrl: SCRIPT_URL }]]);
-  });
-
   it.each(['soft', 'strong'] as const)(
-    'adds sharpness at the %s level',
+    'adds noise reduction, then sharpness at the %s level',
     (level: 'soft' | 'strong'): void => {
       expect(
         createEnhancers(withOptions({ sharpen: level })).map(describeAdapter),
       ).toEqual([
+        ['OpenCvNoiseReductionEnhancer', { scriptUrl: SCRIPT_URL }],
         ['OpenCvSharpnessEnhancer', { scriptUrl: SCRIPT_URL, level }],
       ]);
     },
   );
+
+  it('adds neither noise reduction nor sharpness when sharpness is off', (): void => {
+    expect(
+      createEnhancers(withOptions({ sharpen: 'off', turns: 1 })).map(
+        describeAdapter,
+      ),
+    ).toEqual([
+      ['OpenCvRotationEnhancer', { scriptUrl: SCRIPT_URL, quarterTurns: 1 }],
+    ]);
+  });
 
   it.each([1, 2, 3, -1, -3, 5])(
     'adds rotation by %i quarter turns',
@@ -183,7 +187,6 @@ describe('createEnhancers', (): void => {
         filter: 'grayscale',
         turns: 2,
         sharpen: 'strong',
-        denoise: true,
       }).map(describeAdapter),
     ).toEqual([
       ['OpenCvNoiseReductionEnhancer', { scriptUrl: SCRIPT_URL }],
@@ -251,7 +254,7 @@ describe('renderWith', (): void => {
 
     const png: Uint8Array = await renderWith(
       doc as unknown as ScannedDocument,
-      { filter: 'bw', turns: 1, sharpen: 'soft', denoise: false },
+      { filter: 'bw', turns: 1, sharpen: 'soft' },
     );
 
     expect(png).toBe(PNG);
@@ -262,6 +265,7 @@ describe('renderWith', (): void => {
       ),
     ).toEqual([
       [
+        ['OpenCvNoiseReductionEnhancer', { scriptUrl: SCRIPT_URL }],
         ['OpenCvSharpnessEnhancer', { scriptUrl: SCRIPT_URL, level: 'soft' }],
         ['OpenCvRotationEnhancer', { scriptUrl: SCRIPT_URL, quarterTurns: 1 }],
       ],

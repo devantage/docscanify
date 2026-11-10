@@ -487,12 +487,11 @@ test.describe('Export step', (): void => {
     await openExport(page, ['invoice.jpg', 'receipt.jpg']);
     const [invoice, receipt] = await documentSizes(page);
 
-    // Grayscale, strong sharpness and noise reduction applied to all; only the invoice rotated
+    // Grayscale and strong sharpness (so noise reduction) applied to all; only the invoice rotated
     await page.getByTestId('step-2').click();
     await showDocument(page, 0);
     await choose(page, 'Grayscale');
     await choose(page, 'Strong');
-    await page.getByTestId('denoise').check();
     await page.getByRole('button', { name: 'Right', exact: true }).click();
     await page.getByTestId('apply-all').click();
     await expect(

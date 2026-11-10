@@ -24,7 +24,6 @@ export const NO_ENHANCEMENTS: EnhanceOptions = {
   filter: 'none',
   turns: 0,
   sharpen: 'off',
-  denoise: false,
 };
 
 /**
@@ -45,19 +44,21 @@ export async function createScannedDocument(
 
 /**
  * Builds the enhancers chosen in the Enhance step. They run after the crop and before the
- * filter, in this order: noise reduction, sharpness, rotation.
+ * filter, in this order: noise reduction, sharpness, rotation. Noise reduction comes with any
+ * sharpness level, since sharpening alone would also sharpen the noise.
  *
  * @returns The active enhancers; empty when none is on.
  */
 export function createEnhancers({
-  denoise,
   sharpen,
   turns,
 }: EnhanceOptions): ImageEnhancer[] {
   const enhancers: ImageEnhancer[] = [];
-  if (denoise) enhancers.push(new OpenCvNoiseReductionEnhancer({ scriptUrl }));
   if (sharpen !== 'off') {
-    enhancers.push(new OpenCvSharpnessEnhancer({ scriptUrl, level: sharpen }));
+    enhancers.push(
+      new OpenCvNoiseReductionEnhancer({ scriptUrl }),
+      new OpenCvSharpnessEnhancer({ scriptUrl, level: sharpen }),
+    );
   }
   if (turns % 4 !== 0) {
     enhancers.push(

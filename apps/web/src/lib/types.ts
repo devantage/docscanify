@@ -18,8 +18,8 @@ export interface EnhanceOptions {
   filter: Filter;
   /** Clockwise quarter turns; negative values rotate counterclockwise. */
   turns: number;
+  /** Any level other than `"off"` also reduces the noise before sharpening. */
   sharpen: Sharpen;
-  denoise: boolean;
 }
 
 /** Export options, chosen in the Export step. They apply to every document. */

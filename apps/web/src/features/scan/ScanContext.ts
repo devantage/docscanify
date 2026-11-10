@@ -32,7 +32,7 @@ export interface ScanContextValue {
   setCorners(id: string, corners: Corners): void;
   redetect(id: string): void;
   setOptions(id: string, options: EnhanceOptions): void;
-  /** Copies color, sharpness, and noise reduction from one document to all the others. */
+  /** Copies color and sharpness from one document to all the others. */
   applyOptionsToAll(sourceId: string): void;
   setExportSettings(settings: ExportSettings): void;
   /** Discards every document and the export options, and starts over at the Upload step. */

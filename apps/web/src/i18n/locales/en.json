@@ -114,7 +114,6 @@
       "soft": "Soft",
       "strong": "Strong"
     },
-    "denoise": "Reduce noise",
     "applyAll": "Apply to all documents",
     "applied": {
       "one": "The adjustments were applied to {count} document.",

@@ -37,7 +37,6 @@ vi.mock('@/lib/scan', () => ({
     filter: 'none',
     turns: 0,
     sharpen: 'off',
-    denoise: false,
   },
 }));
 vi.mock('./renderCache', () => ({
@@ -49,7 +48,6 @@ const NO_ENHANCEMENTS: EnhanceOptions = {
   filter: 'none',
   turns: 0,
   sharpen: 'off',
-  denoise: false,
 };
 const BW: EnhanceOptions = { ...NO_ENHANCEMENTS, filter: 'bw' };
 

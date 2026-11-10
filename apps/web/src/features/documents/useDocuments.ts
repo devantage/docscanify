@@ -107,19 +107,19 @@ export function useDocuments(): UseDocumentsResult {
     update(id, { options });
   };
 
-  /** Copies color, sharpness, and noise reduction from one document to all the others. */
+  /** Copies color and sharpness from one document to all the others. */
   const applyOptionsToAll = (sourceId: string): void => {
     const source: DocumentItem | undefined = documents.find(
       (d: DocumentItem) => d.id === sourceId,
     );
     if (!source) return;
-    const { filter, sharpen, denoise } = source.options;
+    const { filter, sharpen } = source.options;
     setDocuments((list: DocumentItem[]) =>
       list.map((d: DocumentItem) =>
         // The source keeps its object identity, so its panel does not reset
         d.id === sourceId
           ? d
-          : { ...d, options: { ...d.options, filter, sharpen, denoise } },
+          : { ...d, options: { ...d.options, filter, sharpen } },
       ),
     );
   };

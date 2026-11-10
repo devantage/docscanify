@@ -86,7 +86,7 @@ function makeDocument(id: string, name: string): DocumentItem {
     corners: null,
     valid: true,
     detectorFailed: false,
-    options: { filter: 'none', turns: 0, sharpen: 'off', denoise: false },
+    options: { filter: 'none', turns: 0, sharpen: 'off' },
   };
 }
 
