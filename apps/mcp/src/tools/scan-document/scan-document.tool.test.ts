@@ -9,11 +9,12 @@ import type {
   ImageContent,
   ListToolsResult,
 } from '@modelcontextprotocol/sdk/types.js';
+import { PDFDocument } from 'pdf-lib';
 
 import type { TransportName } from '../../cli/cli-options.class';
 import { DocScanifyMcpServer } from '../../server/docscanify-mcp-server.class';
 import { createBlankPhoto, createDocumentPhoto } from '../../test-helpers';
-import type { ScanDocumentOutput } from './scan-document.schema';
+import type { ScanDocumentOutput, ScanPdfArea } from './scan-document.schema';
 
 const PHOTO: Buffer = createDocumentPhoto();
 
@@ -134,6 +135,36 @@ describe('ScanDocumentTool', (): void => {
     expect(JSON.parse(getText(result))).toEqual(output);
   });
 
+  it('returns how the document was laid out on the PDF page', async (): Promise<void> => {
+    const result: CallToolResult = await scan(client, {
+      imageBase64: PHOTO.toString('base64'),
+      pageSize: 'letter',
+      margin: 36,
+    });
+    const output: ScanDocumentOutput =
+      result.structuredContent as unknown as ScanDocumentOutput;
+    const pdf: PDFDocument = await PDFDocument.load(
+      Buffer.from(
+        (result.content[0] as { resource: { blob: string } }).resource.blob,
+        'base64',
+      ),
+    );
+
+    expect(output.pdf).toMatchObject({
+      unit: 'pt',
+      page: { width: 612, height: 792, orientation: 'portrait' },
+    });
+    expect(pdf.getPage(0).getSize()).toEqual({ width: 612, height: 792 });
+    const image: ScanPdfArea = output.pdf?.image ?? {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+    };
+    expect(Math.min(image.x, image.y)).toBeCloseTo(36);
+    expect(output.pdf?.pixelsPerPoint).toBeCloseTo(output.width / image.width);
+  });
+
   it('returns an image as image content, named after the file', async (): Promise<void> => {
     const result: CallToolResult = await scan(client, {
       imagePath: join(directory, 'photo.png'),
@@ -152,6 +183,7 @@ describe('ScanDocumentTool', (): void => {
       fileName: 'photo.png',
       mimeType: 'image/png',
     });
+    expect(result.structuredContent).not.toHaveProperty('pdf');
   });
 
   it('saves the file to outputPath', async (): Promise<void> => {

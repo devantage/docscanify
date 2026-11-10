@@ -1,6 +1,6 @@
 {
   "name": "@devantage/docscanify-mcp",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "MCP server that scans documents out of images (edge detection and perspective correction) and outputs them as images or PDFs, over stdio or streamable HTTP",
   "contributors": [
     "Guilherme Nogueira <guilherme.nogueira@devantage.com.br>"
@@ -33,7 +33,7 @@
     "src"
   ],
   "dependencies": {
-    "@devantage/docscanify": "^1.1.0",
+    "@devantage/docscanify": "^1.2.0",
     "@modelcontextprotocol/sdk": "^1.32.2",
     "zod": "^3.25.67"
   }
