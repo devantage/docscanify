@@ -5,9 +5,7 @@ import type { TranslateFunction } from './translate';
 
 export interface TranslateContextValue {
   locale: Locale;
-  /** Whether the language is fixed: the user cannot change it, so there is no language picker. */
-  fixed: boolean;
-  /** Changes the language and remembers the choice. Does nothing when the language is fixed. */
+  /** Changes the language and remembers the choice. */
   setLocale(locale: Locale): void;
   /** Translates a key in the current language. */
   t: TranslateFunction;

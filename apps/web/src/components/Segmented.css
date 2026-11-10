@@ -3,8 +3,7 @@
   gap: 2px;
   padding: 3px;
   background: var(--surface-sunken);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
+  border-radius: 12px;
 }
 
 .segmented label {
@@ -12,7 +11,7 @@
   place-items: center;
   min-height: 38px;
   padding: 0.4rem 0.35rem;
-  border-radius: var(--radius-pill);
+  border-radius: 9px;
   font-size: var(--fs-small);
   font-weight: 500;
   color: var(--text-2);
@@ -26,12 +25,12 @@
 }
 
 .segmented label.is-on {
-  background: var(--surface-raised);
-  color: var(--brand-press);
-  font-weight: 500;
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
   box-shadow:
-    0 1px 3px rgba(58, 36, 24, 0.12),
-    0 0 0 1px rgba(58, 36, 24, 0.05);
+    0 1px 3px rgba(16, 24, 40, 0.1),
+    0 0 0 1px rgba(16, 24, 40, 0.04);
 }
 
 @media (hover: hover) {

@@ -20,20 +20,37 @@ interface Screen {
   height: number;
 }
 
-/**
- * The language of the app and what the top bar shows in it. The app is fixed to Brazilian
- * Portuguese, whatever the browser language: the top bar has no language picker.
- */
+/** A language of the app and what the top bar shows in it. */
 interface Language {
-  /** `<html lang>`. */
+  /** Browser language that selects it. */
+  locale: string;
+  /** `<html lang>` once it is on. */
   lang: string;
+  /** Short code on the language button. */
+  short: string;
   /** Names of the four steps. */
   steps: [string, string, string, string];
 }
 
+const ENGLISH: Language = {
+  locale: 'en-US',
+  lang: 'en',
+  short: 'EN',
+  steps: ['Upload', 'Crop', 'Adjust', 'Export'],
+};
+
 const PORTUGUESE: Language = {
+  locale: 'pt-BR',
   lang: 'pt-BR',
+  short: 'PT',
   steps: ['Enviar', 'Recortar', 'Ajustar', 'Exportar'],
+};
+
+const SPANISH: Language = {
+  locale: 'es-ES',
+  lang: 'es',
+  short: 'ES',
+  steps: ['Subir', 'Recortar', 'Ajustar', 'Exportar'],
 };
 
 const IPHONE_PRO_MAX: Screen = {
@@ -52,10 +69,10 @@ const PORTRAIT: Screen[] = [
 ];
 
 /**
- * Widths where the top bar changes: narrow phones (only the step numbers), wide phones, and the
- * range from 521 to 760 px where the current step shows its name.
+ * Widths where the top bar changes: narrow phones (only the step numbers and the flag), wide
+ * phones, and the range from 521 to 760 px where the current step shows its name.
  */
-const TOP_BAR_SCREENS: Screen[] = [
+const LANGUAGE_SCREENS: Screen[] = [
   { name: 'narrow phone', width: 360, height: 740 },
   IPHONE_PRO_MAX,
   { name: 'wide phone', width: 521, height: 900 },
@@ -178,11 +195,12 @@ interface TopBarLayout {
   content: Box;
   brand: Box;
   steps: Box;
+  language: Box;
   items: StepLayout[];
 }
 
 /**
- * Measures the top bar in the page: its content box, its two parts, and the item, button,
+ * Measures the top bar in the page: its content box, its three parts, and the item, button,
  * number and connector of each step.
  */
 async function topBarLayout(page: Page): Promise<TopBarLayout> {
@@ -208,6 +226,7 @@ async function topBarLayout(page: Page): Promise<TopBarLayout> {
       },
       brand: measure(bar.querySelector('.brand')),
       steps: measure(bar.querySelector('.steps')),
+      language: measure(bar.querySelector('.language')),
       items: [...bar.querySelectorAll('.steps li')].map(
         (item: Element): StepLayout => {
           const before: CSSStyleDeclaration = getComputedStyle(
@@ -241,6 +260,7 @@ function topBarProblems(layout: TopBarLayout): string[] {
   const parts: [string, Box][] = [
     ['brand', layout.brand],
     ['steps', layout.steps],
+    ['language', layout.language],
   ];
   for (const [name, box] of parts) {
     if (
@@ -259,6 +279,8 @@ function topBarProblems(layout: TopBarLayout): string[] {
   }
   if (layout.brand.right > layout.steps.left + TOLERANCE)
     problems.push('the brand overlaps the steps');
+  if (layout.steps.right > layout.language.left + TOLERANCE)
+    problems.push('the steps overlap the language picker');
   if (layout.items.length !== 4)
     problems.push(`${String(layout.items.length)} steps instead of 4`);
   layout.items.forEach((step: StepLayout, i: number): void => {
@@ -288,7 +310,7 @@ function topBarProblems(layout: TopBarLayout): string[] {
   return problems;
 }
 
-/** The brand and the steps fit inside the top bar, on one line. */
+/** The brand, the steps and the language picker fit inside the top bar, on one line. */
 async function expectTopBarOnOneLine(page: Page): Promise<void> {
   expect(
     topBarProblems(await topBarLayout(page)),
@@ -297,9 +319,8 @@ async function expectTopBarOnOneLine(page: Page): Promise<void> {
 }
 
 /**
- * The names in the top bar, in Brazilian Portuguese: on phones up to 520 px only the step
- * numbers; from 521 to 760 px the name of the current step too; above that, every name. The
- * language is fixed, so there is no language picker.
+ * The names in the top bar: on phones up to 520 px only the step numbers and the flag; from 521
+ * to 760 px the name of the current step and the language code too; above that, every name.
  */
 async function expectTopBarNames(
   page: Page,
@@ -308,7 +329,6 @@ async function expectTopBarNames(
   language: Language,
 ): Promise<void> {
   await expect(page.locator('html')).toHaveAttribute('lang', language.lang);
-  await expect(page.getByTestId('language')).toHaveCount(0);
   for (let i: number = 0; i < 4; i++) {
     const label: Locator = page
       .getByTestId(`step-${String(i)}`)
@@ -321,6 +341,13 @@ async function expectTopBarNames(
     } else {
       await expect(label).toBeHidden();
     }
+  }
+  const code: Locator = page.getByTestId('language').locator('.language-code');
+  if (screen.width > 520) {
+    await expect(code).toBeVisible();
+    await expect(code).toHaveText(language.short);
+  } else {
+    await expect(code).toBeHidden();
   }
 }
 
@@ -501,6 +528,7 @@ async function expectStepFits(
   await expectPageFits(page, screen);
   await expectTopBarOnOneLine(page);
   await expectTopBarNames(page, screen, current, language);
+  await expectTappable(page.getByTestId('language'), 'the language picker');
   for (const step of [0, 1, 2, 3]) {
     await expectTappable(
       page.getByTestId(`step-${String(step)}`),
@@ -524,7 +552,7 @@ async function expectCurrentStep(page: Page, step: number): Promise<void> {
 
 /**
  * Goes through every step with the photos and checks each: Upload empty and with the documents,
- * Crop, Adjust and Export. Uses test ids only, so it does not depend on the language.
+ * Crop, Adjust and Export. Uses test ids only, so it works in every language.
  */
 async function walkSteps(
   page: Page,
@@ -658,24 +686,25 @@ test.describe('Phone layout', (): void => {
       }: {
         page: Page;
       }): Promise<void> => {
-        await walkSteps(page, screen, THREE_DOCUMENTS, PORTUGUESE);
+        await walkSteps(page, screen, THREE_DOCUMENTS, ENGLISH);
       });
     });
   }
 
-  // The browser stays in English: the app ignores it and shows Brazilian Portuguese
-  for (const screen of TOP_BAR_SCREENS) {
-    test.describe(`${PORTUGUESE.lang}, ${screen.name}, ${String(screen.width)} × ${String(screen.height)}`, (): void => {
-      test.use(phone(screen));
+  for (const language of [ENGLISH, PORTUGUESE, SPANISH]) {
+    for (const screen of LANGUAGE_SCREENS) {
+      test.describe(`${language.locale}, ${screen.name}, ${String(screen.width)} × ${String(screen.height)}`, (): void => {
+        test.use({ ...phone(screen), locale: language.locale });
 
-      test('the top bar fits on one line in every step, with the names this width has room for', async ({
-        page,
-      }: {
-        page: Page;
-      }): Promise<void> => {
-        await walkSteps(page, screen, ['invoice.jpg'], PORTUGUESE);
+        test('the top bar fits on one line in every step, with the names this width has room for', async ({
+          page,
+        }: {
+          page: Page;
+        }): Promise<void> => {
+          await walkSteps(page, screen, ['invoice.jpg'], language);
+        });
       });
-    });
+    }
   }
 
   for (const screen of LANDSCAPE) {
@@ -687,7 +716,7 @@ test.describe('Phone layout', (): void => {
       }: {
         page: Page;
       }): Promise<void> => {
-        await walkSteps(page, screen, THREE_DOCUMENTS, PORTUGUESE);
+        await walkSteps(page, screen, THREE_DOCUMENTS, ENGLISH);
       });
     });
   }
@@ -753,7 +782,7 @@ test.describe('Collapsible panel on phones', (): void => {
         await settle(page);
         const panel: Locator = page.locator('.panel');
         const rotateRight: Locator = page.getByRole('button', {
-          name: 'Direita',
+          name: 'Right',
           exact: true,
         });
         await expectCollapsed(page, false);
@@ -763,7 +792,7 @@ test.describe('Collapsible panel on phones', (): void => {
           screen.height * OPEN_PANEL_SHARE + TOLERANCE,
         );
         await expectTappable(page.getByTestId('apply-all'), '"Apply to all"');
-        await expectTappable(rotateRight, '"Direita"');
+        await expectTappable(rotateRight, '"Right"');
 
         await page.getByTestId('panel-toggle').click();
         await expectCollapsed(page, true);
@@ -857,7 +886,7 @@ test.describe('Collapsible panel on phones', (): void => {
     await expect(page.getByTestId('panel-toggle')).toBeHidden();
     await expect(page.getByTestId('apply-all')).toBeVisible();
     await expect(
-      page.getByRole('button', { name: 'Direita', exact: true }),
+      page.getByRole('button', { name: 'Right', exact: true }),
     ).toBeVisible();
   });
 });
