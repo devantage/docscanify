@@ -10,7 +10,7 @@ import { ExportOptionsForm } from './ExportOptionsForm';
 const PDF: ExportSettings = {
   format: 'pdf',
   pageFormat: 'a4',
-  margin: 10,
+  margins: 10,
   combine: true,
 };
 
@@ -44,8 +44,8 @@ function renderForm(settings: ExportSettings, count: number): OnChange {
 const group = (legend: string): HTMLElement =>
   screen.getByRole('group', { name: legend });
 
-/** The margin field, in mm. */
-const marginInput = (): HTMLInputElement => screen.getByTestId('margin');
+/** The margins field, in mm. */
+const marginsInput = (): HTMLInputElement => screen.getByTestId('margins');
 
 describe('ExportOptionsForm', (): void => {
   it('offers PDF, PNG and JPG, in order, with the current format selected', (): void => {
@@ -108,56 +108,62 @@ describe('ExportOptionsForm', (): void => {
       });
     });
 
-    it('shows the margin in millimeters, between 0 and 100', (): void => {
-      renderForm({ ...PDF, margin: 15 }, 1);
+    it('shows the margins in millimeters, between 0 and 100', (): void => {
+      renderForm({ ...PDF, margins: 15 }, 1);
 
-      const margin: HTMLInputElement = screen.getByRole('spinbutton', {
-        name: 'Margin (mm)',
+      const margins: HTMLInputElement = screen.getByRole('spinbutton', {
+        name: 'Margins (In millimeters)',
       });
-      expect(margin).toBe(marginInput());
-      expect(margin).toHaveValue(15);
-      expect(margin).toHaveAttribute('min', '0');
-      expect(margin).toHaveAttribute('max', '100');
+      expect(margins).toBe(marginsInput());
+      expect(margins).toHaveValue(15);
+      expect(margins).toHaveAttribute('min', '0');
+      expect(margins).toHaveAttribute('max', '100');
     });
 
-    it('changes the margin to the number typed', (): void => {
+    it('changes the margins to the number typed', (): void => {
       const onChange: OnChange = renderForm(PDF, 1);
 
-      fireEvent.change(marginInput(), { target: { value: '25' } });
+      fireEvent.change(marginsInput(), { target: { value: '25' } });
 
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margin: 25 });
+      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margins: 25 });
     });
 
-    it('accepts a fractional margin', (): void => {
+    it('accepts fractional margins', (): void => {
       const onChange: OnChange = renderForm(PDF, 1);
 
-      fireEvent.change(marginInput(), { target: { value: '2.5' } });
+      fireEvent.change(marginsInput(), { target: { value: '2.5' } });
 
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margin: 2.5 });
+      expect(onChange).toHaveBeenCalledExactlyOnceWith({
+        ...PDF,
+        margins: 2.5,
+      });
     });
 
-    it('limits the margin to 100 mm', (): void => {
+    it('limits the margins to 100 mm', (): void => {
       const onChange: OnChange = renderForm(PDF, 1);
 
-      fireEvent.change(marginInput(), { target: { value: '250' } });
+      fireEvent.change(marginsInput(), { target: { value: '250' } });
 
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margin: 100 });
+      expect(onChange).toHaveBeenCalledExactlyOnceWith({
+        ...PDF,
+        margins: 100,
+      });
     });
 
-    it('turns a negative margin into 0', (): void => {
+    it('turns negative margins into 0', (): void => {
       const onChange: OnChange = renderForm(PDF, 1);
 
-      fireEvent.change(marginInput(), { target: { value: '-4' } });
+      fireEvent.change(marginsInput(), { target: { value: '-4' } });
 
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margin: 0 });
+      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margins: 0 });
     });
 
-    it('turns an empty margin into 0', (): void => {
+    it('turns empty margins into 0', (): void => {
       const onChange: OnChange = renderForm(PDF, 1);
 
-      fireEvent.change(marginInput(), { target: { value: '' } });
+      fireEvent.change(marginsInput(), { target: { value: '' } });
 
-      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margin: 0 });
+      expect(onChange).toHaveBeenCalledExactlyOnceWith({ ...PDF, margins: 0 });
     });
 
     it('has no file option nor hint for a single document', (): void => {
@@ -227,11 +233,11 @@ describe('ExportOptionsForm', (): void => {
   });
 
   describe('as an image', (): void => {
-    it('hides the page, margin and file options', (): void => {
+    it('hides the page, margins and file options', (): void => {
       renderForm({ ...PDF, format: 'jpg' }, 3);
 
       expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('margin')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('margins')).not.toBeInTheDocument();
       expect(
         screen.queryByRole('group', { name: 'File' }),
       ).not.toBeInTheDocument();

@@ -59,7 +59,7 @@ function fakeScan(
     exportSettings: {
       format: 'pdf',
       pageFormat: 'a4',
-      margin: 0,
+      margins: 0,
       combine: true,
     },
     addFiles: vi.fn(async (): Promise<void> => Promise.resolve()),

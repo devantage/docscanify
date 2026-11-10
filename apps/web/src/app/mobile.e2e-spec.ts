@@ -834,7 +834,7 @@ test.describe('Collapsible panel on phones', (): void => {
       await page.getByTestId('continue').click();
       await resultSize(page);
       await expectCollapsed(page, true);
-      await expect(page.getByTestId('margin')).toBeHidden();
+      await expect(page.getByTestId('margins')).toBeHidden();
       await expectTappable(page.getByTestId('download'), '"Export"');
 
       await page.reload();

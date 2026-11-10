@@ -62,7 +62,7 @@ function deferred<T>(): Deferred<T> {
 const SETTINGS: ExportSettings = {
   format: 'pdf',
   pageFormat: 'a4',
-  margin: 0,
+  margins: 0,
   combine: true,
 };
 
@@ -246,7 +246,11 @@ describe('ExportPanel', (): void => {
     vi.mocked(exportDocuments).mockReturnValue(
       deferred<ExportedFile>().promise,
     );
-    const settings: ExportSettings = { ...SETTINGS, combine: false, margin: 8 };
+    const settings: ExportSettings = {
+      ...SETTINGS,
+      combine: false,
+      margins: 8,
+    };
     renderPanel({ settings });
 
     fireEvent.click(screen.getByTestId('download'));

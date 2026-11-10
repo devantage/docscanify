@@ -27,8 +27,8 @@ export interface ExportSettings {
   format: ExportFormat;
   /** PDF page size. Only used when `format` is `"pdf"`. */
   pageFormat: PageFormat;
-  /** PDF page margin, in millimeters. */
-  margin: number;
+  /** PDF page margins, in millimeters, the same on every side. */
+  margins: number;
   /**
    * With more than one document as PDF: `true` makes a single PDF with one page per document;
    * `false` makes one PDF per document, inside a ZIP. PNG and JPG are always one file per document.

@@ -17,7 +17,7 @@ const POINTS_PER_MM: number = 72 / 25.4;
 export const DEFAULT_EXPORT_SETTINGS: ExportSettings = {
   format: 'pdf',
   pageFormat: 'a4',
-  margin: 0,
+  margins: 0,
   combine: true,
 };
 
@@ -43,14 +43,14 @@ interface EncodedFile {
 }
 
 /**
- * Picks the docscanify encoder for the export format. The PDF margin is converted from
+ * Picks the docscanify encoder for the export format. The PDF margins are converted from
  * millimeters to points; JPG uses the highest quality.
  */
 function createEncoder(settings: ExportSettings): DocumentEncoder {
   if (settings.format === 'pdf') {
     return new PdfDocumentEncoder({
       pageFormat: settings.pageFormat,
-      margin: settings.margin * POINTS_PER_MM,
+      margin: settings.margins * POINTS_PER_MM,
     });
   }
   return settings.format === 'png'

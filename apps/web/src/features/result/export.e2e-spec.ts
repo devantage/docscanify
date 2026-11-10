@@ -56,17 +56,17 @@ async function choosePage(
   await page.getByLabel('PDF page').selectOption(format);
 }
 
-/** Types a margin, in millimeters. */
-async function setMargin(page: Page, millimeters: number): Promise<void> {
-  await page.getByTestId('margin').fill(String(millimeters));
-  await expect(page.getByTestId('margin')).toHaveValue(String(millimeters));
+/** Types the margins, in millimeters. */
+async function setMargins(page: Page, millimeters: number): Promise<void> {
+  await page.getByTestId('margins').fill(String(millimeters));
+  await expect(page.getByTestId('margins')).toHaveValue(String(millimeters));
 }
 
-/** A "Document size" page: the image at 150 dpi, plus the margin on each side. */
-function documentSizePage(size: Size, margin: number = 0): Size {
+/** A "Document size" page: the image at 150 dpi, plus the margins on each side. */
+function documentSizePage(size: Size, margins: number = 0): Size {
   return {
-    width: (size.width * 72) / PDF_IMAGE_DPI + margin * 2,
-    height: (size.height * 72) / PDF_IMAGE_DPI + margin * 2,
+    width: (size.width * 72) / PDF_IMAGE_DPI + margins * 2,
+    height: (size.height * 72) / PDF_IMAGE_DPI + margins * 2,
   };
 }
 
@@ -117,7 +117,7 @@ test.describe('Export step', (): void => {
       page.getByRole('radio', { name: 'PDF', exact: true }),
     ).toBeChecked();
     await expect(page.getByLabel('PDF page')).toHaveValue('a4');
-    await expect(page.getByTestId('margin')).toHaveValue('0');
+    await expect(page.getByTestId('margins')).toHaveValue('0');
 
     const file: DownloadedFile = await exportFile(page);
 
@@ -235,37 +235,39 @@ test.describe('Export step', (): void => {
     );
   });
 
-  test('applies the margin in millimeters around the image of an A4 page', async ({
+  test('applies the margins in millimeters around the image of an A4 page', async ({
     page,
   }: {
     page: Page;
   }): Promise<void> => {
     await openExport(page, ['invoice.jpg']);
     const size: Size = await resultSize(page);
-    const noMargin: DownloadedFile = await exportFile(page);
+    const noMargins: DownloadedFile = await exportFile(page);
 
-    await setMargin(page, 20);
-    const withMargin: DownloadedFile = await exportFile(page);
+    await setMargins(page, 20);
+    const withMargins: DownloadedFile = await exportFile(page);
 
-    expect(withMargin.data.equals(noMargin.data)).toBe(false);
-    const pdf: PdfInfo = await readPdf(withMargin.data);
+    expect(withMargins.data.equals(noMargins.data)).toBe(false);
+    const pdf: PdfInfo = await readPdf(withMargins.data);
     expect(pdf.pageCount).toBe(1);
     // Same page, smaller image, centered inside the margins
     expectPageSize(pdf.pageSizes[0], A4);
-    const margin: number = 20 * POINTS_PER_MM;
-    const [before] = await pdfImagePlacements(noMargin.data);
-    const [after] = await pdfImagePlacements(withMargin.data);
-    expectPlacement(after, expectedPlacement(size, A4, margin));
+    const margins: number = 20 * POINTS_PER_MM;
+    const [before] = await pdfImagePlacements(noMargins.data);
+    const [after] = await pdfImagePlacements(withMargins.data);
+    expectPlacement(after, expectedPlacement(size, A4, margins));
     expect(after.width).toBeLessThan(before.width);
     expect(after.height).toBeLessThan(before.height);
-    expect(Math.min(after.x, after.y)).toBeCloseTo(margin, 1);
-    expect(after.x + after.width).toBeLessThanOrEqual(A4.width - margin + 0.01);
+    expect(Math.min(after.x, after.y)).toBeCloseTo(margins, 1);
+    expect(after.x + after.width).toBeLessThanOrEqual(
+      A4.width - margins + 0.01,
+    );
     expect(after.y + after.height).toBeLessThanOrEqual(
-      A4.height - margin + 0.01,
+      A4.height - margins + 0.01,
     );
   });
 
-  test('adds the margin around a page the size of the document', async ({
+  test('adds the margins around a page the size of the document', async ({
     page,
   }: {
     page: Page;
@@ -274,21 +276,21 @@ test.describe('Export step', (): void => {
     const size: Size = await resultSize(page);
 
     await choosePage(page, 'image');
-    await setMargin(page, 10);
+    await setMargins(page, 10);
     const file: DownloadedFile = await exportFile(page);
 
-    const margin: number = 10 * POINTS_PER_MM;
+    const margins: number = 10 * POINTS_PER_MM;
     const pdf: PdfInfo = await readPdf(file.data);
-    expectPageSize(pdf.pageSizes[0], documentSizePage(size, margin));
+    expectPageSize(pdf.pageSizes[0], documentSizePage(size, margins));
     const [placement] = await pdfImagePlacements(file.data);
     expectPlacement(placement, {
-      x: margin,
-      y: margin,
+      x: margins,
+      y: margins,
       ...documentSizePage(size),
     });
   });
 
-  test('limits the margin to 100 mm, which still exports a valid Letter page', async ({
+  test('limits the margins to 100 mm, which still exports a valid Letter page', async ({
     page,
   }: {
     page: Page;
@@ -298,10 +300,10 @@ test.describe('Export step', (): void => {
 
     await choosePage(page, 'letter');
     // Neither negative nor larger than 100 mm
-    await page.getByTestId('margin').fill('-5');
-    await expect(page.getByTestId('margin')).toHaveValue('0');
-    await page.getByTestId('margin').fill('150');
-    await expect(page.getByTestId('margin')).toHaveValue('100');
+    await page.getByTestId('margins').fill('-5');
+    await expect(page.getByTestId('margins')).toHaveValue('0');
+    await page.getByTestId('margins').fill('150');
+    await expect(page.getByTestId('margins')).toHaveValue('100');
     const file: DownloadedFile = await exportFile(page);
 
     const pdf: PdfInfo = await readPdf(file.data);
@@ -396,7 +398,7 @@ test.describe('Export step', (): void => {
 
     await choose(page, 'PNG');
     await expect(page.getByLabel('PDF page')).toHaveCount(0);
-    await expect(page.getByTestId('margin')).toHaveCount(0);
+    await expect(page.getByTestId('margins')).toHaveCount(0);
     const file: DownloadedFile = await exportFile(page);
 
     expect(file.name).toBe('invoice.png');
@@ -578,7 +580,7 @@ test.describe('Export step', (): void => {
     // Options away from the defaults, which a new scan must not keep
     await choose(page, 'One PDF per document');
     await choosePage(page, 'letter');
-    await setMargin(page, 5);
+    await setMargins(page, 5);
     await choose(page, 'PNG');
     await exportFile(page);
     await expect(savedToast(page)).toBeVisible();
@@ -619,7 +621,7 @@ test.describe('Export step', (): void => {
       page.getByRole('radio', { name: 'One PDF with everything', exact: true }),
     ).toBeChecked();
     await expect(page.getByLabel('PDF page')).toHaveValue('a4');
-    await expect(page.getByTestId('margin')).toHaveValue('0');
+    await expect(page.getByTestId('margins')).toHaveValue('0');
     const file: DownloadedFile = await exportFile(page);
     expect(file.name).toMatch(/^documents-\d{12}\.pdf$/);
     const pdf: PdfInfo = await readPdf(file.data);

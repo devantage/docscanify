@@ -136,11 +136,11 @@ afterEach((): void => {
 });
 
 describe('DEFAULT_EXPORT_SETTINGS', (): void => {
-  it('is an A4 PDF without margin, combining every document', (): void => {
+  it('is an A4 PDF without margins, combining every document', (): void => {
     expect(DEFAULT_EXPORT_SETTINGS).toEqual({
       format: 'pdf',
       pageFormat: 'a4',
-      margin: 0,
+      margins: 0,
       combine: true,
     });
   });
@@ -148,10 +148,10 @@ describe('DEFAULT_EXPORT_SETTINGS', (): void => {
 
 describe('exportDocuments', (): void => {
   describe('encoder choice', (): void => {
-    it('builds the PDF encoder with the page format and the margin converted from mm to points', async (): Promise<void> => {
+    it('builds the PDF encoder with the page format and the margins converted from mm to points', async (): Promise<void> => {
       await exportDocuments(
         [item('a', 1)],
-        settings({ format: 'pdf', pageFormat: 'letter', margin: 10 }),
+        settings({ format: 'pdf', pageFormat: 'letter', margins: 10 }),
         { batchName: 'scan' },
       );
 
@@ -164,13 +164,13 @@ describe('exportDocuments', (): void => {
       expect(options.margin).toBeCloseTo(28.346456, 5);
     });
 
-    it('converts 25.4 mm to exactly 72 points and keeps a zero margin at zero', async (): Promise<void> => {
+    it('converts 25.4 mm to exactly 72 points and keeps zero margins at zero', async (): Promise<void> => {
       await exportDocuments(
         [item('a', 1)],
-        settings({ pageFormat: 'image', margin: 25.4 }),
+        settings({ pageFormat: 'image', margins: 25.4 }),
         { batchName: 'scan' },
       );
-      await exportDocuments([item('a', 1)], settings({ margin: 0 }), {
+      await exportDocuments([item('a', 1)], settings({ margins: 0 }), {
         batchName: 'scan',
       });
 

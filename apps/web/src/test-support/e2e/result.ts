@@ -34,7 +34,7 @@ export interface Size {
 /** Matches the size at the end of the status of the Adjust and Export panels. */
 const SIZE_PATTERN: RegExp = /(\d+) × (\d+) px$/;
 
-/** Points per millimeter, the unit of the margin field. */
+/** Points per millimeter, the unit of the margins field. */
 export const POINTS_PER_MM: number = 72 / 25.4;
 
 /** A4 and Letter pages in points, portrait. */
@@ -410,11 +410,11 @@ export async function pdfImageSizes(data: Uint8Array): Promise<Size[]> {
 export function expectedPlacement(
   image: Size,
   pageSize: Size,
-  margin: number,
+  margins: number,
 ): Placement {
   const scale: number = Math.min(
-    (pageSize.width - margin * 2) / image.width,
-    (pageSize.height - margin * 2) / image.height,
+    (pageSize.width - margins * 2) / image.width,
+    (pageSize.height - margins * 2) / image.height,
   );
   const width: number = image.width * scale;
   const height: number = image.height * scale;
