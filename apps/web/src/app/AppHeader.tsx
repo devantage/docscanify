@@ -30,7 +30,7 @@ export function AppHeader(): JSX.Element {
     <header className="topbar">
       <span className="brand">
         <img src={`${import.meta.env.BASE_URL}icon.svg`} alt="" aria-hidden />
-        <span className="brand-name">DocScanify</span>
+        <span className="brand-name">DocScanner</span>
       </span>
       <ol className="steps" aria-label={t('app.steps')}>
         {STEPS.map((item: (typeof STEPS)[number], i: number) => (

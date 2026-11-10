@@ -147,7 +147,7 @@ describe('AppHeader', (): void => {
     mockScan();
     renderHeader();
 
-    expect(screen.getByRole('banner')).toHaveTextContent('DocScanify');
+    expect(screen.getByRole('banner')).toHaveTextContent('DocScanner');
     expect(
       stepButtons().map(
         (b: HTMLElement) => b.querySelector('.step-label')?.textContent,

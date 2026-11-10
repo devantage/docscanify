@@ -248,8 +248,8 @@ test.describe('web app manifests', (): void => {
       expect(manifest.id).toBe('./');
       expect(manifest.start_url).toBe('./');
       expect(manifest.scope).toBe('./');
-      expect(manifest.name).toBe('DocScanify');
-      expect(manifest.short_name).toBe('DocScanify');
+      expect(manifest.name).toBe('DocScanner');
+      expect(manifest.short_name).toBe('DocScanner');
       expect(manifest.display).toBe('standalone');
       expect(manifest.icons).toEqual(ICONS);
     });

@@ -1,4 +1,5 @@
-import '@fontsource-variable/instrument-sans';
+import '@fontsource-variable/cormorant-garamond';
+import '@fontsource-variable/outfit';
 import './styles/index.css';
 
 import { StrictMode } from 'react';
