@@ -108,6 +108,7 @@ export default [
   {
     ignores: [
       '**/eslint.config.mjs',
+      'commitlint.config.mjs',
       '**/vite.config.ts',
       '**/vite.config.*.timestamp*',
       '**/vitest.config.*.timestamp*',
