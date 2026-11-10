@@ -93,6 +93,7 @@
   "result": {
     "stage": "Document preview",
     "preview": "Preview of document {number}, cropped",
+    "pagePreview": "Preview of document {number} as a PDF ({page})",
     "applying": "Applying…",
     "position": "Document {current} of {total} · {detail}",
     "failed": "These options could not be applied on this device."
@@ -127,11 +128,13 @@
     "file": "File",
     "fileOne": "One PDF with everything",
     "fileMany": "One PDF per document",
-    "page": "PDF page",
     "pageFormat": {
-      "a4": "A4",
-      "letter": "Letter",
-      "image": "Document size"
+      "label": "Page format",
+      "values": {
+        "a4": "A4",
+        "letter": "Letter",
+        "image": "Document size"
+      }
     },
     "margins": "Margins (In centimeters)",
     "pdfZipHint": "The PDFs are downloaded together, in a ZIP file.",

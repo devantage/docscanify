@@ -1,7 +1,10 @@
 import {
   type DocumentEncoder,
+  type ImageDimensions,
   JpegImageEncoder,
+  type PageFormat,
   PdfDocumentEncoder,
+  type PdfPageLayout,
   PngImageEncoder,
 } from '@devantage/docscanify';
 import { zipSync } from 'fflate';
@@ -42,20 +45,48 @@ interface EncodedFile {
   mimeType: string;
 }
 
-/**
- * Picks the docscanify encoder for the export format. The PDF margins are converted from
- * centimeters to points; JPG uses the highest quality.
- */
+/** What the preview of a PDF page draws: the page as the PDF encoder lays it out. */
+export interface PdfPagePreview {
+  pageFormat: PageFormat;
+  /** The page and where the document goes on it, in points. */
+  layout: PdfPageLayout;
+  /** The margin on every side of the page, in points. */
+  margin: number;
+}
+
+/** The PDF encoder of the export settings, with the margins converted from centimeters to points. */
+function createPdfEncoder(
+  settings: Pick<ExportSettings, 'pageFormat' | 'margins'>,
+): PdfDocumentEncoder {
+  return new PdfDocumentEncoder({
+    pageFormat: settings.pageFormat,
+    margin: settings.margins * POINTS_PER_CM,
+  });
+}
+
+/** Picks the docscanify encoder for the export format. JPG uses the highest quality. */
 function createEncoder(settings: ExportSettings): DocumentEncoder {
-  if (settings.format === 'pdf') {
-    return new PdfDocumentEncoder({
-      pageFormat: settings.pageFormat,
-      margin: settings.margins * POINTS_PER_CM,
-    });
-  }
+  if (settings.format === 'pdf') return createPdfEncoder(settings);
   return settings.format === 'png'
     ? new PngImageEncoder()
     : new JpegImageEncoder({ quality: 100 });
+}
+
+/**
+ * How a render of this size will sit on the PDF page of the export settings, laid out by the same
+ * encoder the export uses, so the preview shows exactly what the PDF holds.
+ *
+ * @param render Size of the rendered document, in pixels.
+ */
+export function pdfPagePreview(
+  settings: Pick<ExportSettings, 'pageFormat' | 'margins'>,
+  render: ImageDimensions,
+): PdfPagePreview {
+  return {
+    pageFormat: settings.pageFormat,
+    layout: createPdfEncoder(settings).getPageLayout(render),
+    margin: settings.margins * POINTS_PER_CM,
+  };
 }
 
 /** Renders a document and encodes the render, keeping the MIME type of the result. */

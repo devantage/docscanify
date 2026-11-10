@@ -25,8 +25,13 @@ import {
   PDF_IMAGE_DPI,
   pdfImagePlacements,
   pdfImageSizes,
+  pdfPageOperators,
+  type PixelRegion,
   POINTS_PER_CM,
+  previewCanvasSize,
   type PreviewPixels,
+  previewRegion,
+  type RegionPixels,
   resultSize,
   resultStatus,
   seenTransients,
@@ -53,7 +58,7 @@ async function choosePage(
   page: Page,
   format: 'a4' | 'letter' | 'image',
 ): Promise<void> {
-  await page.getByLabel('PDF page').selectOption(format);
+  await page.getByLabel('Page format').selectOption(format);
 }
 
 /** Fills the masked margins field, in centimeters, with the 2 decimal places it shows. */
@@ -74,6 +79,41 @@ function documentSizePage(size: Size, margins: number = 0): Size {
 function expectPageSize(actual: Size, expected: Size): void {
   expect(actual.width).toBeCloseTo(expected.width, 1);
   expect(actual.height).toBeCloseTo(expected.height, 1);
+}
+
+/** The preview of the Export step. */
+function preview(page: Page): Locator {
+  return page.getByTestId('result');
+}
+
+/**
+ * Checks the preview shows a PDF page of this size, in points: its proportions, to a pixel, and as
+ * large as the render along the longest side.
+ */
+async function expectPagePreview(
+  page: Page,
+  pageSize: Size,
+  render: Size,
+): Promise<void> {
+  const longest: number = Math.max(render.width, render.height);
+  const scale: number = longest / Math.max(pageSize.width, pageSize.height);
+  await expect
+    .poll(async (): Promise<Size> => previewCanvasSize(page))
+    .toEqual({
+      width: Math.round(pageSize.width * scale),
+      height: Math.round(pageSize.height * scale),
+    });
+}
+
+/** Checks the preview shows the render on its own, at its size, as in the Adjust step. */
+async function expectPlainPreview(page: Page, render: Size): Promise<void> {
+  await expect(preview(page)).not.toHaveAttribute('data-page-format');
+  await expect(preview(page)).toHaveAccessibleName(
+    'Preview of document 1, cropped',
+  );
+  await expect
+    .poll(async (): Promise<Size> => previewCanvasSize(page))
+    .toEqual(render);
 }
 
 /** The result size of every document, in carousel order, read from the status. */
@@ -116,7 +156,7 @@ test.describe('Export step', (): void => {
     await expect(
       page.getByRole('radio', { name: 'PDF', exact: true }),
     ).toBeChecked();
-    await expect(page.getByLabel('PDF page')).toHaveValue('a4');
+    await expect(page.getByLabel('Page format')).toHaveValue('a4');
     await expect(page.getByTestId('margins')).toHaveValue('0.00');
 
     const file: DownloadedFile = await exportFile(page);
@@ -136,6 +176,132 @@ test.describe('Export step', (): void => {
     await expect(savedToast(page)).toHaveAttribute('data-kind', 'success');
     // The button comes back once the progress bar is done
     await expect(page.getByTestId('download')).toBeEnabled();
+  });
+
+  test('previews the PDF page of the options, and the plain render for PNG and in Adjust', async ({
+    page,
+  }: {
+    page: Page;
+  }): Promise<void> => {
+    await openExport(page, ['invoice.jpg']);
+    const size: Size = await resultSize(page);
+
+    // The portrait invoice on a portrait A4 page, the default
+    await expect(preview(page)).toHaveAttribute('data-page-format', 'a4');
+    await expect(preview(page)).toHaveAccessibleName(
+      'Preview of document 1 as a PDF (A4)',
+    );
+    await expectPagePreview(page, A4, size);
+    // The status keeps the size of the render, which the PDF embeds
+    await expect(resultStatus(page)).toHaveText(sizeText(size));
+
+    await choosePage(page, 'letter');
+    await expect(preview(page)).toHaveAttribute('data-page-format', 'letter');
+    await expect(preview(page)).toHaveAccessibleName(
+      'Preview of document 1 as a PDF (Letter)',
+    );
+    await expectPagePreview(page, LETTER, size);
+
+    await choosePage(page, 'image');
+    await expectPagePreview(page, documentSizePage(size), size);
+    await setMargins(page, 1.25);
+    await expectPagePreview(
+      page,
+      documentSizePage(size, 1.25 * POINTS_PER_CM),
+      size,
+    );
+    await expect(preview(page)).toHaveAccessibleName(
+      'Preview of document 1 as a PDF (Document size)',
+    );
+
+    // PNG and JPG files are the render itself
+    await choose(page, 'PNG');
+    await expectPlainPreview(page, size);
+    await choose(page, 'JPG');
+    await expectPlainPreview(page, size);
+
+    // Back to PDF, with the page options kept
+    await choose(page, 'PDF');
+    await expect(preview(page)).toHaveAttribute('data-page-format', 'image');
+    await expectPagePreview(
+      page,
+      documentSizePage(size, 1.25 * POINTS_PER_CM),
+      size,
+    );
+
+    // The Adjust step always shows the render
+    await page.getByTestId('step-2').click();
+    await expect(page.getByTestId('step-2')).toHaveAttribute(
+      'aria-current',
+      'step',
+    );
+    await expectPlainPreview(page, size);
+  });
+
+  test('previews the margins of the PDF page as white around the document, with a guide that is not exported', async ({
+    page,
+  }: {
+    page: Page;
+  }): Promise<void> => {
+    await openExport(page, ['invoice.jpg']);
+    const size: Size = await resultSize(page);
+
+    await setMargins(page, 2);
+    await expectPagePreview(page, A4, size);
+    const canvas: Size = await previewCanvasSize(page);
+    const pixelsPerPoint: number = canvas.height / A4.height;
+    const margin: number = 2 * POINTS_PER_CM * pixelsPerPoint;
+    // The document, centered as the PDF places it (the same from the top as from the bottom)
+    const placement: PixelRegion = expectedPlacement(
+      size,
+      A4,
+      2 * POINTS_PER_CM,
+    );
+    const documentArea: PixelRegion = {
+      x: placement.x * pixelsPerPoint,
+      y: placement.y * pixelsPerPoint,
+      width: placement.width * pixelsPerPoint,
+      height: placement.height * pixelsPerPoint,
+    };
+
+    // From the edges of the page to near the margin, nothing but white
+    const band: number = Math.floor(margin * 0.8);
+    const edges: PixelRegion[] = [
+      { x: 0, y: 0, width: canvas.width, height: band },
+      { x: 0, y: canvas.height - band, width: canvas.width, height: band },
+      { x: 0, y: 0, width: band, height: canvas.height },
+      { x: canvas.width - band, y: 0, width: band, height: canvas.height },
+    ];
+    for (const edge of edges) {
+      expect((await previewRegion(page, edge)).whiteShare).toBe(1);
+    }
+    // At the margin, a light dashed guide, so the margins show even on a white document
+    const guide: RegionPixels = await previewRegion(page, {
+      x: margin,
+      y: band,
+      width: canvas.width - margin * 2,
+      height: Math.floor(margin) - band,
+    });
+    expect(guide.lightGrayShare).toBeGreaterThan(0.02);
+    expect(guide.darkShare).toBe(0);
+    // Inside, the invoice with its text
+    const content: RegionPixels = await previewRegion(page, {
+      x: documentArea.x + 2,
+      y: documentArea.y + 2,
+      width: documentArea.width - 4,
+      height: documentArea.height - 4,
+    });
+    expect(content.darkShare).toBeGreaterThan(0.005);
+
+    // The PDF has the same page, with only the document drawn on it
+    const file: DownloadedFile = await exportFile(page);
+    const pdf: PdfInfo = await readPdf(file.data);
+    expectPageSize(pdf.pageSizes[0], A4);
+    const [exported] = await pdfImagePlacements(file.data);
+    expectPlacement(exported, placement);
+    // Placing and drawing the image: no lines nor shapes
+    const [operators] = await pdfPageOperators(file.data);
+    expect(new Set(operators)).toEqual(new Set(['q', 'cm', 'Do', 'Q']));
   });
 
   test('shows the progress while the file is created', async ({
@@ -421,11 +587,13 @@ test.describe('Export step', (): void => {
   }): Promise<void> => {
     await openExport(page, ['invoice.jpg']);
     const size: Size = await resultSize(page);
-    const shown: PreviewPixels = await settledPixels(page);
 
     await choose(page, 'PNG');
-    await expect(page.getByLabel('PDF page')).toHaveCount(0);
+    await expect(page.getByLabel('Page format')).toHaveCount(0);
     await expect(page.getByTestId('margins')).toHaveCount(0);
+    // A PNG shows the render itself, not on a page
+    await expect(preview(page)).not.toHaveAttribute('data-page-format');
+    const shown: PreviewPixels = await settledPixels(page);
     const file: DownloadedFile = await exportFile(page);
 
     expect(file.name).toBe('invoice.png');
@@ -532,7 +700,8 @@ test.describe('Export step', (): void => {
       'step',
     );
 
-    // What the preview shows for each document, with its adjustments
+    // What the preview shows for each document, with its adjustments: the render itself, for PNG
+    await choose(page, 'PNG');
     const shown: PreviewPixels[] = [];
     for (const index of [0, 1]) {
       await showDocument(page, index);
@@ -544,7 +713,6 @@ test.describe('Export step', (): void => {
     });
     expect({ width: shown[1].width, height: shown[1].height }).toEqual(receipt);
 
-    await choose(page, 'PNG');
     const file: DownloadedFile = await exportFile(page);
 
     const zip: Map<string, Uint8Array> = readZip(file.data);
@@ -647,7 +815,7 @@ test.describe('Export step', (): void => {
     await expect(
       page.getByRole('radio', { name: 'One PDF with everything', exact: true }),
     ).toBeChecked();
-    await expect(page.getByLabel('PDF page')).toHaveValue('a4');
+    await expect(page.getByLabel('Page format')).toHaveValue('a4');
     await expect(page.getByTestId('margins')).toHaveValue('0.00');
     const file: DownloadedFile = await exportFile(page);
     expect(file.name).toMatch(/^documents-\d{12}\.pdf$/);

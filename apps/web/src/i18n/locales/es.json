@@ -93,6 +93,7 @@
   "result": {
     "stage": "Vista previa del documento",
     "preview": "Vista previa del documento {number}, recortado",
+    "pagePreview": "Vista previa del documento {number} en PDF ({page})",
     "applying": "Aplicando…",
     "position": "Documento {current} de {total} · {detail}",
     "failed": "No se pudieron aplicar estas opciones en este dispositivo."
@@ -127,11 +128,13 @@
     "file": "Archivo",
     "fileOne": "Un PDF con todo",
     "fileMany": "Un PDF por documento",
-    "page": "Página del PDF",
     "pageFormat": {
-      "a4": "A4",
-      "letter": "Carta",
-      "image": "Tamaño del documento"
+      "label": "Formato de la página",
+      "values": {
+        "a4": "A4",
+        "letter": "Carta",
+        "image": "Tamaño del documento"
+      }
     },
     "margins": "Márgenes (En centímetros)",
     "pdfZipHint": "Los PDF se descargan juntos, en un archivo ZIP.",

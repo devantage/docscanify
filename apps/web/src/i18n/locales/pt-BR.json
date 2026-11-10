@@ -93,9 +93,10 @@
   "result": {
     "stage": "Prévia do documento",
     "preview": "Prévia do documento {number}, recortado",
+    "pagePreview": "Prévia do documento {number} em PDF ({page})",
     "applying": "Aplicando…",
     "position": "Documento {current} de {total} · {detail}",
-    "failed": "Não foi possível aplicar estas opções neste aparelho."
+    "failed": "Não foi possível aplicar estas opções neste dispositivo."
   },
   "enhance": {
     "title": "Ajustar",
@@ -127,11 +128,13 @@
     "file": "Arquivo",
     "fileOne": "Um PDF com tudo",
     "fileMany": "Um PDF por documento",
-    "page": "Página do PDF",
     "pageFormat": {
-      "a4": "A4",
-      "letter": "Carta",
-      "image": "Tamanho do documento"
+      "label": "Formato da página",
+      "values": {
+        "a4": "A4",
+        "letter": "Carta",
+        "image": "Tamanho do documento"
+      }
     },
     "margins": "Margens (Em centímetros)",
     "pdfZipHint": "Os PDFs são baixados juntos, num arquivo ZIP.",

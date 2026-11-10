@@ -98,7 +98,7 @@ describe('ExportOptionsForm', (): void => {
       renderForm({ ...PDF, pageFormat: 'letter' }, 1);
 
       const select: HTMLSelectElement = screen.getByRole('combobox', {
-        name: 'PDF page',
+        name: 'Page format',
       });
       expect(select.value).toBe('letter');
       expect(
@@ -120,7 +120,7 @@ describe('ExportOptionsForm', (): void => {
       const onChange: OnChange = renderForm(PDF, 1);
 
       await user.selectOptions(
-        screen.getByRole('combobox', { name: 'PDF page' }),
+        screen.getByRole('combobox', { name: 'Page format' }),
         'image',
       );
 

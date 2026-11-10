@@ -84,16 +84,18 @@ export function ExportOptionsForm({
         <>
           <div className="field-pair">
             <label className="field">
-              <span className="field-label">{t('export.page')}</span>
+              <span className="field-label">
+                {t('export.pageFormat.label')}
+              </span>
               <select
                 value={pageFormat}
                 onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                   change({ pageFormat: e.target.value as PageFormat });
                 }}
               >
-                {PAGE_FORMATS.map((page: PageFormat) => (
-                  <option key={page} value={page}>
-                    {t(`export.pageFormat.${page}`)}
+                {PAGE_FORMATS.map((curPageFormat: PageFormat) => (
+                  <option key={curPageFormat} value={curPageFormat}>
+                    {t(`export.pageFormat.values.${curPageFormat}`)}
                   </option>
                 ))}
               </select>

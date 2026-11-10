@@ -276,6 +276,73 @@ export async function previewPixels(page: Page): Promise<PreviewPixels> {
     });
 }
 
+/** The size of the preview canvas, in its own pixels. */
+export async function previewCanvasSize(page: Page): Promise<Size> {
+  return page.getByTestId('result').evaluate((canvas: HTMLElement): Size => {
+    if (!(canvas instanceof HTMLCanvasElement))
+      throw new Error('The preview is not a canvas');
+    return { width: canvas.width, height: canvas.height };
+  });
+}
+
+/** A rectangle of the preview canvas, in its pixels. */
+export interface PixelRegion {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/** What the pixels of a region of the preview canvas look like. */
+export interface RegionPixels {
+  /** Share of pixels that are pure white. */
+  whiteShare: number;
+  /** Share of pixels that are a light gray: every channel from 160 to 240, at most 20 apart. */
+  lightGrayShare: number;
+  /** Share of pixels with a channel below 128. */
+  darkShare: number;
+}
+
+/** Reads the pixels of a region of the preview canvas, rounded out to whole pixels. */
+export async function previewRegion(
+  page: Page,
+  region: PixelRegion,
+): Promise<RegionPixels> {
+  return page
+    .getByTestId('result')
+    .evaluate((canvas: HTMLElement, area: PixelRegion): RegionPixels => {
+      if (!(canvas instanceof HTMLCanvasElement))
+        throw new Error('The preview is not a canvas');
+      const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
+      if (!context) throw new Error('No 2D context');
+      const x: number = Math.floor(area.x);
+      const y: number = Math.floor(area.y);
+      const data: Uint8ClampedArray = context.getImageData(
+        x,
+        y,
+        Math.ceil(area.x + area.width) - x,
+        Math.ceil(area.y + area.height) - y,
+      ).data;
+      let white: number = 0;
+      let lightGray: number = 0;
+      let dark: number = 0;
+      for (let i: number = 0; i < data.length; i += 4) {
+        const channels: number[] = [data[i], data[i + 1], data[i + 2]];
+        const low: number = Math.min(...channels);
+        const high: number = Math.max(...channels);
+        if (low === 255) white++;
+        if (low >= 160 && high <= 240 && high - low <= 20) lightGray++;
+        if (low < 128) dark++;
+      }
+      const pixels: number = data.length / 4;
+      return {
+        whiteShare: white / pixels,
+        lightGrayShare: lightGray / pixels,
+        darkShare: dark / pixels,
+      };
+    }, region);
+}
+
 /** Waits for the preview to show the render of the current options and reads its pixels. */
 export async function settledPixels(page: Page): Promise<PreviewPixels> {
   await resultSize(page);
@@ -376,6 +443,19 @@ export async function pdfImagePlacements(
       );
     return placements[0];
   });
+}
+
+/** The operators of the content of each page of a PDF, in order, one list per page. */
+export async function pdfPageOperators(data: Uint8Array): Promise<string[][]> {
+  const pdf: PDFDocument = await PDFDocument.load(data);
+  return pdf.getPages().map((page: PDFPage): string[] =>
+    pageContent(page)
+      .split(/\s+/)
+      .filter(
+        (token: string): boolean =>
+          token !== '' && Number.isNaN(Number(token)) && !token.startsWith('/'),
+      ),
+  );
 }
 
 /** The size, in pixels, of the image embedded in each page of a PDF, one entry per page. */
