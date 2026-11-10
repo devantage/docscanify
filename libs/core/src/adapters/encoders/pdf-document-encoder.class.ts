@@ -22,6 +22,28 @@ export interface PdfDocumentEncoderOptions {
   imageEncoder?: ImageEncoder;
 }
 
+/** A rectangle on the PDF page, in points. */
+export interface PdfPageArea {
+  /** Distance from the left edge of the page. */
+  x: number;
+
+  /** Distance from the top edge of the page. */
+  y: number;
+
+  width: number;
+
+  height: number;
+}
+
+/** How an image is laid out on the PDF page, in points (1 pt = 1/72 in). */
+export interface PdfPageLayout {
+  /** The page, already turned to landscape when the image is wider than it is tall. */
+  page: ImageDimensions;
+
+  /** Where the image is drawn: centered and as large as the margin allows. */
+  image: PdfPageArea;
+}
+
 const PAGE_FORMATS: Record<'a4' | 'letter', [number, number]> = {
   a4: [595.28, 841.89],
   letter: [612, 792],
@@ -68,25 +90,49 @@ export class PdfDocumentEncoder implements PdfEncoder {
   public async encode(buffer: Uint8Array): Promise<Uint8Array> {
     const document: PDFDocument = await PDFDocument.create();
     const pdfImage: PDFImage = await this.embed(document, buffer);
-    const { margin } = this._options;
-    const { width: pageWidth, height: pageHeight } =
-      this.getPageDimensions(pdfImage);
-    const scale: number = Math.min(
-      (pageWidth - margin * 2) / pdfImage.width,
-      (pageHeight - margin * 2) / pdfImage.height,
-    );
-    const drawWidth: number = pdfImage.width * scale;
-    const drawHeight: number = pdfImage.height * scale;
-    const page: PDFPage = document.addPage([pageWidth, pageHeight]);
+    const { page: pageDimensions, image } = this.getPageLayout(pdfImage);
+    const page: PDFPage = document.addPage([
+      pageDimensions.width,
+      pageDimensions.height,
+    ]);
 
+    // pdf-lib measures y from the bottom of the page, the layout from the top
     page.drawImage(pdfImage, {
-      x: (pageWidth - drawWidth) / 2,
-      y: (pageHeight - drawHeight) / 2,
-      width: drawWidth,
-      height: drawHeight,
+      ...image,
+      y: pageDimensions.height - image.y - image.height,
     });
 
     return document.save();
+  }
+
+  /**
+   * Lays out an image on the page the way `encode` does, without making the
+   * PDF: the page, turned to landscape for a wide image, and the image centered
+   * and as large as the margins allow. A preview can draw exactly what the PDF
+   * will hold.
+   *
+   * @param image the dimensions of the image, in pixels
+   * @returns the page and where the image goes on it, in points
+   */
+  public getPageLayout(image: ImageDimensions): PdfPageLayout {
+    const { margin } = this._options;
+    const page: ImageDimensions = this.getPageDimensions(image);
+    const scale: number = Math.min(
+      (page.width - margin * 2) / image.width,
+      (page.height - margin * 2) / image.height,
+    );
+    const width: number = image.width * scale;
+    const height: number = image.height * scale;
+
+    return {
+      page,
+      image: {
+        x: (page.width - width) / 2,
+        y: (page.height - height) / 2,
+        width,
+        height,
+      },
+    };
   }
 
   /**
@@ -141,22 +187,22 @@ export class PdfDocumentEncoder implements PdfEncoder {
    * Finds the dimensions of the page. A fixed format turns to landscape if the
    * image is wider than it is tall.
    *
-   * @param pdfImage the image in the PDF
+   * @param image the dimensions of the image, in pixels
    * @returns the dimensions, in points
    */
-  private getPageDimensions(pdfImage: PDFImage): ImageDimensions {
+  private getPageDimensions(image: ImageDimensions): ImageDimensions {
     const { pageFormat, imageDpi, margin } = this._options;
 
     if (pageFormat === 'image') {
       return {
-        width: (pdfImage.width * POINTS_PER_INCH) / imageDpi + margin * 2,
-        height: (pdfImage.height * POINTS_PER_INCH) / imageDpi + margin * 2,
+        width: (image.width * POINTS_PER_INCH) / imageDpi + margin * 2,
+        height: (image.height * POINTS_PER_INCH) / imageDpi + margin * 2,
       };
     }
 
     const [width, height] = PAGE_FORMATS[pageFormat];
 
-    return pdfImage.width > pdfImage.height
+    return image.width > image.height
       ? { width: height, height: width }
       : { width, height };
   }
