@@ -1,5 +1,10 @@
+import { PDFDocument, type PDFPage } from 'pdf-lib';
+
 import { DEFAULT_ADAPTERS } from './default-adapters';
-import { DocumentScanner } from './document-scanner.class';
+import {
+  DocumentScanner,
+  type DocumentScannerOutput,
+} from './document-scanner.class';
 import type { Corners, DocumentOutput } from './domain/models';
 import {
   createBlankPhoto,
@@ -42,6 +47,32 @@ describe('DocumentScanner', (): void => {
         DOCUMENT_PHOTO_CORNERS,
       ),
     ).toBeLessThan(10);
+  });
+
+  it('tells how the document was laid out on the PDF page it outputs', async (): Promise<void> => {
+    const { file, report, pageLayout }: DocumentScannerOutput =
+      await scanner.scan(photo, { pageSize: 'letter', margin: 36 });
+    const page: PDFPage = (await PDFDocument.load(file.buffer)).getPage(0);
+
+    expect(pageLayout).not.toBeNull();
+    expect(pageLayout?.page.width).toBeCloseTo(page.getWidth());
+    expect(pageLayout?.page.height).toBeCloseTo(page.getHeight());
+    // The document fills the margin box on at least one side, keeping its proportions
+    const { image } = pageLayout ?? {
+      image: { x: 0, y: 0, width: 0, height: 0 },
+    };
+    expect(Math.min(image.x, image.y)).toBeCloseTo(36);
+    expect(image.width / image.height).toBeCloseTo(
+      report.dimensions.width / report.dimensions.height,
+    );
+  });
+
+  it('has no page layout for an image', async (): Promise<void> => {
+    const { pageLayout }: DocumentScannerOutput = await scanner.scan(photo, {
+      outputFormat: 'image',
+    });
+
+    expect(pageLayout).toBeNull();
   });
 
   it('keeps the name of the original file in the report', async (): Promise<void> => {

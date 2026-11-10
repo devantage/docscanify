@@ -2,6 +2,7 @@ import { JpegImageEncoder } from './adapters/encoders/jpeg-image-encoder.class';
 import {
   type PageFormat,
   PdfDocumentEncoder,
+  type PdfPageLayout,
 } from './adapters/encoders/pdf-document-encoder.class';
 import { PngImageEncoder } from './adapters/encoders/png-image-encoder.class';
 import type { OpenCvAdapterOptions } from './adapters/opencv/opencv-adapter.class';
@@ -28,6 +29,15 @@ import type {
 
 /** Format of the scan result. */
 export type OutputFormat = 'pdf' | 'image';
+
+/** The scanned document, with where it was placed on the PDF page. */
+export interface DocumentScannerOutput extends DocumentOutput {
+  /**
+   * How the document was laid out on the PDF page, in points (see
+   * `PdfDocumentEncoder.getPageLayout`), or `null` for an image
+   */
+  pageLayout: PdfPageLayout | null;
+}
 
 /** Filter applied after cropping and enhancing. */
 export type ScanFilter = 'none' | 'grayscale' | 'bw';
@@ -96,13 +106,14 @@ export class DocumentScanner {
    *
    * @param image the image file, in any format the `imageDecoder` reads
    * @param options what to do with the document
-   * @returns the scanned document and the report of what was done to it
+   * @returns the scanned document, the report of what was done to it and, for a
+   * PDF, how it was laid out on the page
    * @throws if no document is detected, unless `onNotDetected` is `original`
    */
   public async scan(
     image: Uint8Array,
     options: DocumentScannerOptions = {},
-  ): Promise<DocumentOutput> {
+  ): Promise<DocumentScannerOutput> {
     const filter: ScanFilter = options.filter ?? 'none';
     const document: ScannedDocument = await ScannedDocument.fromImage(
       image,
@@ -123,15 +134,21 @@ export class DocumentScanner {
       options.jpegQuality,
     );
 
-    return options.outputFormat === 'image'
-      ? document.toImage(imageEncoder)
-      : document.toPdf(
-          new PdfDocumentEncoder({
-            pageFormat: options.pageSize ?? 'a4',
-            margin: options.margin ?? 0,
-            imageEncoder,
-          }),
-        );
+    if (options.outputFormat === 'image') {
+      return { ...(await document.toImage(imageEncoder)), pageLayout: null };
+    }
+
+    const pdfEncoder: PdfDocumentEncoder = new PdfDocumentEncoder({
+      pageFormat: options.pageSize ?? 'a4',
+      margin: options.margin ?? 0,
+      imageEncoder,
+    });
+    const output: DocumentOutput = await document.toPdf(pdfEncoder);
+
+    return {
+      ...output,
+      pageLayout: pdfEncoder.getPageLayout(output.report.dimensions),
+    };
   }
 
   /** The enhancers chosen, in the order they run: noise, sharpness, rotation. */
