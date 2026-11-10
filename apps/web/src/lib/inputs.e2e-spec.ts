@@ -453,7 +453,7 @@ test.describe('Image inputs', (): void => {
       maxCornerError(await editorCorners(page), FIXTURE_CORNERS['invoice.jpg']),
     ).toBeLessThan(DETECTION_TOLERANCE);
     await expect(page.getByTestId('detect-status')).toHaveText(
-      'Mova os cantos para enquadrar a área da imagem que deseja escanear',
+      'Move the corners to frame the part of the image you want to scan',
     );
     await expect(page.getByTestId('crop')).toBeEnabled();
 

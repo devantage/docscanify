@@ -35,17 +35,9 @@ const SPINNER: string = '[data-testid="loading"]';
 /** The preview faded while a new render runs, for `watchTransients`. */
 const BUSY_PREVIEW: string = '[data-testid="result"].is-busy';
 
-/** The labels of the rotate buttons. */
-const ROTATE_LABELS: Record<'Left' | 'Right', string> = {
-  Left: 'Esquerda',
-  Right: 'Direita',
-};
-
 /** Rotates the document on display a quarter turn. */
 async function rotate(page: Page, direction: 'Left' | 'Right'): Promise<void> {
-  await page
-    .getByRole('button', { name: ROTATE_LABELS[direction], exact: true })
-    .click();
+  await page.getByRole('button', { name: direction, exact: true }).click();
 }
 
 /** The width and the height of a size, swapped, as a quarter turn does. */
@@ -71,7 +63,7 @@ test.describe('Adjust step', (): void => {
     await expect(preview(page)).toHaveJSProperty('width', size.width);
     await expect(preview(page)).toHaveJSProperty('height', size.height);
     await expect(
-      page.getByRole('img', { name: 'Prévia do documento 1, recortado' }),
+      page.getByRole('img', { name: 'Preview of document 1, cropped' }),
     ).toBeVisible();
     // Only one document: nothing to copy the adjustments to
     await expect(page.getByTestId('apply-all')).toHaveCount(0);
@@ -146,7 +138,7 @@ test.describe('Adjust step', (): void => {
 
     // OpenCV blocks the page while it renders: the loading state is noted as it happens
     await watchTransients(page, [SPINNER, BUSY_PREVIEW]);
-    await choose(page, 'Cinza');
+    await choose(page, 'Grayscale');
     await expect(resultStatus(page)).toHaveText(sizeText(size), RENDER_TIMEOUT);
 
     // The size only shows up with the new render already drawn
@@ -154,7 +146,7 @@ test.describe('Adjust step', (): void => {
     const seen: Transients = await seenTransients(page);
     expect(seen.statuses).toEqual([
       sizeText(size),
-      'Aplicando…',
+      'Applying…',
       sizeText(size),
     ]);
     // Meanwhile the previous render stayed, faded, under a spinner
@@ -173,7 +165,7 @@ test.describe('Adjust step', (): void => {
     await openAdjust(page, ['invoice.jpg']);
 
     await expect(
-      page.getByRole('radio', { name: 'Colorido', exact: true }),
+      page.getByRole('radio', { name: 'Color', exact: true }),
     ).toBeChecked();
     await expect(preview(page)).toHaveAttribute('data-filter', 'none');
     const pixels: PreviewPixels = await settledPixels(page);
@@ -191,7 +183,7 @@ test.describe('Adjust step', (): void => {
     const size: Size = await resultSize(page);
     const color: PreviewPixels = await previewPixels(page);
 
-    await choose(page, 'Cinza');
+    await choose(page, 'Grayscale');
     await expect(preview(page)).toHaveAttribute('data-filter', 'grayscale');
     await expect
       .poll(measure(page, 'maxChannelSpread'), RENDER_TIMEOUT)
@@ -205,7 +197,7 @@ test.describe('Adjust step', (): void => {
 
     // Back to a render made before: shown again without a new render, so without a loading state
     await watchTransients(page, [SPINNER, BUSY_PREVIEW]);
-    await choose(page, 'Colorido');
+    await choose(page, 'Color');
     await expect(preview(page)).toHaveAttribute('data-filter', 'none');
     await expect
       .poll(measure(page, 'checksum'), RENDER_TIMEOUT)
@@ -222,7 +214,7 @@ test.describe('Adjust step', (): void => {
     await openAdjust(page, ['invoice.jpg']);
     const size: Size = await resultSize(page);
 
-    await choose(page, 'Preto e branco');
+    await choose(page, 'Black and white');
     await expect(preview(page)).toHaveAttribute('data-filter', 'bw');
     await expect
       .poll(measure(page, 'midtoneShare'), RENDER_TIMEOUT)
@@ -242,20 +234,20 @@ test.describe('Adjust step', (): void => {
   }): Promise<void> => {
     await openAdjust(page, ['invoice.jpg']);
     await expect(
-      page.getByRole('radio', { name: 'Sem ajuste', exact: true }),
+      page.getByRole('radio', { name: 'None', exact: true }),
     ).toBeChecked();
     const plain: PreviewPixels = await settledPixels(page);
 
     // The noise reduction that comes with any sharpness smooths the flat areas first, so Soft
     // gains less edge energy than a sharpening alone would
-    await choose(page, 'Suave');
+    await choose(page, 'Soft');
     await expect
       .poll(measure(page, 'edgeEnergy'), RENDER_TIMEOUT)
       .toBeGreaterThan(plain.edgeEnergy * 1.04);
     const soft: PreviewPixels = await settledPixels(page);
     expect(soft.checksum).not.toBe(plain.checksum);
 
-    await choose(page, 'Forte');
+    await choose(page, 'Strong');
     await expect
       .poll(measure(page, 'edgeEnergy'), RENDER_TIMEOUT)
       .toBeGreaterThan(soft.edgeEnergy * 1.1);
@@ -266,7 +258,7 @@ test.describe('Adjust step', (): void => {
     expect(strong.width).toBe(plain.width);
     expect(strong.height).toBe(plain.height);
 
-    await choose(page, 'Sem ajuste');
+    await choose(page, 'None');
     await expect
       .poll(measure(page, 'checksum'), RENDER_TIMEOUT)
       .toBe(plain.checksum);
@@ -290,17 +282,17 @@ test.describe('Adjust step', (): void => {
     expect(receiptColor.maxChannelSpread).toBeGreaterThan(60);
 
     await showDocument(page, 0);
-    await choose(page, 'Cinza');
-    await choose(page, 'Forte');
+    await choose(page, 'Grayscale');
+    await choose(page, 'Strong');
     await rotate(page, 'Right');
     await expect(resultStatus(page)).toHaveText(
-      `Documento 1 de 3 · ${sizeText(swapped(sizes[0]))}`,
+      `Document 1 of 3 · ${sizeText(swapped(sizes[0]))}`,
       RENDER_TIMEOUT,
     );
 
     await page.getByTestId('apply-all').click();
     const toast: Locator = page.getByTestId('toast').filter({
-      hasText: 'Os ajustes foram aplicados aos 3 documentos.',
+      hasText: 'The adjustments were applied to all 3 documents.',
     });
     await expect(toast).toBeVisible();
     await expect(toast).toHaveAttribute('data-kind', 'success');
@@ -308,15 +300,15 @@ test.describe('Adjust step', (): void => {
     for (const index of [1, 2]) {
       await showDocument(page, index);
       await expect(
-        page.getByRole('radio', { name: 'Cinza', exact: true }),
+        page.getByRole('radio', { name: 'Grayscale', exact: true }),
       ).toBeChecked();
       await expect(
-        page.getByRole('radio', { name: 'Forte', exact: true }),
+        page.getByRole('radio', { name: 'Strong', exact: true }),
       ).toBeChecked();
       await expect(preview(page)).toHaveAttribute('data-filter', 'grayscale');
       // Not rotated: the size it had before
       await expect(resultStatus(page)).toHaveText(
-        `Documento ${String(index + 1)} de 3 · ${sizeText(sizes[index])}`,
+        `Document ${String(index + 1)} of 3 · ${sizeText(sizes[index])}`,
         RENDER_TIMEOUT,
       );
     }
@@ -330,11 +322,11 @@ test.describe('Adjust step', (): void => {
     // The source document keeps its own rotation
     await showDocument(page, 0);
     await expect(resultStatus(page)).toHaveText(
-      `Documento 1 de 3 · ${sizeText(swapped(sizes[0]))}`,
+      `Document 1 of 3 · ${sizeText(swapped(sizes[0]))}`,
       RENDER_TIMEOUT,
     );
     await expect(
-      page.getByRole('radio', { name: 'Cinza', exact: true }),
+      page.getByRole('radio', { name: 'Grayscale', exact: true }),
     ).toBeChecked();
   });
 
@@ -345,15 +337,15 @@ test.describe('Adjust step', (): void => {
   }): Promise<void> => {
     await openAdjust(page, ['invoice.jpg', 'receipt.jpg']);
 
-    await choose(page, 'Preto e branco');
+    await choose(page, 'Black and white');
     await page.getByTestId('apply-all').click();
     await expect(
-      page.getByTestId('toast').filter({ hasText: 'ajustes' }),
-    ).toHaveText('Os ajustes foram aplicados aos 2 documentos.');
+      page.getByTestId('toast').filter({ hasText: 'adjustments' }),
+    ).toHaveText('The adjustments were applied to all 2 documents.');
 
     await showDocument(page, 1);
     await expect(
-      page.getByRole('radio', { name: 'Preto e branco', exact: true }),
+      page.getByRole('radio', { name: 'Black and white', exact: true }),
     ).toBeChecked();
     await expect
       .poll(measure(page, 'midtoneShare'), RENDER_TIMEOUT)
@@ -371,26 +363,26 @@ test.describe('Adjust step', (): void => {
     const receipt: Size = await resultSize(page);
 
     // The receipt: grayscale, soft and rotated left
-    await choose(page, 'Cinza');
-    await choose(page, 'Suave');
+    await choose(page, 'Grayscale');
+    await choose(page, 'Soft');
     await rotate(page, 'Left');
     await expect(resultStatus(page)).toHaveText(
-      `Documento 2 de 2 · ${sizeText(swapped(receipt))}`,
+      `Document 2 of 2 · ${sizeText(swapped(receipt))}`,
       RENDER_TIMEOUT,
     );
 
     // The invoice: black and white with strong sharpness
     await showDocument(page, 0);
     await expect(
-      page.getByRole('radio', { name: 'Colorido', exact: true }),
+      page.getByRole('radio', { name: 'Color', exact: true }),
     ).toBeChecked();
     await expect(
-      page.getByRole('radio', { name: 'Sem ajuste', exact: true }),
+      page.getByRole('radio', { name: 'None', exact: true }),
     ).toBeChecked();
-    await choose(page, 'Preto e branco');
-    await choose(page, 'Forte');
+    await choose(page, 'Black and white');
+    await choose(page, 'Strong');
     await expect(resultStatus(page)).toHaveText(
-      `Documento 1 de 2 · ${sizeText(invoice)}`,
+      `Document 1 of 2 · ${sizeText(invoice)}`,
       RENDER_TIMEOUT,
     );
     await expect
@@ -400,14 +392,14 @@ test.describe('Adjust step', (): void => {
     // Back to the receipt: its own options, untouched by the invoice ones
     await showDocument(page, 1);
     await expect(
-      page.getByRole('radio', { name: 'Cinza', exact: true }),
+      page.getByRole('radio', { name: 'Grayscale', exact: true }),
     ).toBeChecked();
     await expect(
-      page.getByRole('radio', { name: 'Suave', exact: true }),
+      page.getByRole('radio', { name: 'Soft', exact: true }),
     ).toBeChecked();
     await expect(preview(page)).toHaveAttribute('data-filter', 'grayscale');
     await expect(resultStatus(page)).toHaveText(
-      `Documento 2 de 2 · ${sizeText(swapped(receipt))}`,
+      `Document 2 of 2 · ${sizeText(swapped(receipt))}`,
       RENDER_TIMEOUT,
     );
     const gray: PreviewPixels = await settledPixels(page);
@@ -417,14 +409,14 @@ test.describe('Adjust step', (): void => {
     // And the invoice still has its own
     await showDocument(page, 0);
     await expect(
-      page.getByRole('radio', { name: 'Preto e branco', exact: true }),
+      page.getByRole('radio', { name: 'Black and white', exact: true }),
     ).toBeChecked();
     await expect(
-      page.getByRole('radio', { name: 'Forte', exact: true }),
+      page.getByRole('radio', { name: 'Strong', exact: true }),
     ).toBeChecked();
     await expect(preview(page)).toHaveAttribute('data-filter', 'bw');
     await expect(resultStatus(page)).toHaveText(
-      `Documento 1 de 2 · ${sizeText(invoice)}`,
+      `Document 1 of 2 · ${sizeText(invoice)}`,
       RENDER_TIMEOUT,
     );
   });

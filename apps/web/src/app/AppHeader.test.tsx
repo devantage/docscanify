@@ -116,14 +116,10 @@ function Probe(): JSX.Element {
   );
 }
 
-/**
- * Renders the top bar with the real steps and camera, and a {@link Probe} on them.
- *
- * @param fixed Fixes the language, as the app does with `FIXED_LOCALE`.
- */
-function renderHeader(fixed?: boolean): void {
+/** Renders the top bar with the real steps and camera, and a {@link Probe} on them. */
+function renderHeader(): void {
   render(
-    <TranslateProvider defaultLocale="pt-BR" fixed={fixed}>
+    <TranslateProvider>
       <StepsProvider>
         <CameraProvider>
           <AppHeader />
@@ -151,7 +147,7 @@ describe('AppHeader', (): void => {
     mockScan();
     renderHeader();
 
-    expect(screen.getByRole('banner')).toHaveTextContent('DocScanner');
+    expect(screen.getByRole('banner')).toHaveTextContent('DocScanify');
     expect(
       stepButtons().map(
         (b: HTMLElement) => b.querySelector('.step-label')?.textContent,
@@ -165,20 +161,6 @@ describe('AppHeader', (): void => {
     expect(
       within(screen.getByRole('banner')).getByTestId('language'),
     ).toBeInTheDocument();
-  });
-
-  it('hides the language picker when the language is fixed, and shows the steps in it', (): void => {
-    mockScan();
-    renderHeader(true);
-
-    expect(
-      within(screen.getByRole('banner')).queryByTestId('language'),
-    ).not.toBeInTheDocument();
-    expect(
-      stepButtons().map(
-        (b: HTMLElement) => b.querySelector('.step-label')?.textContent,
-      ),
-    ).toEqual(['Enviar', 'Recortar', 'Ajustar', 'Exportar']);
   });
 
   it('translates the step names', (): void => {
