@@ -135,7 +135,7 @@ export function ExportOptionsForm({
       ) : (
         <p className="panel-hint">
           {count > 1 && `${t('export.imageZipHint')} `}
-          {t('export.imageHint')}
+          {t(`export.imageHint.${format}`)}
         </p>
       )}
     </>

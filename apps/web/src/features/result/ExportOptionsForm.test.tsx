@@ -17,8 +17,8 @@ const PDF: ExportSettings = {
 
 const PDF_ZIP_HINT: string = 'The PDFs are downloaded together, in a ZIP file.';
 const IMAGE_ZIP_HINT: string = 'Each document becomes a file, all in a ZIP.';
-const IMAGE_HINT: string =
-  'PNG keeps every detail. JPG makes a smaller file, with some loss.';
+const PNG_HINT: string = 'Larger file, with the best quality.';
+const JPG_HINT: string = 'Smaller file, with slightly lower quality.';
 
 type OnChange = Mock<(settings: ExportSettings) => void>;
 
@@ -223,7 +223,8 @@ describe('ExportOptionsForm', (): void => {
         screen.queryByRole('group', { name: 'File' }),
       ).not.toBeInTheDocument();
       expect(screen.queryByText(PDF_ZIP_HINT)).not.toBeInTheDocument();
-      expect(screen.queryByText(IMAGE_HINT)).not.toBeInTheDocument();
+      expect(screen.queryByText(PNG_HINT)).not.toBeInTheDocument();
+      expect(screen.queryByText(JPG_HINT)).not.toBeInTheDocument();
     });
 
     it('offers one PDF with everything or one PDF per document with several documents', (): void => {
@@ -294,20 +295,32 @@ describe('ExportOptionsForm', (): void => {
       expect(screen.queryByText(PDF_ZIP_HINT)).not.toBeInTheDocument();
     });
 
-    it('explains PNG and JPG for a single document, without a ZIP', (): void => {
-      renderForm({ ...PDF, format: 'png' }, 1);
+    it.each([
+      ['png', PNG_HINT],
+      ['jpg', JPG_HINT],
+    ] as const)(
+      'explains the trade-off of %s for a single document, without a ZIP',
+      (format: 'png' | 'jpg', expected: string): void => {
+        renderForm({ ...PDF, format }, 1);
 
-      const hint: HTMLElement = screen.getByText(IMAGE_HINT);
-      expect(hint).toHaveClass('panel-hint');
-      expect(hint.textContent).toBe(IMAGE_HINT);
-    });
+        const hint: HTMLElement = screen.getByText(expected);
+        expect(hint).toHaveClass('panel-hint');
+        expect(hint.textContent).toBe(expected);
+      },
+    );
 
-    it('tells that several documents come as one file each, in a ZIP', (): void => {
-      renderForm({ ...PDF, format: 'png' }, 2);
+    it.each([
+      ['png', PNG_HINT],
+      ['jpg', JPG_HINT],
+    ] as const)(
+      'tells that several documents come as one %s file each, in a ZIP',
+      (format: 'png' | 'jpg', expected: string): void => {
+        renderForm({ ...PDF, format }, 2);
 
-      expect(screen.getByText(`${IMAGE_ZIP_HINT} ${IMAGE_HINT}`)).toHaveClass(
-        'panel-hint',
-      );
-    });
+        expect(screen.getByText(`${IMAGE_ZIP_HINT} ${expected}`)).toHaveClass(
+          'panel-hint',
+        );
+      },
+    );
   });
 });

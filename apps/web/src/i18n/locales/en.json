@@ -139,7 +139,10 @@
     "margins": "Margins (In centimeters)",
     "pdfZipHint": "The PDFs are downloaded together, in a ZIP file.",
     "imageZipHint": "Each document becomes a file, all in a ZIP.",
-    "imageHint": "PNG keeps every detail. JPG makes a smaller file, with some loss.",
+    "imageHint": {
+      "png": "Larger file, with the best quality.",
+      "jpg": "Smaller file, with slightly lower quality."
+    },
     "generating": "Creating file…",
     "generatingOf": "Creating {current} of {total}…",
     "action": "Export",
