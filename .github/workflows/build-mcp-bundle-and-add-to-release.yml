@@ -1,0 +1,38 @@
+name: Build MCP bundle and add to release
+
+on:
+  push:
+    tags:
+      - mcp-v*.*.*
+
+jobs:
+  build-and-add-to-release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      # The tag must match the version of the server, so the bundle is never attached to the wrong release
+      - run: |
+          VERSION=$(jq .version apps/mcp/package.json -r)
+
+          if [ "${GITHUB_REF_NAME}" != "mcp-v${VERSION}" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match apps/mcp/package.json version ${VERSION} (expected mcp-v${VERSION})"
+
+            exit 1
+          fi
+
+      - run: npm install
+
+      - run: npm run pack mcp
+
+      - run: gh release upload "${GITHUB_REF_NAME}" dist/apps/mcpb/*.mcpb --clobber

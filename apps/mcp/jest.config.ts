@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'mcp',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',

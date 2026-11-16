@@ -25,7 +25,9 @@
   "engines": {
     "node": ">=20.0.0"
   },
+  "type": "commonjs",
   "main": "./src/main.js",
+  "types": "./src/main.d.ts",
   "bin": {
     "docscanify-mcp": "./src/main.js"
   },
