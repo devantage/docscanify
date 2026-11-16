@@ -24,6 +24,24 @@
         "command": "mkdir -p tmp/mcp/node-path/@devantage && ln -sfn ../../../../dist/libs/core tmp/mcp/node-path/@devantage/docscanify && NODE_PATH=\"$PWD/tmp/mcp/node-path\" node dist/apps/mcp/src/main.js --transport http --port 3333"
       }
     },
+    "pack": {
+      "executor": "@devantage/nx-mcpb:pack",
+      "dependsOn": ["build"],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/mcpb",
+        "platformBinaries": {
+          "@napi-rs/canvas": [
+            "darwin-arm64",
+            "darwin-x64",
+            "win32-x64-msvc",
+            "win32-arm64-msvc",
+            "linux-x64-gnu",
+            "linux-arm64-gnu"
+          ]
+        }
+      }
+    },
     "lint": {
       "cache": false,
       "options": {

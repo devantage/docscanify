@@ -16,6 +16,8 @@
     "serve": "nx serve",
     "build": "nx build",
     "build:all": "nx run-many -t build",
+    "pack": "nx pack",
+    "pack:all": "nx run-many -t pack",
     "lint": "nx lint",
     "lint:affected": "nx affected -t lint",
     "lint:all": "nx run-many -t lint",
@@ -44,6 +46,7 @@
   "devDependencies": {
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
+    "@devantage/nx-mcpb": "^1.0.0",
     "@nx/eslint": "24.0.4",
     "@nx/eslint-plugin": "24.0.4",
     "@nx/jest": "24.0.4",

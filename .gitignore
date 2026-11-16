@@ -5,7 +5,7 @@ out-tsc
 *.tgz
 *.tsbuildinfo
 
-# dependencies
+# Dependencies
 /node_modules
 
 # IDEs and editors
@@ -24,7 +24,7 @@ out-tsc
 !/.vscode/launch.json
 !/.vscode/extensions.json
 
-# misc
+# Miscellaneous
 /.sass-cache
 /connect.lock
 /coverage
@@ -45,9 +45,6 @@ Thumbs.db
 # Vite Files
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
-
-# Packages
-*.tgz
 
 # OpenCV copy
 /apps/web/public/opencv.js

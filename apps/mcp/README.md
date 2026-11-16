@@ -16,6 +16,8 @@ The scanning is done by [DocScanify](https://www.npmjs.com/package/@devantage/do
 
 ## Installation
 
+In Claude Desktop, install the MCP Bundle with one click: download `docscanify-<version>.mcpb` from the [latest release](https://github.com/devantage/docscanify/releases) and open it, or drag it to **Settings > Extensions**. See [Claude Desktop](#claude-desktop).
+
 Run it with npx, with no install:
 
 ```bash
@@ -71,7 +73,9 @@ claude mcp add --transport http docscanify http://127.0.0.1:3000/mcp
 
 ### Claude Desktop
 
-In `claude_desktop_config.json`:
+Install the MCP Bundle (`.mcpb`) of the [latest release](https://github.com/devantage/docscanify/releases): open the file, or drag it to **Settings > Extensions**, and confirm the installation. The bundle carries the server with its dependencies and the native binaries for macOS (Apple Silicon and Intel), Windows (x64 and ARM64) and Linux (x64 and ARM64, glibc), so it needs no npm install. It runs over stdio.
+
+Or configure it by hand, in `claude_desktop_config.json`:
 
 ```json
 {
@@ -178,9 +182,9 @@ With stdio, the server reads `imagePath` and writes `outputPath` with the permis
 From the root of the repository:
 
 ```bash
-npx nx build mcp   # builds the server and the library into dist/
-npx nx serve mcp   # builds and runs the HTTP transport on http://127.0.0.1:3000/mcp
-npx nx test mcp
+npm run build mcp   # builds the server and the library into dist/
+npm run serve mcp   # builds and runs the HTTP transport on http://127.0.0.1:3000/mcp
+npm run test mcp
 ```
 
 To try it with the [MCP Inspector](https://github.com/modelcontextprotocol/inspector), build it and run:
@@ -189,11 +193,19 @@ To try it with the [MCP Inspector](https://github.com/modelcontextprotocol/inspe
 NODE_PATH="$PWD/tmp/mcp/node-path" npx @modelcontextprotocol/inspector node dist/apps/mcp/src/main.js
 ```
 
-`NODE_PATH` points to a link to `dist/libs/core`, created by `npx nx serve mcp`, so the built server finds the library of the repository instead of the published one.
+`NODE_PATH` points to a link to `dist/libs/core`, created by `npm run serve mcp`, so the built server finds the library of the repository instead of the published one.
+
+### MCP Bundle
+
+```bash
+npm run pack mcp   # builds the server and packs it into dist/apps/mcpb/docscanify-<version>.mcpb
+```
+
+The bundle is packed by [@devantage/nx-mcpb](https://www.npmjs.com/package/@devantage/nx-mcpb) from the build output, with the manifest and icon in [`.mcpb/`](.mcpb). The version of the manifest is replaced by the one of `apps/mcp/package.json`. Like the npm package, the bundle installs the published `@devantage/docscanify`, not the library of the repository.
 
 ### Releases
 
-Pushing a tag `mcp-v1.2.3` publishes the package to npm and the [image](#installation) to the GitHub Container Registry, for amd64 and arm64. The tag must match the `version` of `apps/mcp/package.json`. The image uses the library of the same commit, but the npm package depends on the published `@devantage/docscanify`, so publish the library first when the server needs a new version of it.
+Pushing a tag `mcp-v1.2.3` publishes the package to npm, the [image](#installation) to the GitHub Container Registry, for amd64 and arm64, and attaches the [MCP Bundle](#mcp-bundle) to the GitHub release of the tag. The tag must match the `version` of `apps/mcp/package.json`. The image uses the library of the same commit, but the npm package depends on the published `@devantage/docscanify`, so publish the library first when the server needs a new version of it.
 
 ## License
 

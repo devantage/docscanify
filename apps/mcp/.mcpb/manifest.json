@@ -1,0 +1,51 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/mcpb/refs/heads/main/schemas/mcpb-manifest-v0.4.schema.json",
+  "manifest_version": "0.4",
+  "name": "docscanify",
+  "display_name": "DocScanify",
+  "version": "1.1.0",
+  "description": "Scans documents out of photos: detects the edges, crops, corrects the perspective and returns a PDF or an image.",
+  "long_description": "Works like a \"CamScanner\": give it a photo of a document and get back only the document, cropped, with its perspective corrected, enhanced and filtered, as a PDF or an image. The image can come from a file on your computer, a URL or base64, and the result can also be saved to a file or directory. Runs locally, with no system dependencies.",
+  "author": {
+    "name": "Guilherme Nogueira"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/devantage/docscanify.git"
+  },
+  "homepage": "https://github.com/devantage/docscanify/tree/main/apps/mcp",
+  "documentation": "https://github.com/devantage/docscanify/tree/main/apps/mcp#readme",
+  "support": "https://github.com/devantage/docscanify/issues",
+  "icon": "icon.png",
+  "server": {
+    "type": "node",
+    "entry_point": "src/main.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/src/main.js", "--transport", "stdio"],
+      "env": {}
+    }
+  },
+  "tools": [
+    {
+      "name": "scan_document",
+      "description": "Detects the document in an image, crops it, corrects its perspective, enhances and filters it, and returns it as a PDF or an image."
+    }
+  ],
+  "keywords": [
+    "mcp",
+    "document-scanner",
+    "scanner",
+    "pdf",
+    "perspective",
+    "camscanner",
+    "opencv"
+  ],
+  "license": "MIT",
+  "compatibility": {
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": {
+      "node": ">=20.0.0"
+    }
+  }
+}
